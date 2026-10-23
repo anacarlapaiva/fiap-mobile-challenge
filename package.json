@@ -16,7 +16,6 @@
     "postinstall": "husky"
   },
   "dependencies": {
-    "@react-native/new-app-screen": "0.88.0",
     "@shopify/restyle": "^2.4.5",
     "react": "19.3.0",
     "react-native": "0.88.0",
@@ -45,6 +44,7 @@
     "jest": "^29.6.3",
     "lint-staged": "^16.4.0",
     "prettier": "2.8.8",
+    "react-native-asset": "^2.3.0",
     "react-test-renderer": "19.3.0",
     "typescript": "^6.0.3"
   },

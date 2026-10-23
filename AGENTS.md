@@ -14,22 +14,24 @@ Instruções para qualquer agente de IA (e pessoa) que trabalhe neste repositór
 | Testes                       | Jest 29 + `react-test-renderer`                                                      |
 | Lint e formatação            | ESLint 8 (`@react-native/eslint-config` + `eslint-plugin-boundaries`) e Prettier 2.8 |
 | Dependências de runtime      | `@shopify/restyle`, `react-native-safe-area-context`                                 |
+| Fontes                       | Montserrat (4 pesos, em `src/assets/fonts/`)                                         |
 
 Use sempre `yarn`. Nunca use `npm` ou `npx` para instalar pacotes.
 
 ## Comandos
 
-| Ação                   | Comando                                                                      |
-| ---------------------- | ---------------------------------------------------------------------------- |
-| Instalar dependências  | `yarn install`                                                               |
-| Instalar pods (iOS)    | `bundle install` (primeira vez) e `bundle exec pod install` (em `ios/`)      |
-| Iniciar o Metro        | `yarn start` (`yarn start --reset-cache` após mudar a configuração do Babel) |
-| Rodar no Android / iOS | `yarn android` / `yarn ios`                                                  |
-| Typecheck              | `yarn typecheck`                                                             |
-| Lint                   | `yarn lint` (corrigir automaticamente: `yarn lint:fix`)                      |
-| Formatação             | `yarn format:check` (corrigir automaticamente: `yarn format`)                |
-| Testes                 | `yarn test`                                                                  |
-| Validação completa     | `yarn validate` (typecheck + lint + formatação + testes)                     |
+| Ação                   | Comando                                                                                      |
+| ---------------------- | -------------------------------------------------------------------------------------------- |
+| Instalar dependências  | `yarn install`                                                                               |
+| Instalar pods (iOS)    | `bundle install` (primeira vez) e `bundle exec pod install` (em `ios/`)                      |
+| Registrar fontes       | `yarn react-native-asset` (depois de alterar `src/assets/fonts/` e `react-native.config.js`) |
+| Iniciar o Metro        | `yarn start` (`yarn start --reset-cache` após mudar a configuração do Babel)                 |
+| Rodar no Android / iOS | `yarn android` / `yarn ios`                                                                  |
+| Typecheck              | `yarn typecheck`                                                                             |
+| Lint                   | `yarn lint` (corrigir automaticamente: `yarn lint:fix`)                                      |
+| Formatação             | `yarn format:check` (corrigir automaticamente: `yarn format`)                                |
+| Testes                 | `yarn test`                                                                                  |
+| Validação completa     | `yarn validate` (typecheck + lint + formatação + testes)                                     |
 
 ## Arquitetura
 
