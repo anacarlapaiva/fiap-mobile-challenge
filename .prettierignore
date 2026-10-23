@@ -1,0 +1,8 @@
+android/
+ios/
+vendor/
+.yarn/
+.bundle/
+coverage/
+.husky/_/
+yarn.lock
