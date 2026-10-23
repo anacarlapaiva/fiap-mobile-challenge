@@ -3,10 +3,10 @@
 Source of truth for the repository rulesets. Each file is the payload accepted by the
 [GitHub Rulesets API](https://docs.github.com/en/rest/repos/rules).
 
-| File           | Ruleset          | Target               | Merge methods   |
-| -------------- | ---------------- | -------------------- | --------------- |
-| `main.json`    | Proteger Main    | default branch       | merge           |
-| `homolog.json` | Proteger homolog | `refs/heads/homolog` | squash, merge   |
+| File           | Ruleset          | Target               | Merge methods |
+| -------------- | ---------------- | -------------------- | ------------- |
+| `main.json`    | Proteger Main    | default branch       | merge         |
+| `homolog.json` | Proteger homolog | `refs/heads/homolog` | squash, merge |
 
 Both branches block deletion and force pushes and only accept changes through pull requests
 with every review conversation resolved.
