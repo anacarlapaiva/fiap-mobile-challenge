@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 
 import { useCurrentUser } from '@/features/auth';
 import { LessonRow } from '@/features/schedule/components/LessonRow';
-import { formatAgendaDay } from '@/features/schedule/utils/formatAgendaDay';
+import { formatAgendaDay } from '@/features/schedule/formatAgendaDay';
 import { Box, Dropdown, Empty, Screen, Text } from '@/shared/components';
 
 const styles = StyleSheet.create({
@@ -31,34 +31,37 @@ export function ScheduleScreen() {
   }
 
   const days = currentUser.user.student.agenda;
-  const selectedDia =
-    pickedDia !== undefined && days.some(day => day.dia === pickedDia)
-      ? pickedDia
-      : days[0]?.dia;
-  const selectedDay = days.find(day => day.dia === selectedDia);
-  const aulas = selectedDay?.aulas ?? [];
+  const selectedDay = days.find(day => day.dia === pickedDia) ?? days[0];
+
+  if (!selectedDay) {
+    return (
+      <Screen testID="schedule-screen" edges={[]}>
+        <AgendaTitle />
+        <Empty message="Nenhuma aula cadastrada." />
+      </Screen>
+    );
+  }
+
+  const aulas = selectedDay.aulas;
 
   return (
     <Screen testID="schedule-screen" edges={[]}>
       <AgendaTitle />
-      {selectedDia !== undefined ? (
-        <Box paddingHorizontal="l" marginTop="m">
-          <Dropdown
-            testID="agenda-day"
-            value={selectedDia}
-            options={days.map(day => ({
-              label: formatAgendaDay(day.dia),
-              value: day.dia,
-            }))}
-            onSelect={option => setPickedDia(option.value)}
-            textInset="m"
-          />
-        </Box>
-      ) : null}
-      {selectedDia !== undefined && aulas.length === 0 ? (
+      <Box paddingHorizontal="l" marginTop="m">
+        <Dropdown
+          testID="agenda-day"
+          value={selectedDay.dia}
+          options={days.map(day => ({
+            label: formatAgendaDay(day.dia),
+            value: day.dia,
+          }))}
+          onSelect={option => setPickedDia(option.value)}
+          textInset="m"
+        />
+      </Box>
+      {aulas.length === 0 ? (
         <Empty message="Sem aulas neste dia" />
-      ) : null}
-      {aulas.length > 0 ? (
+      ) : (
         <Box flex={1}>
           <ScrollView
             testID="agenda-lessons"
@@ -74,7 +77,7 @@ export function ScheduleScreen() {
             ))}
           </ScrollView>
         </Box>
-      ) : null}
+      )}
     </Screen>
   );
 }

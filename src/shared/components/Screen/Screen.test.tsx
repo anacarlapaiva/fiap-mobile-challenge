@@ -31,7 +31,7 @@ async function renderStyle(element: React.ReactElement) {
 
 describe('tela', () => {
   describe('dado uma tela sem bordas pedidas', () => {
-    test('CA-01: quando renderizada, então o fundo é preto e a área segura fica no topo e na base', async () => {
+    test('quando renderizada, então o fundo é preto e a área segura fica no topo e na base', async () => {
       const style = await renderStyle(<Screen testID="screen" />);
 
       expect(style).toMatchObject({
@@ -44,7 +44,7 @@ describe('tela', () => {
   });
 
   describe('dado uma tela só com a borda superior', () => {
-    test('CA-01: quando renderizada, então a área segura fica só nessa borda', async () => {
+    test('quando renderizada, então a área segura fica só nessa borda', async () => {
       const style = await renderStyle(
         <Screen testID="screen" edges={['top']} />,
       );

@@ -90,6 +90,26 @@ describe('pulso', () => {
     });
   });
 
+  describe('dado um pulso interrompido por outro', () => {
+    test('quando o segundo termina, então só ele avisa o fim', async () => {
+      const first = jest.fn();
+      const second = jest.fn();
+      const view = await render();
+
+      await ReactTestRenderer.act(() => {
+        view.pulse(first);
+        jest.advanceTimersByTime(motion.short / 2);
+      });
+      await ReactTestRenderer.act(() => {
+        view.pulse(second);
+        jest.advanceTimersByTime(motion.short * 2 + 50);
+      });
+
+      expect(first).not.toHaveBeenCalled();
+      expect(second).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('dado "Reduzir movimento" ligado', () => {
     test('CA-13: quando pulsa, então não anima e avisa o fim na hora', async () => {
       useReducedMotionMock.mockReturnValue(true);

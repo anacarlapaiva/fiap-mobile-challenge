@@ -1,7 +1,6 @@
 import {
   createRestyleComponent,
   createVariant,
-  useTheme,
   type VariantProps,
 } from '@shopify/restyle';
 import { Image, type ImageProps } from 'react-native';
@@ -19,20 +18,16 @@ const LogoImage = createRestyleComponent<LogoImageProps, Theme>(
 
 type LogoProps = {
   size: keyof Theme['logoVariants'];
-  accessibilityLabel?: string;
 };
 
-export function Logo({ size, accessibilityLabel }: LogoProps) {
-  const theme = useTheme<Theme>();
-
+export function Logo({ size }: LogoProps) {
   return (
     <LogoImage
       variant={size}
       source={logo}
       resizeMode="contain"
-      accessibilityRole="image"
-      accessibilityLabel={accessibilityLabel}
-      style={theme.logoVariants[size]}
+      accessible={false}
+      importantForAccessibility="no"
     />
   );
 }

@@ -3,8 +3,9 @@ import { parseGuardians } from '@/shared/validation';
 
 import guardiansMock from './responsaveis.json';
 
-const guardians = parseGuardians(guardiansMock);
+let guardians: ResponsavelDto[] | undefined;
 
 export function readGuardians(): ResponsavelDto[] {
+  guardians ??= parseGuardians(guardiansMock);
   return guardians;
 }

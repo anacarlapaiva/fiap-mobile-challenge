@@ -41,7 +41,6 @@ const borderWidths = {
 const sizes = {
   actionsBarHeight: 48,
   buttonHeight: 60,
-  inputHeight: 96,
   dropdownHeight: 45,
   cardHeight: 90,
   optionRowHeight: 36,
@@ -88,7 +87,6 @@ export const theme = createTheme({
     loginTop: 100,
   },
   borderRadii: {
-    none: 0,
     m: 8,
     bullet: 3,
   },

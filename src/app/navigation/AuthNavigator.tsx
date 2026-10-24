@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen } from '@/features/auth';
 import { theme } from '@/shared/theme';
 
-export type AuthStackParamList = {
+type AuthStackParamList = {
   Login: undefined;
 };
 

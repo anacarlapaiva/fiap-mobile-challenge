@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text as NativeText, View } from 'react-native';
 import ReactTestRenderer from 'react-test-renderer';
 
 import { Empty } from '@/shared/components/Empty';
-import { fonts, theme } from '@/shared/theme';
+import { theme } from '@/shared/theme';
 
 async function renderEmpty(message: string) {
   let renderer: ReactTestRenderer.ReactTestRenderer | undefined;
@@ -25,6 +25,7 @@ describe('estado vazio', () => {
     test('CA-20: quando renderizado, então a ilustração ocupa até 328 por 208 sem distorção e a frase usa o rótulo do campo 20 abaixo', async () => {
       const root = await renderEmpty('Sem aulas neste dia');
       const image = root.findByType(Image);
+      const text = root.findByType(NativeText);
 
       expect(StyleSheet.flatten(image.props.style)).toEqual({
         width: '100%',
@@ -32,12 +33,10 @@ describe('estado vazio', () => {
         aspectRatio: 328 / 208,
       });
       expect(image.props.resizeMode).toBe('contain');
-      expect(image.props.accessibilityLabel).toBe('Sem aulas neste dia');
-      expect(
-        StyleSheet.flatten(root.findByType(NativeText).props.style),
-      ).toEqual(
+      expect(image.props.accessible).toBe(false);
+      expect(StyleSheet.flatten(text.props.style)).toEqual(
         expect.objectContaining({
-          fontFamily: fonts.regular,
+          fontFamily: 'Montserrat-Regular',
           fontSize: 20,
           lineHeight: 24,
           textAlign: 'center',
@@ -48,9 +47,7 @@ describe('estado vazio', () => {
           .findAllByType(View)
           .some(node => StyleSheet.flatten(node.props.style)?.marginTop === 20),
       ).toBe(true);
-      expect(root.findByType(NativeText).props.children).toBe(
-        'Sem aulas neste dia',
-      );
+      expect(text.props.children).toBe('Sem aulas neste dia');
     });
   });
 });

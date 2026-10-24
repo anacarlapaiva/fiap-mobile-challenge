@@ -64,10 +64,10 @@ export function TextField({
         ),
         -1,
       );
-    } else {
-      cancelAnimation(caretOpacity);
-      caretOpacity.value = 0;
+      return () => cancelAnimation(caretOpacity);
     }
+    cancelAnimation(caretOpacity);
+    caretOpacity.value = 0;
   }, [caretOpacity, focused, motion.caretBlink, secure]);
 
   const lineStyle = useAnimatedStyle(() => ({
@@ -127,12 +127,14 @@ export function TextField({
           style={[valueHeight, secure ? styles.hiddenValue : undefined]}
           {...(secure
             ? {
+                secureTextEntry: true,
                 caretHidden: true,
                 contextMenuHidden: true,
                 autoComplete: 'off',
                 textContentType: 'none',
                 importantForAutofill: 'no',
                 accessibilityValue: { text: mask },
+                selection: { start: value.length, end: value.length },
               }
             : {})}
         />

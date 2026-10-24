@@ -86,6 +86,17 @@ describe('avaliação do login', () => {
     });
   });
 
+  describe('dado o CPF e a senha de um responsável sem alunos', () => {
+    test('CA-21: quando o login é avaliado, então a frase diz que não há aluno vinculado', () => {
+      expect(
+        assessLogin('969.294.560-04', '123456', [{ ...gustavo, alunos: [] }]),
+      ).toEqual({
+        ok: false,
+        message: loginMessages.noStudents,
+      });
+    });
+  });
+
   describe('dado os dígitos de um CPF', () => {
     test('CA-03: quando a máscara é aplicada, então o campo fica no formato XXX.XXX.XXX-XX', () => {
       expect(applyCpfMask('')).toBe('');

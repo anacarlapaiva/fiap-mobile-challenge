@@ -11,7 +11,8 @@ const AnimatedCardBox = Animated.createAnimatedComponent(CardBox);
 
 type CardProps = PropsWithChildren<{
   selected?: boolean;
-  onPress?: () => void;
+  onPress: () => void;
+  expanded?: boolean;
   paddingHorizontal?: keyof Theme['spacing'];
   accessibilityLabel?: string;
   testID?: string;
@@ -21,44 +22,35 @@ export function Card({
   children,
   selected = false,
   onPress,
+  expanded,
   paddingHorizontal = 'none',
   accessibilityLabel,
   testID,
 }: CardProps) {
   const { motion } = useTheme<Theme>();
-  const surface = (
-    <CardBox
-      variant="surface"
-      paddingHorizontal={paddingHorizontal}
-      testID={testID}
-      accessibilityLabel={onPress ? undefined : accessibilityLabel}
-      accessibilityState={onPress ? undefined : { selected }}
-    >
-      {children}
-      {selected ? (
-        <AnimatedCardBox
-          variant="selectedOutline"
-          testID="card-selected-border"
-          pointerEvents="none"
-          entering={FadeIn.duration(motion.medium)}
-          exiting={FadeOut.duration(motion.medium)}
-        />
-      ) : null}
-    </CardBox>
-  );
-
-  if (!onPress) {
-    return surface;
-  }
-
   return (
     <PressableOpacity
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
-      accessibilityState={{ selected }}
+      accessibilityState={{ selected, expanded }}
     >
-      {surface}
+      <CardBox
+        variant="surface"
+        paddingHorizontal={paddingHorizontal}
+        testID={testID}
+      >
+        {children}
+        {selected ? (
+          <AnimatedCardBox
+            variant="selectedOutline"
+            testID="card-selected-border"
+            pointerEvents="none"
+            entering={FadeIn.duration(motion.medium)}
+            exiting={FadeOut.duration(motion.medium)}
+          />
+        ) : null}
+      </CardBox>
     </PressableOpacity>
   );
 }

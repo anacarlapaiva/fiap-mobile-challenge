@@ -26,9 +26,11 @@ export function LessonRow({ aula }: LessonRowProps) {
         borderColor="bulletBorder"
         marginRight="s"
       />
-      <Box>
+      <Box flex={1}>
         <Text variant="caption">{aula.horario}</Text>
-        <Text variant="bodySemiBold">{aula.disciplina}</Text>
+        <Text variant="bodySemiBold" numberOfLines={1}>
+          {aula.disciplina}
+        </Text>
       </Box>
     </Box>
   );

@@ -49,7 +49,7 @@ async function render(element: ReactElement) {
 
 describe('botão', () => {
   describe('dado um botão desabilitado', () => {
-    test('CA-04: quando renderizado, então o toque fica bloqueado e o rótulo fica cinza', async () => {
+    test('quando renderizado, então o toque fica bloqueado e o rótulo fica cinza', async () => {
       const onPress = jest.fn();
       const view = await render(
         <Button
@@ -72,7 +72,7 @@ describe('botão', () => {
   });
 
   describe('dado um botão habilitado', () => {
-    test('CA-05: quando tocado, então a ação é chamada uma vez e o rótulo fica preto', async () => {
+    test('quando tocado, então a ação é chamada uma vez e o rótulo fica preto', async () => {
       const onPress = jest.fn();
       const view = await render(
         <Button testID="button" label="FAZER LOGIN" onPress={onPress} />,
@@ -91,7 +91,7 @@ describe('botão', () => {
   });
 
   describe('dado um botão carregando', () => {
-    test('CA-06: quando renderizado, então o rótulo some, o indicador aparece e o toque fica bloqueado', async () => {
+    test('quando renderizado, então o rótulo some, o indicador aparece e o toque fica bloqueado', async () => {
       const view = await render(
         <Button
           testID="button"
@@ -122,7 +122,7 @@ describe('botão', () => {
   });
 
   describe('dado um botão que estende o fundo pela área segura', () => {
-    test('CA-07: quando há indicador de início, então o fundo acento cobre o inset inferior', async () => {
+    test('quando há indicador de início, então o fundo acento cobre o inset inferior', async () => {
       const view = await render(
         <Button
           testID="button"
@@ -138,7 +138,7 @@ describe('botão', () => {
   });
 
   describe('dado um botão sem estender o fundo', () => {
-    test('CA-07: quando renderizado, então a área segura não entra na altura', async () => {
+    test('quando renderizado, então a área segura não entra na altura', async () => {
       const view = await render(
         <Button testID="button" label="FAZER LOGIN" onPress={jest.fn()} />,
       );

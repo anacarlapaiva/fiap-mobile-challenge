@@ -31,8 +31,8 @@ export function Empty({ message, testID }: EmptyProps) {
         variant="illustration"
         source={empty}
         resizeMode="contain"
-        accessibilityRole="image"
-        accessibilityLabel={message}
+        accessible={false}
+        importantForAccessibility="no"
       />
       <EmptyRoot variant="message">
         <Text variant="inputLabel" textAlign="center">

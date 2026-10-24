@@ -2,22 +2,13 @@ import { useQuery, type QueryClient } from '@tanstack/react-query';
 
 import { readGuardians } from '@/shared/mocks';
 
-export const guardiansQueryKey = ['guardians'] as const;
-
 const guardiansQuery = {
-  queryKey: guardiansQueryKey,
+  queryKey: ['guardians'],
   queryFn: readGuardians,
 };
 
-type GuardiansQueryOptions = {
-  enabled?: boolean;
-};
-
-export function useGuardians(options?: GuardiansQueryOptions) {
-  return useQuery({
-    ...guardiansQuery,
-    enabled: options?.enabled ?? true,
-  });
+export function useGuardians() {
+  return useQuery(guardiansQuery);
 }
 
 export function ensureGuardians(queryClient: QueryClient) {

@@ -1,6 +1,7 @@
 import { ThemeProvider } from '@shopify/restyle';
 import { StyleSheet, Text as NativeText, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import ReactTestRenderer from 'react-test-renderer';
 
 import { ToastHost } from '@/shared/components/Toast';
@@ -45,7 +46,7 @@ describe('mensagem de sucesso', () => {
   });
 
   describe('dado o host na raiz', () => {
-    test('CA-15: quando a mensagem é mostrada, então aparece com fundo de superfície, raio 8, barra de destaque de 4 e padding 16', async () => {
+    test('CA-15: quando a mensagem é mostrada, então aparece abaixo da área segura com fundo #262626, raio 8, barra de destaque de 4 e padding 16', async () => {
       const root = await render();
 
       await ReactTestRenderer.act(() => {
@@ -55,19 +56,41 @@ describe('mensagem de sucesso', () => {
       const container = root
         .findAllByType(View)
         .find(
-          node =>
-            StyleSheet.flatten(node.props.style)?.borderLeftWidth ===
-            theme.borderWidths.accentBar,
+          node => StyleSheet.flatten(node.props.style)?.borderLeftWidth === 4,
         );
       expect(
         root.findAllByType(NativeText).map(node => node.props.children),
       ).toContain('Perfil alterado para JOANA');
       expect(StyleSheet.flatten(container?.props.style)).toMatchObject({
-        backgroundColor: theme.colors.surface,
+        backgroundColor: '#262626',
         borderRadius: 8,
         borderLeftColor: theme.colors.accent,
         padding: 16,
       });
+      expect(root.findByType(Toast).props.topOffset).toBe(
+        metrics.insets.top + 16,
+      );
+    });
+
+    test('CA-15: quando a mensagem é tocada, então ela some', async () => {
+      const root = await render();
+      const visible = () =>
+        root.findAll(
+          node =>
+            typeof node.props.isVisible === 'boolean' &&
+            'topOffset' in node.props,
+        )[0]?.props.isVisible;
+
+      await ReactTestRenderer.act(() => {
+        showSuccessToast('Perfil alterado para JOANA');
+      });
+      expect(visible()).toBe(true);
+
+      await ReactTestRenderer.act(() => {
+        root.findByProps({ testID: 'toast-success' }).props.onPress();
+      });
+
+      expect(visible()).toBe(false);
     });
   });
 });

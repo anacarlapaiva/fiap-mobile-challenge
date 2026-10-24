@@ -39,10 +39,6 @@ function ReportCardTab() {
   return <ReportCardScreen key={studentKey} />;
 }
 
-export function tabSceneAnimation(reduceMotion: boolean) {
-  return reduceMotion ? 'none' : 'fade';
-}
-
 export function TabNavigator() {
   const theme = useTheme<Theme>();
   const reduceMotion = useReducedMotion();
@@ -52,7 +48,7 @@ export function TabNavigator() {
       tabBar={renderTabBar}
       screenOptions={{
         headerShown: false,
-        animation: tabSceneAnimation(reduceMotion),
+        animation: reduceMotion ? 'none' : 'fade',
         transitionSpec: {
           animation: 'timing',
           config: { duration: theme.motion.short },

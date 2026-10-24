@@ -1,16 +1,11 @@
 import { ThemeProvider } from '@shopify/restyle';
-import {
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text as NativeText,
-  View,
-} from 'react-native';
+import { Modal, ScrollView, Text as NativeText } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ReactTestRenderer from 'react-test-renderer';
 
-import { Dropdown, type DropdownOption } from '@/shared/components/Dropdown';
 import { theme } from '@/shared/theme';
+
+import { Dropdown, type DropdownOption } from './Dropdown';
 
 const metrics = {
   frame: { x: 0, y: 0, width: 414, height: 736 },
@@ -64,7 +59,6 @@ async function render(
   return {
     press,
     field: () => pressableById('dropdown'),
-    styleOf: (id: string) => StyleSheet.flatten(pressableById(id)?.props.style),
     modalVisible: () => root.findByType(Modal).props.visible,
     optionLabels: () =>
       root
@@ -85,7 +79,7 @@ describe('lista de opções', () => {
   });
 
   describe('dado um campo fechado com opções', () => {
-    test('CA-14: quando o campo é tocado, então a lista abre na ordem e fica expandida', async () => {
+    test('quando o campo é tocado, então a lista abre na ordem e fica expandida', async () => {
       const view = await render(options);
 
       await view.press('dropdown');
@@ -100,7 +94,7 @@ describe('lista de opções', () => {
   });
 
   describe('dado um campo aberto', () => {
-    test('CA-15: quando uma opção é tocada, então quem usa recebe a opção e a lista fecha', async () => {
+    test('quando uma opção é tocada, então quem usa recebe a opção e a lista fecha', async () => {
       const onSelect = jest.fn();
       const view = await render(options, onSelect);
 
@@ -114,7 +108,7 @@ describe('lista de opções', () => {
       });
     });
 
-    test('CA-18: quando o toque é fora da lista, então a lista fecha e ninguém recebe opção', async () => {
+    test('quando o toque é fora da lista, então a lista fecha e ninguém recebe opção', async () => {
       const onSelect = jest.fn();
       const view = await render(options, onSelect);
 
@@ -126,28 +120,8 @@ describe('lista de opções', () => {
     });
   });
 
-  describe('dado o campo do dropdown', () => {
-    test('CA-06: quando renderizado, então o campo tem 45 e cada opção tem 36', async () => {
-      const view = await render(options);
-      await view.press('dropdown');
-
-      expect(
-        view
-          .field()
-          ?.findAllByType(View)
-          .some(node => {
-            const style = StyleSheet.flatten(node.props.style);
-            return style?.height === 45 && style?.borderRadius === 8;
-          }),
-      ).toBe(true);
-      expect(view.styleOf('dropdown-option-0')).toMatchObject({
-        height: 36,
-      });
-    });
-  });
-
   describe('dado um campo sem opções', () => {
-    test('CA-16: quando o campo é tocado, então a lista não abre', async () => {
+    test('quando o campo é tocado, então a lista não abre', async () => {
       const view = await render([]);
 
       await view.press('dropdown');

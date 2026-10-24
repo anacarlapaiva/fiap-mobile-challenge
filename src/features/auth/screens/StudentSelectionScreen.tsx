@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { LayoutAnimationConfig } from 'react-native-reanimated';
 
@@ -36,13 +36,20 @@ export function StudentSelectionScreen({
   const [switchingRm, setSwitchingRm] = useState<number | null>(null);
   const selectedRm = pendingRm ?? user?.student.rm;
 
-  const close = useCallback(() => {
+  useEffect(() => {
+    closed.current = false;
+    return () => {
+      closed.current = true;
+    };
+  }, []);
+
+  const close = () => {
     if (closed.current) {
       return;
     }
     closed.current = true;
     onClose();
-  }, [onClose]);
+  };
 
   const handleClose = () => {
     if (busy.current) {
@@ -71,6 +78,9 @@ export function StudentSelectionScreen({
     }
     setSwitchingRm(student.rm);
     await nextFrame();
+    if (closed.current) {
+      return;
+    }
     const switched = await selectStudent(student.rm).catch(() => false);
     if (switched) {
       await nextFrame();

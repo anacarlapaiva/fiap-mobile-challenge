@@ -3,10 +3,6 @@ import { Pressable, Text as NativeText } from 'react-native';
 import ReactTestRenderer from 'react-test-renderer';
 
 import {
-  guardiansQueryKey,
-  useGuardians,
-} from '@/features/auth/hooks/useGuardians';
-import {
   SessionProvider,
   useSession,
 } from '@/features/auth/session/SessionProvider';
@@ -24,17 +20,22 @@ const clearSession = jest.mocked(sessionStorage.clearSession);
 
 function Harness() {
   const { session, isReady, signIn, signOut, selectStudent } = useSession();
-  const guardians = useGuardians();
   return (
     <>
       <NativeText>{isReady ? 'ready' : 'loading'}</NativeText>
       <NativeText>
         {session ? `${session.guardianId}:${session.studentRm}` : 'none'}
       </NativeText>
-      <NativeText>{guardians.data ? 'cached' : 'empty'}</NativeText>
       <Pressable
         testID="sign-in"
         onPress={() => {
+          signIn('969.294.560-04', '123456').catch(() => undefined);
+        }}
+      />
+      <Pressable
+        testID="sign-in-twice"
+        onPress={() => {
+          signIn('969.294.560-04', '123456').catch(() => undefined);
           signIn('969.294.560-04', '123456').catch(() => undefined);
         }}
       />
@@ -153,11 +154,114 @@ describe('provider da sessão', () => {
         studentRm: 12567,
       });
       expect(texts(renderer)).toContain('1:12567');
-      expect(client.getQueryData(guardiansQueryKey)).toEqual(
+      expect(
+        client
+          .getQueryCache()
+          .getAll()
+          .map(query => query.state.data),
+      ).toEqual([
         expect.arrayContaining([
           expect.objectContaining({ id: 1, cpf: '96929456004' }),
         ]),
+      ]);
+    });
+
+    test('CA-22: quando o Keychain falha ao gravar, então o login vale na memória', async () => {
+      saveSession.mockRejectedValue(new Error('keychain'));
+      const { renderer } = await renderProvider();
+      await settle();
+
+      await press(renderer, 'sign-in');
+
+      expect(texts(renderer)).toContain('1:12567');
+    });
+
+    test('quando o login é pedido duas vezes seguidas, então a sessão é gravada uma vez', async () => {
+      const { renderer } = await renderProvider();
+      await settle();
+
+      await press(renderer, 'sign-in-twice');
+
+      expect(saveSession).toHaveBeenCalledTimes(1);
+      expect(texts(renderer)).toContain('1:12567');
+    });
+  });
+
+  describe('dado um Keychain que falha ao ler', () => {
+    test('quando a leitura termina, então não há sessão e o provider fica pronto', async () => {
+      readSession.mockRejectedValue(new Error('keychain'));
+      const { renderer } = await renderProvider();
+      await settle();
+
+      expect(texts(renderer)).toEqual(
+        expect.arrayContaining(['ready', 'none']),
       );
+    });
+  });
+
+  describe('dado um Keychain que não responde', () => {
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('CA-23: quando o tempo de leitura acaba, então não há sessão e uma resposta atrasada é ignorada', async () => {
+      jest.useFakeTimers();
+      let answer: (session: {
+        guardianId: number;
+        studentRm: number;
+      }) => void = () => undefined;
+      readSession.mockImplementation(
+        () =>
+          new Promise(resolve => {
+            answer = resolve;
+          }),
+      );
+      const { renderer } = await renderProvider();
+      expect(texts(renderer)).toContain('loading');
+
+      await ReactTestRenderer.act(async () => {
+        jest.runOnlyPendingTimers();
+        await flush();
+      });
+      expect(texts(renderer)).toEqual(
+        expect.arrayContaining(['ready', 'none']),
+      );
+
+      await ReactTestRenderer.act(async () => {
+        answer({ guardianId: 1, studentRm: 12567 });
+        await flush();
+        jest.runOnlyPendingTimers();
+        await flush();
+      });
+      expect(texts(renderer)).toContain('none');
+    });
+
+    test('CA-23: quando uma sessão órfã chega depois do tempo, então o Keychain não é apagado', async () => {
+      jest.useFakeTimers();
+      let answer: (session: {
+        guardianId: number;
+        studentRm: number;
+      }) => void = () => undefined;
+      readSession.mockImplementation(
+        () =>
+          new Promise(resolve => {
+            answer = resolve;
+          }),
+      );
+      await renderProvider();
+
+      await ReactTestRenderer.act(async () => {
+        jest.runOnlyPendingTimers();
+        await flush();
+      });
+      await ReactTestRenderer.act(async () => {
+        answer({ guardianId: 99, studentRm: 1 });
+        await flush();
+        jest.runOnlyPendingTimers();
+        await flush();
+      });
+
+      expect(clearSession).not.toHaveBeenCalled();
     });
   });
 

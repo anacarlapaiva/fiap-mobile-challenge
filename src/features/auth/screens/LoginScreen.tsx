@@ -1,5 +1,5 @@
 import { useTheme } from '@shopify/restyle';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -37,19 +37,47 @@ export function LoginScreen() {
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const scroll = useRef<ScrollViewInstance>(null);
 
+  const keyboard = useRef({ open: false, duration: 0 });
+  const revealTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const revealFrame = useRef<number>(undefined);
+
+  const cancelReveal = useCallback(() => {
+    clearTimeout(revealTimer.current);
+    if (revealFrame.current !== undefined) {
+      cancelAnimationFrame(revealFrame.current);
+    }
+  }, []);
+
+  const revealBottom = useCallback(() => {
+    cancelReveal();
+    if (!keyboard.current.open) {
+      return;
+    }
+    revealTimer.current = setTimeout(() => {
+      revealFrame.current = requestAnimationFrame(() => {
+        scroll.current?.scrollToEnd({ animated: true });
+      });
+    }, keyboard.current.duration);
+  }, [cancelReveal]);
+
   useEffect(() => {
     const prefix = Platform.OS === 'ios' ? 'keyboardWill' : 'keyboardDid';
-    const show = Keyboard.addListener(`${prefix}Show`, () =>
-      setKeyboardOpen(true),
-    );
-    const hide = Keyboard.addListener(`${prefix}Hide`, () =>
-      setKeyboardOpen(false),
-    );
+    const show = Keyboard.addListener(`${prefix}Show`, event => {
+      keyboard.current = { open: true, duration: event.duration ?? 0 };
+      setKeyboardOpen(true);
+      revealBottom();
+    });
+    const hide = Keyboard.addListener(`${prefix}Hide`, () => {
+      keyboard.current = { open: false, duration: 0 };
+      cancelReveal();
+      setKeyboardOpen(false);
+    });
     return () => {
       show.remove();
       hide.remove();
+      cancelReveal();
     };
-  }, []);
+  }, [cancelReveal, revealBottom]);
 
   const gutter = {
     paddingHorizontal: Math.max(
@@ -60,12 +88,6 @@ export function LoginScreen() {
 
   const keyboardBackdrop = { backgroundColor: theme.colors.accent };
   const contentBackground = { backgroundColor: theme.colors.background };
-
-  function revealBottom() {
-    if (keyboardOpen) {
-      scroll.current?.scrollToEnd({ animated: true });
-    }
-  }
 
   function submit() {
     setMessage(null);

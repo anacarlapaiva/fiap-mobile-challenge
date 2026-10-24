@@ -47,7 +47,10 @@ async function settle() {
   }
 }
 
-async function renderHeader(session: Session, onSwitchProfile?: () => void) {
+async function renderHeader(
+  session: Session,
+  onSwitchProfile: () => void = jest.fn(),
+) {
   readSession.mockResolvedValue(session);
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },

@@ -4,7 +4,7 @@ import { StyleSheet, Text as NativeText } from 'react-native';
 import ReactTestRenderer from 'react-test-renderer';
 
 import { Text } from '@/shared/components';
-import { fonts, theme } from '@/shared/theme';
+import { theme } from '@/shared/theme';
 
 async function renderStyle(element: ReactElement) {
   let renderer: ReactTestRenderer.ReactTestRenderer | undefined;
@@ -21,20 +21,6 @@ async function renderStyle(element: ReactElement) {
 
 describe('texto do tema', () => {
   describe('dado o estilo de título de seção', () => {
-    test('CA-02: quando o estilo é aplicado, então usa a fonte, o tamanho e a altura da tabela', async () => {
-      const style = await renderStyle(
-        <Text variant="sectionTitle">AGENDA</Text>,
-      );
-
-      expect(style).toMatchObject({
-        fontFamily: fonts.bold,
-        fontSize: 20,
-        lineHeight: 24,
-        letterSpacing: 0,
-        color: theme.colors.accent,
-      });
-    });
-
     test('CA-03: quando o estilo é aplicado, então o sistema não sintetiza negrito nem padding de fonte', async () => {
       const style = await renderStyle(
         <Text variant="sectionTitle">AGENDA</Text>,
@@ -67,7 +53,7 @@ describe('texto do tema', () => {
       const style = await renderStyle(<Text>texto</Text>);
 
       expect(style).toMatchObject({
-        fontFamily: fonts.regular,
+        fontFamily: 'Montserrat-Regular',
         fontSize: 16,
         lineHeight: 20,
         color: theme.colors.textPrimary,

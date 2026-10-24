@@ -28,8 +28,8 @@ export function usePulse() {
       }
       scale.value = withSequence(
         withTiming(motion.pulseScale, { duration: motion.short }),
-        withTiming(1, { duration: motion.short }, () => {
-          if (onDone) {
+        withTiming(1, { duration: motion.short }, finished => {
+          if (finished && onDone) {
             scheduleOnRN(onDone);
           }
         }),

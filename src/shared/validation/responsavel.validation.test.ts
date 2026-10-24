@@ -78,6 +78,29 @@ const guardianWithoutGrade = {
   ],
 };
 
+const guardianWithoutSchedule = {
+  ...guardian,
+  alunos: [
+    {
+      rm: 12567,
+      turma: '7EF',
+      periodo: 'Matutino',
+      primeiroNome: 'Rafael',
+      sobrenome: 'da Silva',
+    },
+  ],
+};
+
+const guardianWithImpossibleDay = {
+  ...guardian,
+  alunos: [
+    {
+      ...guardian.alunos[0],
+      agenda: [{ dia: '2025-02-30', aulas: [] }],
+    },
+  ],
+};
+
 describe('leitura do JSON de responsáveis', () => {
   describe('dado um responsável com boletim de 2024 e de 2025', () => {
     test('quando o JSON é lido, então a turma do boletim de 2024 permanece', () => {
@@ -110,6 +133,23 @@ describe('leitura do JSON de responsáveis', () => {
   describe('dado um boletim cuja disciplina não informa a nota', () => {
     test('quando o JSON é lido, então a leitura é recusada', () => {
       expect(() => parseGuardians([guardianWithoutGrade])).toThrow(ZodError);
+    });
+  });
+
+  describe('dado um aluno sem agenda e sem boletim', () => {
+    test('quando o JSON é lido, então agenda e boletim viram listas vazias', () => {
+      const parsed = parseGuardians([guardianWithoutSchedule]);
+
+      expect(parsed[0]?.alunos[0]?.agenda).toEqual([]);
+      expect(parsed[0]?.alunos[0]?.boletim).toEqual([]);
+    });
+  });
+
+  describe('dado um dia da agenda que não existe no calendário', () => {
+    test('quando o JSON é lido, então a leitura é recusada', () => {
+      expect(() => parseGuardians([guardianWithImpossibleDay])).toThrow(
+        ZodError,
+      );
     });
   });
 });

@@ -6,4 +6,4 @@ export {
   SessionProvider,
   useSession,
 } from '@/features/auth/session/SessionProvider';
-export type { Session, User, UserState } from '@/features/auth/types';
+export type { UserState } from '@/features/auth/types';
