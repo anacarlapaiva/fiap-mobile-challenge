@@ -1,6 +1,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@shopify/restyle';
-import { Image, StyleSheet, Text as NativeText, View } from 'react-native';
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text as NativeText,
+  View,
+  type AlertButton,
+} from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ReactTestRenderer from 'react-test-renderer';
 
@@ -40,7 +47,7 @@ async function settle() {
   }
 }
 
-async function renderHeader(session: Session) {
+async function renderHeader(session: Session, onSwitchProfile?: () => void) {
   readSession.mockResolvedValue(session);
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },
@@ -52,7 +59,7 @@ async function renderHeader(session: Session) {
         <QueryClientProvider client={client}>
           <ThemeProvider theme={theme}>
             <SessionProvider>
-              <Header />
+              <Header onSwitchProfile={onSwitchProfile} />
             </SessionProvider>
           </ThemeProvider>
         </QueryClientProvider>
@@ -152,18 +159,80 @@ describe('cabeçalho autenticado', () => {
   });
 
   describe('dado TROCAR PERFIL visível', () => {
-    test('CA-12: quando o botão é tocado, então a sessão permanece', async () => {
-      const renderer = await renderHeader({
-        guardianId: 1,
-        studentRm: 12567,
-      });
+    test('CA-12: quando o botão é tocado, então a troca de perfil é pedida e a sessão permanece', async () => {
+      const onSwitchProfile = jest.fn();
+      const renderer = await renderHeader(
+        {
+          guardianId: 1,
+          studentRm: 12567,
+        },
+        onSwitchProfile,
+      );
 
       await ReactTestRenderer.act(() => {
         renderer.root.findByProps({ testID: 'switch-profile' }).props.onPress();
       });
 
+      expect(onSwitchProfile).toHaveBeenCalledTimes(1);
       expect(clearSession).not.toHaveBeenCalled();
       expect(labels(renderer)).toContain('GUSTAVO');
+    });
+  });
+
+  describe('dado a área autenticada', () => {
+    async function openSignOutAlert() {
+      const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+      const renderer = await renderHeader({
+        guardianId: 1,
+        studentRm: 12567,
+      });
+      await ReactTestRenderer.act(() => {
+        renderer.root.findByProps({ testID: 'logout' }).props.onPress();
+      });
+      const [title, message, buttons, options] = alert.mock.calls[0] ?? [];
+      const button = (text: string): AlertButton | undefined =>
+        buttons?.find(item => item.text === text);
+      alert.mockRestore();
+      return { renderer, title, message, buttons, options, button };
+    }
+
+    test('CA-01: quando SAIR é tocado, então o alerta pede confirmação e a sessão continua', async () => {
+      const view = await openSignOutAlert();
+
+      expect(view.title).toBe('Sair da conta?');
+      expect(view.message).toBe(
+        'Você vai precisar entrar de novo com CPF e senha.',
+      );
+      expect(view.buttons?.map(item => [item.text, item.style])).toEqual([
+        ['Cancelar', 'cancel'],
+        ['Sair', 'destructive'],
+      ]);
+      expect(view.options).toMatchObject({ cancelable: true });
+      expect(clearSession).not.toHaveBeenCalled();
+      expect(labels(view.renderer)).toContain('GUSTAVO');
+    });
+
+    test('CA-02: quando Sair é confirmado, então a sessão sai do Keychain', async () => {
+      const view = await openSignOutAlert();
+
+      await ReactTestRenderer.act(async () => {
+        view.button('Sair')?.onPress?.();
+        await flush();
+      });
+
+      expect(clearSession).toHaveBeenCalledTimes(1);
+    });
+
+    test('CA-03: quando Cancelar é tocado, então a sessão e a tela não mudam', async () => {
+      const view = await openSignOutAlert();
+
+      await ReactTestRenderer.act(async () => {
+        view.button('Cancelar')?.onPress?.();
+        await flush();
+      });
+
+      expect(clearSession).not.toHaveBeenCalled();
+      expect(labels(view.renderer)).toContain('GUSTAVO');
     });
   });
 });

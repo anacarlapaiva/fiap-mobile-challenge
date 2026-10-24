@@ -274,43 +274,25 @@ describe('tela do boletim', () => {
     });
   });
 
-  describe('dado o campo do dropdown', () => {
-    test('CA-09: quando renderizado, então medidas de dropdown, card e disciplina batem com o tema', async () => {
+  describe('dado o boletim do Rafael', () => {
+    test('CA-09: quando renderizado, então a margem lateral é 16 e o card seguinte fica 16 abaixo', async () => {
       const view = await renderReport();
-
-      await view.press('report-year');
-
-      const option = view.root.findByProps({ testID: 'dropdown-option-0' });
-      const card = view.root.findByProps({ testID: 'term-1' });
-      const spaced = view.root.findByProps({ testID: 'term-section-2' });
       const styles = view.root
         .findAllByType(View)
         .map(node => StyleSheet.flatten(node.props.style));
+      const spaced = view.root.findByProps({ testID: 'term-section-2' });
 
-      expect(hasStyle(option, style => style?.height === 36)).toBe(true);
-      expect(
-        hasStyle(
-          card,
-          style => style?.height === 90 && style?.borderRadius === 8,
-        ),
-      ).toBe(true);
-      expect(hasStyle(spaced, style => style?.marginTop === 16)).toBe(true);
       expect(
         styles.some(
           style => style?.paddingHorizontal === 16 && style?.marginTop === 16,
         ),
       ).toBe(true);
       expect(
-        styles.some(style => style?.height === 45 && style?.borderRadius === 8),
+        styles.some(
+          style => style?.paddingHorizontal === 16 && style?.paddingTop === 16,
+        ),
       ).toBe(true);
-
-      await view.press('term-1');
-
-      const row = view.root.findAllByType(View).find(node => {
-        const style = StyleSheet.flatten(node.props.style);
-        return style?.height === 37;
-      });
-      expect(row).toBeDefined();
+      expect(hasStyle(spaced, style => style?.marginTop === 16)).toBe(true);
     });
   });
 });

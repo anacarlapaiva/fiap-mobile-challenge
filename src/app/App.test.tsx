@@ -1,6 +1,6 @@
 import * as Keychain from 'react-native-keychain';
 import type { UserCredentials } from 'react-native-keychain';
-import { StatusBar, StyleSheet, View } from 'react-native';
+import { Alert, StatusBar, StyleSheet, View } from 'react-native';
 import ReactTestRenderer from 'react-test-renderer';
 
 import App from '@/app/App';
@@ -187,7 +187,12 @@ describe('abertura do app', () => {
   });
 
   describe('dado a área autenticada', () => {
-    test('CA-13: quando SAIR é tocado, então o login volta', async () => {
+    test('CA-13: quando SAIR é tocado e confirmado, então o login volta', async () => {
+      const alert = jest
+        .spyOn(Alert, 'alert')
+        .mockImplementation((_title, _message, buttons) => {
+          buttons?.find(button => button.text === 'Sair')?.onPress?.();
+        });
       getGenericPassword.mockResolvedValue({
         username: 'session',
         password: JSON.stringify({ guardianId: 1, studentRm: 12567 }),
@@ -202,6 +207,8 @@ describe('abertura do app', () => {
           await Promise.resolve();
         }
       });
+
+      alert.mockRestore();
 
       expect(resetGenericPassword).toHaveBeenCalled();
       expect(

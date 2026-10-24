@@ -1,4 +1,5 @@
 import { useTheme } from '@shopify/restyle';
+import { Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useCurrentUser } from '@/features/auth/hooks/useCurrentUser';
@@ -19,6 +20,24 @@ export function Header({ onSwitchProfile }: HeaderProps) {
   const canSwitch = ready !== null && ready.guardian.alunos.length > 1;
 
   const topInset = { paddingTop: insets.top };
+
+  const confirmSignOut = () => {
+    Alert.alert(
+      'Sair da conta?',
+      'Você vai precisar entrar de novo com CPF e senha.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Sair',
+          style: 'destructive',
+          onPress: () => {
+            signOut().catch(() => undefined);
+          },
+        },
+      ],
+      { cancelable: true },
+    );
+  };
 
   return (
     <Box testID="header" backgroundColor="background">
@@ -45,7 +64,7 @@ export function Header({ onSwitchProfile }: HeaderProps) {
                   testID="logout"
                   label="SAIR"
                   icon="logout"
-                  onPress={signOut}
+                  onPress={confirmSignOut}
                 />
               </Box>
             </Box>

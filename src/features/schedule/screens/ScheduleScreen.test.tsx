@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@shopify/restyle';
-import { StyleSheet, Text as NativeText, View } from 'react-native';
+import { ScrollView, StyleSheet, Text as NativeText, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ReactTestRenderer from 'react-test-renderer';
 
@@ -164,17 +164,21 @@ describe('tela da agenda', () => {
   });
 
   describe('dado um dia com aulas', () => {
-    test('quando a lista é exibida, então as aulas ficam numa área que rola', async () => {
+    test('quando a lista é exibida, então as aulas ficam numa lista que rola', async () => {
       const view = await renderSchedule();
 
       await view.press('agenda-day');
       await view.press('dropdown-option-1');
 
-      expect(
-        StyleSheet.flatten(
-          view.root.findByProps({ testID: 'agenda-lessons' }).props.style,
-        ),
-      ).toMatchObject({ flex: 1 });
+      const list = view.root.findByType(ScrollView);
+      const lessons = list
+        .findAllByType(NativeText)
+        .map(node => node.props.children);
+
+      expect(list.props.testID).toBe('agenda-lessons');
+      expect(lessons).toEqual(
+        expect.arrayContaining(['07:15 - 08:00', 'Matemática I']),
+      );
     });
   });
 
