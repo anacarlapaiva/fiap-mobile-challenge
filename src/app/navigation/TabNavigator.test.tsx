@@ -52,13 +52,27 @@ async function renderTabs() {
     throw new Error('render falhou');
   }
   const root = renderer.root;
-  const pressableById = (id: string) =>
-    root
+  const pressableById = (id: string) => {
+    const direct = root
       .findAll(
         node =>
           node.props.testID === id && typeof node.props.onPress === 'function',
       )
       .slice(-1)[0];
+    if (direct) {
+      return direct;
+    }
+    let current = root
+      .findAll(node => node.props.testID === id)
+      .slice(-1)[0]?.parent;
+    while (current) {
+      if (typeof current.props.onPress === 'function') {
+        return current;
+      }
+      current = current.parent;
+    }
+    return undefined;
+  };
   const press = async (id: string) => {
     await ReactTestRenderer.act(() => {
       pressableById(id)?.props.onPress({});
@@ -98,6 +112,26 @@ describe('abas com a agenda', () => {
 
       expect(view.labels()).toEqual(
         expect.arrayContaining(['17 de março, segunda-feira', 'Matemática I']),
+      );
+    });
+  });
+
+  describe('dado 7EF - 2025 com o 1º trimestre e Língua Portuguesa abertos', () => {
+    test('CA-08: quando a pessoa vai à AGENDA e volta ao BOLETIM, então o ano e a nota permanecem', async () => {
+      const view = await renderTabs();
+
+      await view.press('tab-ReportCard');
+      await view.press('term-1');
+      await view.press('subject-Língua Portuguesa');
+      await view.press('tab-Agenda');
+      await view.press('tab-ReportCard');
+
+      expect(view.labels()).toEqual(
+        expect.arrayContaining([
+          '7EF - 2025',
+          'LÍNGUA PORTUGUESA',
+          'Nota: 9.5',
+        ]),
       );
     });
   });
