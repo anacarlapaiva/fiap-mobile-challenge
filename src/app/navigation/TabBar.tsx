@@ -103,8 +103,11 @@ function TabItem({ label, icon, focused, onPress, testID }: TabItemProps) {
 }
 
 export function TabBar({ state, navigation }: BottomTabBarProps) {
+  const { spacing } = useTheme<Theme>();
   const insets = useSafeAreaInsets();
-  const bottomInset = { paddingBottom: insets.bottom };
+  const bottomInset = {
+    paddingBottom: Math.max(insets.bottom, spacing.tabBottom),
+  };
 
   return (
     <TabBarBox testID="tab-bar" variant="bar" style={bottomInset}>

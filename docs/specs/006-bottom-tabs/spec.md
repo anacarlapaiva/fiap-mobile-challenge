@@ -12,7 +12,7 @@ Rodapé com as abas AGENDA e BOLETIM abaixo do cabeçalho, idêntico ao Figma (n
 ## Critérios de aceite
 
 - **CA-01:** **Dado** a área autenticada, **Quando** ela abre, **Então** o rodapé mostra AGENDA e BOLETIM, AGENDA ativa, e o cabeçalho fica acima das abas.
-- **CA-02:** **Dado** o rodapé, **Quando** renderizado, **Então** tem fundo `#262626` até a borda física, 64 de altura acima da área segura, e cada aba ocupa metade da largura com o ícone 24 a 11 do topo e o rótulo 4 abaixo, centralizados.
+- **CA-02:** **Dado** o rodapé, **Quando** renderizado, **Então** tem fundo `#262626` até a borda física, 64 de altura sem área segura (a base de 13 sob o rótulo é absorvida pela área segura quando ela é maior), e cada aba ocupa metade da largura com o ícone 24 a 11 do topo e o rótulo 4 abaixo, centralizados.
 - **CA-03:** **Dado** uma aba ativa, **Quando** exibida, **Então** ícone e rótulo ficam na cor de destaque; a inativa fica branca.
 - **CA-04:** **Dado** uma aba inativa, **Quando** tocada, **Então** a tela dela abre e o cabeçalho continua. **Quando** a aba ativa é tocada, **Então** a tela não muda.
 - **CA-05:** **Dado** qualquer aba, **Quando** tocada, **Então** o ícone pulsa e a cor troca em 150 ms; com "Reduzir movimento" ligado, sem animação.

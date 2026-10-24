@@ -46,7 +46,6 @@ const sizes = {
   optionRowHeight: 36,
   subjectRowHeight: 37,
   lessonRowHeight: 59,
-  tabBarHeight: 64,
   bullet: 6,
   fieldMinWidth: 260,
   emptyImage: { width: 328, height: 208 },
@@ -73,6 +72,7 @@ export const theme = createTheme({
     iconGap: 8,
     tabTop: 11,
     s: 12,
+    tabBottom: 13,
     m: 16,
     emptyGap: 20,
     l: 24,
@@ -117,7 +117,6 @@ export const theme = createTheme({
       backgroundColor: 'surface',
     },
     item: {
-      height: sizes.tabBarHeight,
       alignItems: 'center',
       paddingTop: 'tabTop',
     },

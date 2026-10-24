@@ -55,6 +55,7 @@ Montserrat v9.000 (OFL), pesos 400, 500, 600 e 700. Letter-spacing 0. Altura de 
 | 8     | Valor do campo do login e a linha                                                         |
 | 11    | Topo do rodapé e o ícone da aba                                                           |
 | 12    | Texto no dropdown e no card de trimestre                                                  |
+| 13    | Rótulo da aba e a base do rodapé (absorvido pela área segura quando ela é maior)          |
 | 16    | Margem lateral do boletim e da seleção; espaço entre cards; barra de ações; card de aluno |
 | 20    | Imagem "sem aulas" e a frase                                                              |
 | 24    | Margem lateral do dropdown da agenda                                                      |
@@ -86,7 +87,7 @@ Montserrat v9.000 (OFL), pesos 400, 500, 600 e 700. Letter-spacing 0. Altura de 
 | Linha da lista de opções do dropdown    | altura 36                                |
 | Linha da disciplina fechada do boletim  | altura 37                                |
 | Linha da aula                           | altura 59                                |
-| Rodapé (abas)                           | altura 64                                |
+| Rodapé (abas)                           | altura 64 sem área segura                |
 | Ícones                                  | 24 (abas, fechar), 14 (setas), 10 (sair) |
 | Imagem "sem aulas"                      | 328×208                                  |
 
