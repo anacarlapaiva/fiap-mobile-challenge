@@ -3,7 +3,7 @@ import { StyleSheet, Text as NativeText, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ReactTestRenderer from 'react-test-renderer';
 
-import { useCurrentUser } from '@/features/auth';
+import { useCurrentUser, type UserState } from '@/features/auth';
 import { readGuardians } from '@/shared/mocks';
 import { theme } from '@/shared/theme';
 
@@ -41,11 +41,10 @@ function rafaelUser() {
 
 let renderer: ReactTestRenderer.ReactTestRenderer | undefined;
 
-async function renderSchedule() {
-  useCurrentUserMock.mockReturnValue({
-    status: 'ready',
-    user: rafaelUser(),
-  });
+async function renderSchedule(
+  currentUser: UserState = { status: 'ready', user: rafaelUser() },
+) {
+  useCurrentUserMock.mockReturnValue(currentUser);
   await ReactTestRenderer.act(() => {
     renderer = ReactTestRenderer.create(
       <SafeAreaProvider initialMetrics={metrics}>
@@ -99,6 +98,18 @@ describe('tela da agenda', () => {
     });
     renderer = undefined;
     jest.useRealTimers();
+  });
+
+  describe('dado o usuário ainda carregando', () => {
+    test('quando a aba abre, então só o título aparece', async () => {
+      const view = await renderSchedule({ status: 'loading' });
+
+      expect(view.labels()).toEqual(['AGENDA']);
+      expect(
+        view.root.findAll(node => node.props.testID === 'agenda-day'),
+      ).toHaveLength(0);
+      expect(view.labels()).not.toContain('Sem aulas neste dia');
+    });
   });
 
   describe('dado o Rafael com sessão', () => {

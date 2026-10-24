@@ -10,11 +10,27 @@ const styles = StyleSheet.create({
   lessons: { flex: 1 },
 });
 
+function AgendaTitle() {
+  return (
+    <Text variant="sectionTitle" textAlign="center" marginTop="sectionGap">
+      AGENDA
+    </Text>
+  );
+}
+
 export function ScheduleScreen() {
   const currentUser = useCurrentUser();
-  const days =
-    currentUser.status === 'ready' ? currentUser.user.student.agenda : [];
   const [pickedDia, setPickedDia] = useState<string | undefined>(undefined);
+
+  if (currentUser.status !== 'ready') {
+    return (
+      <Screen testID="schedule-screen" edges={[]}>
+        <AgendaTitle />
+      </Screen>
+    );
+  }
+
+  const days = currentUser.user.student.agenda;
   const selectedDia =
     pickedDia !== undefined && days.some(day => day.dia === pickedDia)
       ? pickedDia
@@ -24,9 +40,7 @@ export function ScheduleScreen() {
 
   return (
     <Screen testID="schedule-screen" edges={[]}>
-      <Text variant="sectionTitle" textAlign="center" marginTop="sectionGap">
-        AGENDA
-      </Text>
+      <AgendaTitle />
       {selectedDia !== undefined ? (
         <Box paddingHorizontal="l" marginTop="m">
           <Dropdown
