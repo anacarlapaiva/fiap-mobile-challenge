@@ -24,6 +24,7 @@
 | [0006](adr/0006-sessao-no-keychain.md)                  | Sessão no Keychain                    |
 | [0007](adr/0007-validar-com-zod.md)                     | Validar dados externos com Zod        |
 | [0008](adr/0008-separar-contrato-em-dto-e-validacao.md) | Separar o contrato em DTO e validação |
+| [0009](adr/0009-cache-do-mock-com-react-query.md)       | Cache do mock com React Query         |
 
 ## Specs
 

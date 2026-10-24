@@ -834,7 +834,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-export-namespace-from@npm:^7.29.7":
+"@babel/plugin-transform-export-namespace-from@npm:7.29.7, @babel/plugin-transform-export-namespace-from@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/plugin-transform-export-namespace-from@npm:7.29.7"
   dependencies:
@@ -3096,6 +3096,7 @@ __metadata:
   resolution: "AppFiap@workspace:."
   dependencies:
     "@babel/core": ^7.25.2
+    "@babel/plugin-transform-export-namespace-from": 7.29.7
     "@babel/preset-env": ^7.25.3
     "@babel/runtime": ^7.25.0
     "@react-native-community/cli": 20.2.0
