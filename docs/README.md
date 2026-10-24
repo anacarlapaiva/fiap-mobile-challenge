@@ -30,13 +30,11 @@ Regras operacionais para agentes ficam em [AGENTS.md](../AGENTS.md). Esta pasta 
 
 Contrato de produto. Spec concluída fica só com `spec.md`. Plano e tarefas existem apenas enquanto a spec está em implementação. Como criar uma nova: [specs/README.md](specs/README.md).
 
-| Spec                                                  | Contrato                      |
-| ----------------------------------------------------- | ----------------------------- |
-| [001](specs/001-design-system/spec.md)                | Tema e tipografia             |
-| [002](specs/002-splash-screen/spec.md)                | Splash                        |
-| [003](specs/003-shared-components/spec.md)            | Componentes globais           |
-| [004](specs/004-navegacao-sessao-e-validacao/spec.md) | Navegação, sessão e validação |
-| [005](specs/005-login-e-rotas-da-sessao/spec.md)      | Login e rotas da sessão       |
+| Spec                                             | Contrato                         |
+| ------------------------------------------------ | -------------------------------- |
+| [001](specs/001-design-system/spec.md)           | Tema (valores do Figma)          |
+| [002](specs/002-splash-screen/spec.md)           | Splash                           |
+| [005](specs/005-login-e-rotas-da-sessao/spec.md) | Login, sessão e área autenticada |
 
 ## Instruções para agentes de IA
 

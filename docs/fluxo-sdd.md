@@ -1,6 +1,6 @@
 # Fluxo de Spec-Driven Development (SDD)
 
-Toda feature nova nasce de uma spec aprovada. O código é consequência da spec.
+Toda fatia de produto nova nasce de uma spec aprovada. O código é consequência da spec. Spec não descreve instalação de lib (isso é ADR) nem inventário de componente (isso é teste).
 
 ```mermaid
 flowchart LR
@@ -19,9 +19,9 @@ flowchart LR
 
 ## Etapas
 
-1. **Spec**: o quê e por quê. Não fala de implementação. Template: [specs/\_templates/spec.md](specs/_templates/spec.md).
-2. **Plano**: como. Telas, dados, dependências novas, ADRs. Template: [specs/\_templates/plan.md](specs/_templates/plan.md).
-3. **Tarefas**: checklist pequena e verificável. Template: [specs/\_templates/tasks.md](specs/_templates/tasks.md).
+1. **Spec**: o quê, critérios de aceite e fora do escopo. Curta. Sem narrativa.
+2. **Plano**: como. Arquivos, CAs, dependências novas, ADRs.
+3. **Tarefas**: checklist pequena e verificável.
 4. **Implementação**: uma tarefa por vez. Teste só o arquivo que decide o CA, um caso por critério, sem repetir em quem só consome.
 5. **Verificação**: `yarn validate` precisa passar.
 

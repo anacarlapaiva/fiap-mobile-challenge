@@ -80,7 +80,7 @@ Regras:
 - Ícones só pelo `Icon` (`@/shared/components`), com `color` do tema e `size` como chave de `iconSizes` (altura). Ícone novo entra em `icons.ts` com o `path` e o `viewBox` exportados do Figma; o preenchimento vem sempre da prop `color`.
 - Tela começa com `Screen` (fundo e área segura). Área pressionável usa `PressableOpacity` (feedback de toque padrão) ou `PressableBox` (sem feedback), nunca `TouchableOpacity`.
 - Animações usam `react-native-reanimated` ([ADR 0004](adr/0004-animacoes-com-reanimated.md)); durações e opacidades vêm de `theme.motion` (via `useTheme()`), nunca escritas no componente.
-- Larguras que dependem da tela vêm do layout (flex e margens), não de pixels fixos (decisão de escala na [spec 001](specs/001-design-system/spec.md#regras-de-negócio-e-validações)).
+- Larguras que dependem da tela vêm do layout (flex e margens), não de pixels fixos (decisão de escala na [spec 001](specs/001-design-system/spec.md#regras)).
 
 ## Commits: Conventional Commits
 

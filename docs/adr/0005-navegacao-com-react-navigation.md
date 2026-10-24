@@ -14,6 +14,7 @@ O PDF pede login, duas telas principais (aulas e boletim) com troca no rodapé, 
 2. A stack raiz tem o login e a área autenticada. Dentro da área autenticada ficam as abas Aulas e Boletim, e a escolha de aluno é outra tela dessa stack, nunca uma aba.
 3. Sair da sessão faz `reset` para o login.
 4. Os navegadores ficam em `src/app/navigation/`. Telas continuam nas features. A splash não é uma rota.
+5. Login não tem header. O cabeçalho autenticado é chrome do `PrivateNavigator`, acima da stack (`headerShown: false`). Telas autenticadas não montam o cabeçalho.
 
 ## Alternativas consideradas
 
@@ -27,4 +28,4 @@ O PDF pede login, duas telas principais (aulas e boletim) com troca no rodapé, 
 
 - **Positivas:** o voltar da escolha de aluno devolve a aba que estava aberta; o `reset` no sair impede reabrir a sessão pelo botão de voltar.
 - **Negativas:** `react-native-screens` é módulo nativo; iOS e Android precisam de rebuild. Recarregar o Metro não liga o módulo.
-- **Ações decorrentes:** dependências em `package.json`; `ios/Podfile.lock`; menção em `AGENTS.md`, `docs/estrutura-de-pastas.md` e na spec 004.
+- **Ações decorrentes:** dependências em `package.json`; `ios/Podfile.lock`; menção em `AGENTS.md` e `docs/estrutura-de-pastas.md`.
