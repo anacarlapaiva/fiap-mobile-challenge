@@ -1,37 +1,23 @@
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useState } from 'react';
+import { StatusBar } from 'react-native';
 
 import { AppProviders } from '@/app/providers';
+import { SplashScreen } from '@/features/splash';
+import { Box } from '@/shared/components';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [splashVisible, setSplashVisible] = useState(true);
 
   return (
     <AppProviders>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <StatusBar barStyle="light-content" hidden={splashVisible} />
+      <Box flex={1} backgroundColor="background" testID="app-root">
+        {splashVisible ? (
+          <SplashScreen onFinish={() => setSplashVisible(false)} />
+        ) : null}
+      </Box>
     </AppProviders>
   );
 }
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="src/app/App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;

@@ -25,6 +25,32 @@ const caption = {
   lineHeight: 15,
 } as const;
 
+const fill = {
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+} as const;
+
+const borderWidths = {
+  thin: 1,
+} as const;
+
+const sizes = {
+  actionsBarHeight: 48,
+  buttonHeight: 60,
+  inputHeight: 96,
+  dropdownHeight: 45,
+  cardHeight: 90,
+  optionRowHeight: 36,
+  subjectRowHeight: 37,
+  lessonRowHeight: 59,
+  tabBarHeight: 64,
+  bullet: 6,
+  emptyImage: { width: 328, height: 208 },
+} as const;
+
 export const theme = createTheme({
   colors: {
     background: palette.black,
@@ -41,9 +67,12 @@ export const theme = createTheme({
   spacing: {
     none: 0,
     xs: 7,
+    fieldLineGap: 8,
+    iconGap: 8,
     s: 12,
     m: 16,
     l: 24,
+    fieldLabelGap: 25,
     xl: 48,
   },
   borderRadii: {
@@ -53,6 +82,88 @@ export const theme = createTheme({
   },
   breakpoints: {
     phone: 0,
+  },
+  borderWidths,
+  sizes,
+  iconSizes: {
+    s: 10,
+    m: 14,
+    l: 24,
+  },
+  motion: {
+    pressedOpacity: 0.8,
+    short: 150,
+    medium: 200,
+    caretBlink: 500,
+  },
+  logoVariants: {
+    large: { width: 306, height: 49 },
+    small: { width: 100, height: 16 },
+  },
+  buttonVariants: {
+    primary: {
+      height: sizes.buttonHeight,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  },
+  cardVariants: {
+    surface: {
+      height: sizes.cardHeight,
+      borderRadius: 'm',
+      backgroundColor: 'card',
+      justifyContent: 'center',
+    },
+    selectedOutline: {
+      ...fill,
+      borderRadius: 'm',
+      borderWidth: borderWidths.thin,
+      borderColor: 'accent',
+    },
+  },
+  dropdownVariants: {
+    field: {
+      height: sizes.dropdownHeight,
+      backgroundColor: 'surface',
+      borderRadius: 'm',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingRight: 's',
+    },
+    list: {
+      position: 'absolute',
+      backgroundColor: 'surface',
+      borderRadius: 'm',
+      paddingVertical: 'm',
+    },
+    overlay: fill,
+  },
+  textFieldVariants: {
+    container: {
+      alignSelf: 'stretch',
+      alignItems: 'center',
+    },
+    value: {
+      alignSelf: 'stretch',
+      marginTop: 'fieldLabelGap',
+    },
+    mask: {
+      ...fill,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    caret: {
+      width: borderWidths.thin,
+      alignSelf: 'stretch',
+      backgroundColor: 'textPrimary',
+    },
+    line: {
+      alignSelf: 'stretch',
+      height: borderWidths.thin,
+      marginTop: 'fieldLineGap',
+    },
   },
   textVariants: {
     defaults: {
@@ -78,6 +189,7 @@ export const theme = createTheme({
     bodyBold: { ...body, fontFamily: fonts.bold },
     caption,
     captionMedium: { ...caption, fontFamily: fonts.medium },
+    actionAccent: { ...body, fontFamily: fonts.bold, color: 'accent' },
     tabLabel: { fontFamily: fonts.bold, fontSize: 10, lineHeight: 12 },
   },
 });

@@ -33,16 +33,19 @@
     │   ├── App.test.tsx
     │   ├── nativeLaunch.test.ts
     │   ├── providers/         # composição dos providers globais (safe area + tema)
-    │   └── navigation/        # navegação raiz (sem biblioteca ainda)
+    │   └── navigation/        # navegação raiz (React Navigation: stack e abas, ADR 0005)
     ├── features/
     │   └── splash/            # abertura animada (SplashScreen na API pública)
     ├── shared/
-    │   ├── components/        # design system: Box, Text e componentes globais (spec 003)
-    │   │                      # Screen, Icon (+ icons.ts), Logo, PressableBox, PressableOpacity,
-    │   │                      # Button, TextField, TextButton, Card, Dropdown
+    │   ├── components/        # design system (spec 001 e 003): uma pasta por componente
+    │   │   ├── Button/        # Button.tsx, Button.test.tsx, index.ts
+    │   │   ├── Icon/          # Icon.tsx, Icon.test.tsx, icons.ts, index.ts
+    │   │   ├── …              # Box, Text, Screen, Logo, PressableBox, PressableOpacity,
+    │   │   │                  # TextField, TextButton, Card, Dropdown
+    │   │   └── index.ts       # API pública de todos os componentes
     │   ├── hooks/             # hooks genéricos
-    │   ├── lib/               # utilitários e wrappers de bibliotecas
-    │   ├── theme/             # tema do Restyle (theme.ts, fonts.ts, sizes.ts, motion.ts)
+    │   ├── lib/               # utilitários e wrappers de bibliotecas (createVariantBox do Restyle)
+    │   ├── theme/             # tema do Restyle: theme.ts (tokens, variants, sizes, motion) e fonts.ts
     │   ├── config/            # variáveis de ambiente e constantes
     │   └── types/             # tipos compartilhados
     └── assets/                # fontes, imagens, ícones e vídeos
@@ -51,7 +54,7 @@
         └── videos/            # splash.mp4 e a declaração de tipo ao lado
 ```
 
-As pastas `app/navigation/`, `shared/hooks/`, `shared/lib/`, `shared/config/` e `shared/types/` ainda não existem no repositório: o git não versiona pastas vazias. Cada uma é criada pela primeira tarefa que precisar dela, seguindo a tabela abaixo.
+As pastas `app/navigation/`, `shared/hooks/`, `shared/config/` e `shared/types/` ainda não existem no repositório: o git não versiona pastas vazias. Cada uma é criada pela primeira tarefa que precisar dela, seguindo a tabela abaixo.
 
 ## Propósito de cada pasta
 

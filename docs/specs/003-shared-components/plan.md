@@ -7,19 +7,19 @@
 
 ## Resumo da solução
 
-Os componentes ficam em `src/shared/components/`, um por arquivo, exportados pelo `index.ts` da pasta, construídos sobre `Box` e `Text` do Restyle e com todos os valores vindos do tema. Componentes pressionáveis usam `Pressable` do React Native e animam a opacidade com `react-native-reanimated` (ADR 0004). Os valores de movimento (opacidade pressionada e durações) entram num objeto `motion` exportado por `src/shared/theme/`, ao lado de `sizes` e `borderWidths`.
+Os componentes ficam em `src/shared/components/`, um por arquivo, exportados pelo `index.ts` da pasta, construídos sobre `Box` e `Text` do Restyle e com todos os valores vindos do tema. Componentes pressionáveis usam `Pressable` do React Native e animam a opacidade com `react-native-reanimated` (ADR 0004). Tudo o que é visual fica dentro do `createTheme`: as partes de cada componente são variants do Restyle (`buttonVariants`, `cardVariants`, `dropdownVariants`, `textFieldVariants`, `logoVariants`) e os valores para APIs fora do Restyle ficam em chaves próprias do tema (`sizes`, `iconSizes`, `borderWidths`, `motion`), lidas por `useTheme()`.
 
-Os ícones são componentes `react-native-svg` com o `path` exportado do Figma, sem `react-native-svg-transformer`. Um único `Icon` recebe `name`, `color` (chave de cor do tema, resolvida com `useTheme`) e `size` (altura); a largura sai da proporção do `viewBox` de cada desenho. O preenchimento sempre vem da prop `color`, nunca do arquivo exportado. O logo é a imagem PNG exportada do Figma (250 x 40), em `src/assets/images/logo.png`, exibida por `Image` com `resizeMode="contain"` nos dois tamanhos.
+Os ícones são componentes `react-native-svg` com o `path` exportado do Figma, sem `react-native-svg-transformer`. Um único `Icon` recebe `name`, `color` (chave de cor do tema, resolvida com `useTheme`) e `size` (chave de `iconSizes`); a largura sai da proporção do `viewBox` de cada desenho. O preenchimento sempre vem da prop `color`, nunca do arquivo exportado. O logo é a imagem PNG exportada do Figma (250 x 40), em `src/assets/images/logo.png`, exibida por um `Image` do Restyle com `logoVariants` (`large`, `small`) e `resizeMode="contain"`.
 
-O `TextField` usa um `TextInput` real. No modo seguro, o texto do `TextInput` fica transparente e um `Text` sobreposto desenha um `*` por caractere; um cursor desenhado pisca ao fim dos asteriscos quando o campo tem foco. O `Dropdown` é controlado por fora quanto ao valor (`value`, `options`, `onSelect`) e guarda localmente só o estado aberto/fechado. A lista abre animada (opacidade e deslocamento) e a seta gira com `useAnimatedStyle`. Para ficar por cima do conteúdo e fechar com toque fora, a lista abre num `Modal` transparente do React Native: o campo mede sua posição na janela (`measureInWindow`), a lista é posicionada 7 abaixo dele, e um `Pressable` de tela cheia por trás da lista fecha sem selecionar. Assim a lista não depende de `zIndex` entre irmãos, que se comporta diferente no Android.
+O `TextField` usa um `TextInput` real. No modo seguro, o `TextInput` fica com `opacity={0}` (prop do Restyle) e um `Text` sobreposto desenha um `*` por caractere; um cursor desenhado pisca ao fim dos asteriscos quando o campo tem foco. O `Dropdown` é controlado por fora quanto ao valor (`value`, `options`, `onSelect`) e guarda localmente só o estado aberto/fechado. A lista abre animada (opacidade e deslocamento) e a seta gira com `useAnimatedStyle`. Para ficar por cima do conteúdo e fechar com toque fora, a lista abre num `Modal` transparente do React Native: o campo mede sua posição na janela (`measureInWindow`), a lista é posicionada 7 abaixo dele, e um `Pressable` de tela cheia por trás da lista fecha sem selecionar. Assim a lista não depende de `zIndex` entre irmãos, que se comporta diferente no Android.
 
 ## Uso do Restyle
 
 - Toda cor, espaçamento, raio e texto entra por props do tema; nenhum hex, número de margem ou `fontSize` nos componentes.
 - `PressableBox = createBox<Theme, PressableProps>(Pressable)`: área pressionável com as props do Restyle. `AnimatedBox = Animated.createAnimatedComponent(Box)` para estilos animados.
-- Variações visuais viram variants no tema: os tons do `TextButton` usam os text variants `caption` e `bodyBold` com a cor por prop do Restyle (`color="accent"`), sem estilo condicional à parte.
-- Cores para APIs fora do Restyle (`Svg`, `ActivityIndicator`, `TextInput`, valores animados) vêm de `useTheme()`; tamanhos fixos vêm de `sizes`.
-- `StyleSheet` só para o que o Restyle não modela (estilo animado, posição absoluta calculada em tempo de execução).
+- Partes visuais de componente são variants do tema, aplicados por `createVariantBox(themeKey)` (`@/shared/lib/createVariantBox`) (`createRestyleComponent` + `createVariant` + `boxRestyleFunctions`) ou, no logo, por `createRestyleComponent` sobre `Image`. Os tons do `TextButton` usam os text variants `caption` e `actionAccent`.
+- Valores para APIs fora do Restyle (`Svg`, `ActivityIndicator`, `TextInput`, Reanimated) vêm de `useTheme()`: `colors`, `sizes`, `iconSizes`, `motion`.
+- `style` só para valores de tempo de execução (área segura, posição medida, estilo animado); nenhum `StyleSheet` nos componentes.
 
 ## Estrutura de arquivos
 
@@ -33,21 +33,21 @@ src/assets/images/
 ├── logo.png                            logo exportado do Figma (250 x 40)
 └── logo.png.d.ts                       declaração de tipo do módulo PNG, como em videos/
 src/shared/theme/
-├── motion.ts                           pressedOpacity, durações
 ├── theme.ts                            + spacing fieldLabelGap, fieldLineGap, iconGap
-└── index.ts                            + motion
-src/shared/components/
-├── Screen.tsx        Screen.test.tsx
-├── Icon.tsx          Icon.test.tsx
-├── icons.ts                            path e viewBox de cada ícone
-├── Logo.tsx          Logo.test.tsx
-├── PressableBox.tsx                    createBox<Theme, PressableProps>(Pressable)
-├── PressableOpacity.tsx  PressableOpacity.test.tsx
-├── Button.tsx        Button.test.tsx
-├── TextField.tsx     TextField.test.tsx
-├── TextButton.tsx    TextButton.test.tsx
-├── Card.tsx          Card.test.tsx
-├── Dropdown.tsx      Dropdown.test.tsx
+└── index.ts                            theme, Theme, fonts
+src/shared/lib/
+└── createVariantBox.ts                 Box com variant do tema (createRestyleComponent + createVariant)
+src/shared/components/                  uma pasta por componente: componente, teste e index.ts
+├── Screen/           Screen.tsx, Screen.test.tsx
+├── Icon/             Icon.tsx, Icon.test.tsx, icons.ts (path e viewBox de cada ícone)
+├── Logo/             Logo.tsx, Logo.test.tsx
+├── PressableBox/     PressableBox.tsx (createBox<Theme, PressableProps>(Pressable))
+├── PressableOpacity/ PressableOpacity.tsx, PressableOpacity.test.tsx
+├── Button/           Button.tsx, Button.test.tsx
+├── TextField/        TextField.tsx, TextField.test.tsx
+├── TextButton/       TextButton.tsx, TextButton.test.tsx
+├── Card/             Card.tsx, Card.test.tsx
+├── Dropdown/         Dropdown.tsx, Dropdown.test.tsx
 └── index.ts                            + todos os novos
 ```
 
@@ -61,8 +61,8 @@ Não se aplica: a spec não cria telas.
 | ------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- |
 | `Screen`           | `shared` | `Box flex={1} backgroundColor="background"` + padding da área segura nas `edges` (`useSafeAreaInsets`)                                           | CA-01                |
 | `Icon`             | `shared` | `Svg` + `Path` do ícone pedido; `name: IconName`, `color: keyof Theme['colors']`, `size: number`                                                 | CA-02                |
-| `Logo`             | `shared` | `Image` do logo; `size: 'large' \| 'small'` mapeado para `sizes.logoLarge`/`logoSmall`                                                           | CA-03                |
-| `PressableOpacity` | `shared` | `Pressable` animado: opacidade 1 → `motion.pressedOpacity` no toque, com `motion.short`                                                          | CA-17                |
+| `Logo`             | `shared` | `Image` do logo; `size: 'large' \| 'small'` aplicado como `logoVariants`                                                                         | CA-03                |
+| `PressableOpacity` | `shared` | `Pressable` animado: opacidade 1 → `theme.motion.pressedOpacity` no toque, com `theme.motion.short`                                              | CA-17                |
 | `Button`           | `shared` | `label`, `onPress`, `disabled`, `loading`, `bottomInset`; `ActivityIndicator` no carregamento                                                    | CA-04 a CA-07        |
 | `TextField`        | `shared` | `label`, `value`, `onChangeText`, `secure`, `keyboardType`; linha animada; máscara `*` e cursor                                                  | CA-08 a CA-10        |
 | `TextButton`       | `shared` | `label`, `onPress`, `icon?: IconName`, `tone: 'default' \| 'accent'`                                                                             | CA-11, CA-17         |
@@ -76,7 +76,7 @@ Não se aplica: a spec não cria telas.
 - `IconName = 'arrow' | 'calendar' | 'checkFile' | 'close' | 'logout'`, derivado das chaves de `icons.ts`.
 - `icons.ts`: para cada nome, `viewBox` (`width`, `height`) e a lista de `path` (`d`, `fillRule` opcional). A seta usa a versão 14 x 14; o calendário mantém 21,43 x 24.
 - `DropdownOption<T> = { label: string; value: T }`.
-- `motion`: `pressedOpacity: 0.8`, `short: 150`, `medium: 200`, `caretBlink: 500` (ms).
+- `theme.motion`: `pressedOpacity: 0.8`, `short: 150`, `medium: 200`, `caretBlink: 500` (ms).
 - `spacing`, novos tokens (as props de espaçamento do Restyle só aceitam chaves do tema): `fieldLabelGap: 25` (rótulo → valor do campo) e `fieldLineGap: 8` (valor → linha), medidos no Figma, que exigem a atualização da spec 001 na mesma tarefa; `iconGap: 8` (texto → ícone), definido na spec 003. A margem de 12 da seta e as de 16 da lista usam `s` e `m`; o afastamento de 7 entre o dropdown e a lista usa `xs`.
 
 ## APIs
@@ -90,19 +90,19 @@ Só estado local: aberto/fechado do `Dropdown`, foco do `TextField` e valores an
 ## API pública
 
 `src/shared/components/index.ts`: `Box`, `Text`, `Screen`, `Icon`, `type IconName`, `Logo`, `PressableOpacity`, `Button`, `TextField`, `TextButton`, `Card`, `Dropdown`, `type DropdownOption`.
-`src/shared/theme/index.ts`: + `motion`.
+`src/shared/theme/index.ts`: `theme`, `type Theme`, `fonts` (sem constantes soltas).
 Consumidores: features `auth`, `classes`, `report-card`, seleção de aluno e `app/navigation`.
 
 ## Impacto em outras features e em `shared`
 
-| Área afetada       | Mudança                             | Risco                                                     |
-| ------------------ | ----------------------------------- | --------------------------------------------------------- |
-| `babel.config.js`  | Plugin do worklets                  | Médio: exige `--reset-cache`; plugin fora de ordem quebra |
-| `jest.config.js`   | `setupFiles` do Reanimated          | Baixo                                                     |
-| `ios/`             | Pods do svg, reanimated e worklets  | Médio: exige `pod install` e rebuild                      |
-| `android/`         | Autolinking (sem edição manual)     | Médio: exige rebuild                                      |
-| `src/shared/theme` | `motion` e medidas novas em `sizes` | Baixo                                                     |
-| `features/splash`  | Nenhuma                             | Nenhum                                                    |
+| Área afetada       | Mudança                                                                  | Risco                                                     |
+| ------------------ | ------------------------------------------------------------------------ | --------------------------------------------------------- |
+| `babel.config.js`  | Plugin do worklets                                                       | Médio: exige `--reset-cache`; plugin fora de ordem quebra |
+| `jest.config.js`   | `setupFiles` do Reanimated                                               | Baixo                                                     |
+| `ios/`             | Pods do svg, reanimated e worklets                                       | Médio: exige `pod install` e rebuild                      |
+| `android/`         | Autolinking (sem edição manual)                                          | Médio: exige rebuild                                      |
+| `src/shared/theme` | variants, `sizes`, `iconSizes`, `borderWidths` e `motion` dentro do tema | Baixo                                                     |
+| `features/splash`  | Nenhuma                                                                  | Nenhum                                                    |
 
 ## Dependências novas
 
@@ -129,8 +129,8 @@ Versões conferidas no registro do npm em 2026-10-24: Reanimated 4.7.1 e worklet
 ## Documentação a atualizar
 
 - `docs/specs/001-design-system/spec.md`: espaçamentos internos do campo (25 e 8) na tabela "Espaçamentos observados".
-- `docs/estrutura-de-pastas.md`: `src/assets/images/`, `jest.setup.js`, componentes de `shared/components`, `motion.ts`.
-- `docs/convencoes.md`: animações com Reanimated e tokens de `motion`; ícones só pelo `Icon`; feedback de toque pelo `PressableOpacity`.
+- `docs/estrutura-de-pastas.md`: `src/assets/images/`, `jest.setup.js`, componentes de `shared/components`, `createVariantBox`.
+- `docs/convencoes.md`: animações com Reanimated e `theme.motion`; tudo visual dentro do tema; ícones só pelo `Icon`; feedback de toque pelo `PressableOpacity`.
 - `AGENTS.md`: tabela de stack (`react-native-svg`, `react-native-reanimated`, `react-native-worklets`).
 - `README.md`: dependências novas e `pod install`.
 - `docs/adr/0004-animacoes-com-reanimated.md`: status `Aceito` após aprovação.

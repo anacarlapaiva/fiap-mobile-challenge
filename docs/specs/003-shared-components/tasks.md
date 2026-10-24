@@ -14,9 +14,9 @@ Regras:
 - [x] **T01: Instalar svg e Reanimated e configurar Babel, Jest e pods**
 
   - **Critérios de aceite:** base para CA-02 e CA-17
-  - **Arquivos:** `package.json`, `yarn.lock`, `babel.config.js`, `jest.config.js`, `jest.setup.js`, `ios/Podfile.lock`, `src/shared/theme/motion.ts`, `src/shared/theme/theme.ts`, `src/shared/theme/index.ts`, `docs/specs/001-design-system/spec.md`
+  - **Arquivos:** `package.json`, `yarn.lock`, `babel.config.js`, `jest.config.js`, `jest.setup.js`, `ios/Podfile.lock`, `src/shared/theme/theme.ts`, `src/shared/theme/index.ts`, `docs/specs/001-design-system/spec.md`
   - **Verificação:** teste de fumaça temporário renderiza `Svg` e uma `Animated.View` sem warnings (descartado ao fim); `bundle exec pod install` sem erro; `yarn validate` passa
-  - **Documentação:** `AGENTS.md` (stack), `README.md`, `docs/convencoes.md` (animações e `motion`), `docs/estrutura-de-pastas.md` (`jest.setup.js`, `motion.ts`), spec 001 (espaçamentos 25 e 8)
+  - **Documentação:** `AGENTS.md` (stack), `README.md`, `docs/convencoes.md` (animações e `motion`), `docs/estrutura-de-pastas.md` (`jest.setup.js`), spec 001 (espaçamentos 25 e 8)
   - **Commit:** `chore: adiciona react-native-svg e reanimated com tokens de movimento`
 
 - [x] **T02: Criar Icon e Logo**

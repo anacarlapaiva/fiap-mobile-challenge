@@ -20,6 +20,9 @@
 | [0002](adr/0002-instrucoes-agnosticas-de-agente.md) | Instruções agnósticas de agente |
 | [0003](adr/0003-reproducao-de-video-local.md)       | Reprodução de vídeo local       |
 | [0004](adr/0004-animacoes-com-reanimated.md)        | Animações com Reanimated        |
+| [0005](adr/0005-navegacao-com-react-navigation.md)  | Navegação com React Navigation  |
+| [0006](adr/0006-sessao-no-keychain.md)              | Sessão no Keychain              |
+| [0007](adr/0007-validar-com-zod.md)                 | Validar dados externos com Zod  |
 
 ## Specs
 

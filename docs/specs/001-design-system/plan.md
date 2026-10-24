@@ -7,7 +7,7 @@
 
 ## Resumo da solução
 
-O tema é um objeto do Restyle (`createTheme`), em `src/shared/theme/`, com chaves separadas por tipo de token: `colors`, `spacing`, `borderRadii`, `textVariants` e `breakpoints` (obrigatório no Restyle, com um único breakpoint `phone: 0`). Os tamanhos fixos e as larguras de borda, que o Restyle não modela como tokens, ficam em objetos `sizes` e `borderWidths` exportados ao lado do tema e entram como props do `Box` (`height={sizes.buttonHeight}`). Todos os valores são os da spec, sem arredondamento.
+O tema é um objeto do Restyle (`createTheme`), em `src/shared/theme/`, com chaves separadas por tipo de token: `colors`, `spacing`, `borderRadii`, `textVariants` e `breakpoints` (obrigatório no Restyle, com um único breakpoint `phone: 0`). Os tamanhos fixos e as larguras de borda, que o Restyle não modela como tokens nativos, ficam dentro do próprio tema, em chaves próprias (`sizes`, `borderWidths`) e nos variants de componente (spec 003), lidos por `useTheme()` ou aplicados por `createVariant`. Revisão de 2026-10-24, aprovada pela responsável: antes ficavam em `sizes.ts`, fora do tema. Todos os valores são os da spec, sem arredondamento.
 
 A Montserrat entra como quatro TTFs estáticos (v9.000, do repositório oficial `JulietaUla/Montserrat`) em `src/assets/fonts/`, com o `OFL.txt`. Cada arquivo tem o nome igual ao seu PostScript name (`Montserrat-Regular`, `Montserrat-Medium`, `Montserrat-SemiBold`, `Montserrat-Bold`, conferidos na tabela `name` dos arquivos). Assim, `fontFamily` funciona igual no iOS e no Android, e cada estilo de texto aponta para o arquivo do peso, sem usar `fontWeight`, que faria o sistema sintetizar negrito. O registro nativo usa `react-native-asset` e `react-native.config.js`, alterando `ios/` e `android/` com a autorização dada na spec.
 
@@ -26,7 +26,6 @@ src/assets/fonts/
 src/shared/theme/
 ├── theme.ts                               createTheme + type Theme
 ├── fonts.ts                               nomes das famílias por peso
-├── sizes.ts                               tamanhos fixos e larguras de borda
 └── index.ts
 src/shared/components/
 ├── Box.tsx                                createBox<Theme>()
@@ -55,7 +54,7 @@ Não se aplica: a spec não cria telas.
 
 Tokens (nomes em inglês, valores da spec):
 
-Os valores ficam só na spec e no código (`theme.ts`, `sizes.ts`); o plano registra os nomes e o mapeamento.
+Os valores ficam só na spec e no código (`theme.ts`); o plano registra os nomes e o mapeamento.
 
 - `colors`: um token por linha da tabela "Cores", nomeado pelo uso: `background`, `accent`, `textPrimary`, `textOnAccent`, `textDisabled`, `surface`, `card`, `inputLine`, `inputLineFilled`, `bulletBorder`.
 - `spacing`: `none`, `xs`, `s`, `m`, `l`, `xl` (7 a 48). As margens de 28 e 40 do Figma (texto do boletim e das aulas) são compostas no layout (`m` + `s` e `l` + `m`) e não viram token próprio.
@@ -74,7 +73,7 @@ Não se aplica: o tema é estático, sem estado.
 
 ## API pública
 
-`src/shared/theme/index.ts`: `theme`, `type Theme`, `fonts`, `sizes`, `borderWidths`.
+`src/shared/theme/index.ts`: `theme`, `type Theme`, `fonts`.
 `src/shared/components/index.ts`: `Box`, `Text`.
 Consumidores: `app` (provider) e todas as features futuras.
 
