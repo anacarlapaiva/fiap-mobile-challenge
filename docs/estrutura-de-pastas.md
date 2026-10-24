@@ -11,7 +11,9 @@ A árvore descreve pastas e o papel delas. Arquivos internos não entram aqui: o
     ├── app/                 # bootstrap, providers, navegação raiz
     ├── features/
     │   ├── splash/
-    │   └── auth/
+    │   ├── auth/
+    │   ├── schedule/
+    │   └── report-card/
     ├── shared/
     │   ├── components/      # uma pasta por componente do design system
     │   ├── dto/

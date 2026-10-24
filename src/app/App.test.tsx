@@ -162,7 +162,7 @@ describe('abertura do app', () => {
       expect(
         view.root
           .findAllByType(View)
-          .filter(node => node.props.testID === 'logged-screen'),
+          .filter(node => node.props.testID === 'schedule-screen'),
       ).toHaveLength(0);
     });
   });
@@ -181,7 +181,7 @@ describe('abertura do app', () => {
       expect(
         view.root
           .findAllByType(View)
-          .filter(node => node.props.testID === 'logged-screen'),
+          .filter(node => node.props.testID === 'schedule-screen'),
       ).toHaveLength(1);
     });
   });

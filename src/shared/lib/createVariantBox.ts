@@ -14,7 +14,8 @@ type VariantThemeKey =
   | 'cardVariants'
   | 'dropdownVariants'
   | 'textFieldVariants'
-  | 'emptyVariants';
+  | 'emptyVariants'
+  | 'tabBarVariants';
 
 type VariantBoxProps<K extends VariantThemeKey> = VariantProps<Theme, K> &
   BoxProps<Theme> &

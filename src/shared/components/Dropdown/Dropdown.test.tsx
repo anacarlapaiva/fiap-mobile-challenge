@@ -1,9 +1,21 @@
 import { ThemeProvider } from '@shopify/restyle';
-import { Modal, Text as NativeText } from 'react-native';
+import {
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text as NativeText,
+  View,
+} from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ReactTestRenderer from 'react-test-renderer';
 
 import { Dropdown, type DropdownOption } from '@/shared/components/Dropdown';
 import { theme } from '@/shared/theme';
+
+const metrics = {
+  frame: { x: 0, y: 0, width: 414, height: 736 },
+  insets: { top: 47, bottom: 34, left: 0, right: 0 },
+};
 
 const options: DropdownOption<string>[] = [
   { label: '17 de março, segunda-feira', value: '2025-03-17' },
@@ -18,14 +30,16 @@ async function render(
   let renderer: ReactTestRenderer.ReactTestRenderer | undefined;
   await ReactTestRenderer.act(() => {
     renderer = ReactTestRenderer.create(
-      <ThemeProvider theme={theme}>
-        <Dropdown
-          testID="dropdown"
-          value="2025-03-17"
-          options={items}
-          onSelect={onSelect}
-        />
-      </ThemeProvider>,
+      <SafeAreaProvider initialMetrics={metrics}>
+        <ThemeProvider theme={theme}>
+          <Dropdown
+            testID="dropdown"
+            value="2025-03-17"
+            options={items}
+            onSelect={onSelect}
+          />
+        </ThemeProvider>
+      </SafeAreaProvider>,
     );
   });
   if (!renderer) {
@@ -50,12 +64,14 @@ async function render(
   return {
     press,
     field: () => pressableById('dropdown'),
+    styleOf: (id: string) => StyleSheet.flatten(pressableById(id)?.props.style),
     modalVisible: () => root.findByType(Modal).props.visible,
     optionLabels: () =>
       root
         .findByType(Modal)
         .findAllByType(NativeText)
         .map(node => node.props.children),
+    list: () => root.findByType(ScrollView),
   };
 }
 
@@ -76,6 +92,7 @@ describe('lista de opções', () => {
 
       expect(view.modalVisible()).toBe(true);
       expect(view.optionLabels()).toEqual(options.map(option => option.label));
+      expect(view.list()).toBeTruthy();
       expect(view.field()?.props.accessibilityState).toEqual({
         expanded: true,
       });
@@ -106,6 +123,26 @@ describe('lista de opções', () => {
 
       expect(onSelect).not.toHaveBeenCalled();
       expect(view.modalVisible()).toBe(false);
+    });
+  });
+
+  describe('dado o campo do dropdown', () => {
+    test('CA-06: quando renderizado, então o campo tem 45 e cada opção tem 36', async () => {
+      const view = await render(options);
+      await view.press('dropdown');
+
+      expect(
+        view
+          .field()
+          ?.findAllByType(View)
+          .some(node => {
+            const style = StyleSheet.flatten(node.props.style);
+            return style?.height === 45 && style?.borderRadius === 8;
+          }),
+      ).toBe(true);
+      expect(view.styleOf('dropdown-option-0')).toMatchObject({
+        height: 36,
+      });
     });
   });
 
