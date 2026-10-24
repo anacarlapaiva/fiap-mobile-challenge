@@ -4,8 +4,8 @@ import {
 } from '@react-navigation/bottom-tabs';
 
 import { TabBar } from '@/app/navigation/TabBar';
-import { LoggedScreen } from '@/features/auth';
 import { ReportCardScreen } from '@/features/report-card';
+import { ScheduleScreen } from '@/features/schedule';
 import { theme } from '@/shared/theme';
 
 export type PrivateTabParamList = {
@@ -28,7 +28,7 @@ export function TabNavigator() {
         sceneStyle: { backgroundColor: theme.colors.background },
       }}
     >
-      <Tab.Screen name="Agenda" component={LoggedScreen} />
+      <Tab.Screen name="Agenda" component={ScheduleScreen} />
       <Tab.Screen name="ReportCard" component={ReportCardScreen} />
     </Tab.Navigator>
   );

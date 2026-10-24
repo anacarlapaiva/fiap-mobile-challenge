@@ -1,12 +1,18 @@
 import { useTheme } from '@shopify/restyle';
 import { type ComponentRef, useEffect, useRef, useState } from 'react';
-import { Modal, type View } from 'react-native';
+import {
+  Modal,
+  ScrollView,
+  useWindowDimensions,
+  type View,
+} from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scheduleOnRN } from 'react-native-worklets';
 
 import { Box } from '@/shared/components/Box';
@@ -50,6 +56,8 @@ export function Dropdown<T>({
 }: DropdownProps<T>) {
   const theme = useTheme<Theme>();
   const { motion } = theme;
+  const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
   const fieldRef = useRef<ComponentRef<typeof View>>(null);
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -113,11 +121,25 @@ export function Dropdown<T>({
     setOpen(false);
   };
 
+  const listPadding = theme.spacing.m * 2;
+  const listMinHeight = theme.sizes.optionRowHeight + listPadding;
+  const listMaxHeight = anchor
+    ? Math.max(
+        listMinHeight,
+        windowHeight -
+          anchor.y -
+          anchor.height -
+          theme.spacing.xs -
+          insets.bottom -
+          theme.spacing.l,
+      )
+    : undefined;
   const listPosition = anchor
     ? {
         top: anchor.y + anchor.height + theme.spacing.xs,
         left: anchor.x,
         width: anchor.width,
+        maxHeight: listMaxHeight,
       }
     : undefined;
 
@@ -160,20 +182,27 @@ export function Dropdown<T>({
             testID="dropdown-list"
             style={[listPosition, listStyle]}
           >
-            {options.map((option, index) => (
-              <PressableOpacity
-                key={option.label}
-                testID={`dropdown-option-${index}`}
-                onPress={() => select(option)}
-                marginTop={index === 0 ? 'none' : 'm'}
-                paddingHorizontal={textInset}
-                hitSlop={{ top: theme.spacing.xs, bottom: theme.spacing.xs }}
-                accessibilityRole="button"
-                accessibilityLabel={option.label}
-              >
-                <Text variant="body">{option.label}</Text>
-              </PressableOpacity>
-            ))}
+            <ScrollView
+              nestedScrollEnabled
+              bounces={false}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              {options.map((option, index) => (
+                <PressableOpacity
+                  key={option.label}
+                  testID={`dropdown-option-${index}`}
+                  onPress={() => select(option)}
+                  height={theme.sizes.optionRowHeight}
+                  justifyContent="center"
+                  paddingHorizontal={textInset}
+                  accessibilityRole="button"
+                  accessibilityLabel={option.label}
+                >
+                  <Text variant="body">{option.label}</Text>
+                </PressableOpacity>
+              ))}
+            </ScrollView>
           </AnimatedDropdownBox>
         </DropdownBox>
       </Modal>

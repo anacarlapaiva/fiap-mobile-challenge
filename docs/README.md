@@ -35,6 +35,8 @@ Contrato de produto. Spec concluída fica só com `spec.md`. Plano e tarefas exi
 | [001](specs/001-design-system/spec.md)           | Tema (valores do Figma)          |
 | [002](specs/002-splash-screen/spec.md)           | Splash                           |
 | [005](specs/005-login-e-rotas-da-sessao/spec.md) | Login, sessão e área autenticada |
+| [006](specs/006-bottom-tabs/spec.md)             | Abas                             |
+| [007](specs/007-schedule/spec.md)                | Agenda                           |
 
 ## Instruções para agentes de IA
 

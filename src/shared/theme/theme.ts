@@ -181,6 +181,7 @@ export const theme = createTheme({
       backgroundColor: 'surface',
       borderRadius: 'm',
       paddingVertical: 'm',
+      overflow: 'hidden',
     },
     overlay: fill,
   },
