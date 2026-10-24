@@ -87,6 +87,27 @@ function window(width: number, height: number) {
     .mockReturnValue({ width, height, scale: 3, fontScale: 1 });
 }
 
+function texts(renderer: ReactTestRenderer.ReactTestRenderer) {
+  return renderer.root
+    .findAllByType(NativeText)
+    .map(node => node.props.children);
+}
+
+async function openKeyboard() {
+  const addListener = jest.spyOn(Keyboard, 'addListener');
+  const renderer = await renderLogin();
+  const listeners = addListener.mock.calls
+    .filter(([event]) => event === 'keyboardWillShow')
+    .map(([, listener]) => listener);
+
+  await ReactTestRenderer.act(() => {
+    listeners.forEach(listener =>
+      listener({} as Parameters<typeof listener>[0]),
+    );
+  });
+  return renderer;
+}
+
 describe('tela de login', () => {
   afterEach(() => {
     jest.restoreAllMocks();
@@ -134,23 +155,39 @@ describe('tela de login', () => {
   });
 
   describe('dado o teclado aberto', () => {
-    test('quando o botão fica acima dele, então mantém a altura 60 sem a área segura', async () => {
+    test('quando o botão fica acima dele, então mantém a altura 60 sem a área segura e o fundo atrás do teclado é acento', async () => {
       window(414, 736);
-      const addListener = jest.spyOn(Keyboard, 'addListener');
-      const renderer = await renderLogin();
-      const listeners = addListener.mock.calls
-        .filter(([event]) => event === 'keyboardWillShow')
-        .map(([, listener]) => listener);
-
-      await ReactTestRenderer.act(() => {
-        listeners.forEach(listener =>
-          listener({} as Parameters<typeof listener>[0]),
-        );
-      });
+      const renderer = await openKeyboard();
 
       expect(style(renderer, 'login-submit')).toMatchObject({
         paddingBottom: 0,
       });
+      expect(
+        renderer.root
+          .findAllByType(View)
+          .some(
+            node =>
+              StyleSheet.flatten(node.props.style)?.backgroundColor ===
+                theme.colors.accent &&
+              StyleSheet.flatten(node.props.style)?.flex === 1,
+          ),
+      ).toBe(true);
+    });
+
+    test('quando a frase de erro aparece, então a tela rola até o fim para mostrá-la', async () => {
+      window(414, 736);
+      const renderer = await openKeyboard();
+      const scroll = renderer.root.findByProps({ testID: 'login-scroll' });
+      const scrollToEnd = jest.fn();
+      scroll.instance.scrollToEnd = scrollToEnd;
+
+      await pressLogin(renderer);
+      await ReactTestRenderer.act(() => {
+        scroll.props.onContentSizeChange(414, 600);
+      });
+
+      expect(texts(renderer)).toContain('Informe o CPF.');
+      expect(scrollToEnd).toHaveBeenCalledWith({ animated: true });
     });
   });
 });

@@ -1,5 +1,5 @@
 import { useTheme } from '@shopify/restyle';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   useWindowDimensions,
+  type ScrollViewInstance,
 } from 'react-native';
 
 import { useSession } from '@/features/auth/session/SessionProvider';
@@ -34,6 +35,7 @@ export function LoginScreen() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const scroll = useRef<ScrollViewInstance>(null);
 
   useEffect(() => {
     const prefix = Platform.OS === 'ios' ? 'keyboardWill' : 'keyboardDid';
@@ -56,6 +58,15 @@ export function LoginScreen() {
     ),
   };
 
+  const keyboardBackdrop = { backgroundColor: theme.colors.accent };
+  const contentBackground = { backgroundColor: theme.colors.background };
+
+  function revealBottom() {
+    if (keyboardOpen) {
+      scroll.current?.scrollToEnd({ animated: true });
+    }
+  }
+
   function submit() {
     setMessage(null);
     signIn(cpf, password)
@@ -69,9 +80,16 @@ export function LoginScreen() {
 
   return (
     <Screen testID="login-screen" edges={['top']}>
-      <KeyboardAvoidingView style={styles.fill} behavior="padding">
+      <KeyboardAvoidingView
+        style={[styles.fill, keyboardBackdrop]}
+        behavior="padding"
+      >
         <ScrollView
-          style={styles.fill}
+          ref={scroll}
+          testID="login-scroll"
+          style={[styles.fill, contentBackground]}
+          onLayout={revealBottom}
+          onContentSizeChange={revealBottom}
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
