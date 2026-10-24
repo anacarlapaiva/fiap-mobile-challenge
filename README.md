@@ -26,8 +26,13 @@ cd ios && bundle exec pod install && cd ..
 yarn ios
 ```
 
+As fontes já estão registradas no iOS e no Android. Para alterá-las, veja "Registrar fontes" em [AGENTS.md](AGENTS.md#comandos).
+
+Na abertura, o app reproduz `src/assets/videos/splash.mp4` uma vez e em seguida mostra o conteúdo. A tela nativa anterior ao JavaScript é preta. O player é nativo: depois de instalar dependências, rode `bundle exec pod install` em `ios/` e recompile o app. Recarregar o Metro não basta. O mesmo vale para `react-native-svg` (ícones) e `react-native-reanimated` (animações); o Reanimated também usa um plugin no Babel, então, depois de instalar ou atualizar, inicie o Metro com `yarn start --reset-cache`.
+
 ## Comandos e estrutura
 
+- Stack e dependências: [AGENTS.md](AGENTS.md#stack).
 - Typecheck, lint, formatação, testes e `yarn validate`: [AGENTS.md](AGENTS.md#comandos).
 - Arquitetura e pastas: [docs/arquitetura.md](docs/arquitetura.md) e [docs/estrutura-de-pastas.md](docs/estrutura-de-pastas.md).
 
