@@ -1,6 +1,6 @@
 # Spec 001: Design system (tema global)
 
-- **Status:** Em implementação
+- **Status:** Concluída
 - **Autor:** Ana Carla Paiva (com Claude Code)
 - **Aprovado por:** Ana Carla Paiva (2026-10-23)
 - **Data:** 2026-10-23
@@ -135,6 +135,10 @@ Não se aplica: esta spec não cria telas. Os estados de cada tela são definido
 - Animações.
 - Tema claro.
 - Splash screen.
+
+## Verificação pendente
+
+Conferir no iOS e no Android que os 4 pesos da Montserrat aparecem distintos e iguais ao Figma, sem negrito sintetizado e sem padding extra no Android (CA-03).
 
 ## Perguntas em aberto
 

@@ -72,12 +72,6 @@ Escreva "Nenhuma" se não houver.
 | ----- | ------------- | ------- | --------- |
 |       |               |         |           |
 
-## Documentação a atualizar
-
-Arquivos em `docs/` (e `AGENTS.md`, se for o caso) que mudarão por causa deste plano.
-
-- …
-
 ## Decisões arquiteturais
 
 ADRs que precisam ser criados em `docs/adr/`, ou "Nenhuma".

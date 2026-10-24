@@ -32,7 +32,7 @@ O que muda para o usuário quando a feature existir? Como medimos o sucesso (mé
 
 ## Critérios de aceite
 
-Cada critério é verificável e vira pelo menos um teste.
+Cada critério é verificável. Teste de unidade só no arquivo que decide o comportamento, e só uma vez.
 
 - **CA-01:** **Dado** … **Quando** … **Então** …
 - **CA-02:** **Dado** … **Quando** … **Então** …

@@ -26,7 +26,7 @@ Transformar uma ideia de feature em `docs/specs/NNN-nome/spec.md`, sem ambiguida
 6. Repita o passo 5 até não haver nenhuma resposta vaga ("depende", "talvez", "o de sempre"). Sempre que perceber uma ambiguidade, faça uma pergunta fechada, com opções.
 7. Determine o próximo `NNN` (maior número existente + 1, três dígitos) e um nome em inglês, em `kebab-case` (ex.: `001-email-login`). Confirme o nome com o usuário.
 8. Crie `docs/specs/NNN-nome/spec.md` a partir do template, preenchendo todas as seções:
-   - critérios de aceite numerados (`CA-01`…), no formato **Dado / Quando / Então**, cada um verificável por teste;
+   - critérios de aceite numerados (`CA-01`…), no formato **Dado / Quando / Então**, cada um verificável (teste no dono da decisão, ou conferência no aparelho);
    - nenhuma decisão de implementação (bibliotecas, componentes, endpoints inventados);
    - `Status: Rascunho`.
 9. Apresente a spec ao usuário e liste as perguntas em aberto que restarem.

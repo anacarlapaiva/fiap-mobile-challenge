@@ -1,6 +1,6 @@
 # Spec 004: Navegação, sessão e validação
 
-- **Status:** Aprovada
+- **Status:** Concluída
 - **Autor:** Ana Carla Paiva
 - **Aprovado por:** Ana Carla Paiva (2026-10-24)
 - **Data:** 2026-10-24

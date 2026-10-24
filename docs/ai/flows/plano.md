@@ -21,7 +21,6 @@ Gerar `docs/specs/NNN-nome/plan.md` a partir de uma spec aprovada, respeitando a
    - componentes reutilizáveis vão para `src/shared/`; os específicos ficam na feature;
    - a seção "Dependências novas" justifica cada pacote, ou diz "Nenhuma";
    - escolha estrutural nova (biblioteca de navegação, estado, rede, persistência) é listada em "Decisões arquiteturais" como ADR a criar;
-   - a seção "Documentação a atualizar" lista os arquivos de `docs/` afetados;
    - `Status: Rascunho`.
 8. Verifique se o plano viola alguma regra de `docs/arquitetura.md`. Se a spec só puder ser atendida violando uma regra, não viole: descreva o conflito no plano e pergunte ao usuário.
 9. **Pare.** Apresente o plano ao usuário e aguarde a revisão. Não crie `tasks.md` nem código.

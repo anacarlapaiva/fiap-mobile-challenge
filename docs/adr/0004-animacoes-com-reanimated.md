@@ -11,7 +11,7 @@ O teste técnico exige animação fluida em todas as telas, sem prejudicar a per
 ## Decisão
 
 1. Animações de interface usam `react-native-reanimated` 4.7.1, com `react-native-worklets` 0.13.0 (dependência obrigatória da versão 4; ambas declaram suporte ao React Native 0.86 a 0.88).
-2. O plugin Babel exigido pela biblioteca entra em `babel.config.js`, como último plugin. Depois de mudar a configuração do Babel, o Metro é reiniciado com `yarn start --reset-cache`.
+2. O plugin Babel exigido pela biblioteca entra em `babel.config.js`, como último plugin. Antes dele fica `@babel/plugin-transform-export-namespace-from`, porque o plugin do worklets não aceita `export * as` sem transformar (usado pelo `zod`). Depois de mudar a configuração do Babel, o Metro é reiniciado com `yarn start --reset-cache`.
 3. O módulo nativo entra por autolinking; no iOS, `bundle exec pod install` atualiza o `Podfile.lock`. Mudança em `ios/` autorizada pela responsável em 2026-10-24.
 4. O Jest usa a configuração de testes oficial da biblioteca, num arquivo de setup referenciado em `jest.config.js`.
 5. Durações e opacidades das animações vêm do tema (`src/shared/theme/`), nunca escritas nos componentes.

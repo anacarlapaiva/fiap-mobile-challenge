@@ -1,6 +1,6 @@
 # Spec 003: Componentes globais
 
-- **Status:** Em implementação
+- **Status:** Concluída
 - **Autor:** Ana Carla Paiva (com Claude Code)
 - **Aprovado por:** Ana Carla Paiva (2026-10-24)
 - **Data:** 2026-10-24
@@ -173,6 +173,10 @@ Não se aplica como tela: os estados de cada componente (desabilitado, carregand
 - Navegação e abas do rodapé.
 - Imagem "sem aulas": entra com a spec da agenda.
 - Tema claro e variantes de botão que não existem no Figma.
+
+## Verificação pendente
+
+Conferir no iOS e no Android que medidas, cores e animações dos componentes batem com o Figma.
 
 ## Perguntas em aberto
 

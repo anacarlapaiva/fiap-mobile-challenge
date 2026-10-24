@@ -15,13 +15,11 @@ Regras:
 
   - **Critérios de aceite:** CA-01
   - **Arquivos:** `src/features/<nome>/…`
-  - **Verificação:** teste `X.test.tsx` cobre o cenário …; `yarn validate` passa
-  - **Documentação:** `docs/…` (ou "nenhuma")
+  - **Verificação:** `yarn validate` passa (teste só se esta tarefa decidir algo ainda não coberto)
   - **Commit:** `feat(<nome>): …`
 
 - [ ] **T02: …**
   - **Critérios de aceite:**
   - **Arquivos:**
   - **Verificação:**
-  - **Documentação:**
   - **Commit:**

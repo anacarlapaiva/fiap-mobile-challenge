@@ -15,18 +15,19 @@ Gerar `docs/specs/NNN-nome/tasks.md` com uma checklist de tarefas pequenas, orde
 3. Leia o template `docs/specs/_templates/tasks.md`.
 4. Quebre o plano em tarefas seguindo estas regras:
    - cada tarefa cabe em um único commit e, ao final, deixa `yarn validate` passando;
-   - cada tarefa toca poucos arquivos e tem um resultado observável (teste novo passando, tela renderizando);
+   - cada tarefa toca poucos arquivos e tem um resultado observável;
+   - teste novo só se a tarefa decidir algo que ainda não tem caso no arquivo dono;
    - a ordem respeita as dependências: primeiro a estrutura da feature (skill `docs/ai/skills/create-feature/SKILL.md`), depois tipos, `api`, `store`, `hooks`, `components`, `screens` e, por último, a integração em `src/app/`;
    - ADRs listados no plano viram tarefas anteriores às que dependem deles;
-   - cada tarefa lista critérios de aceite cobertos, arquivos, forma de verificação, documentação a atualizar e mensagem de commit no padrão de `docs/convencoes.md`.
-5. Confira a cobertura: todo `CA-xx` da spec aparece em pelo menos uma tarefa, e todo item de "Documentação a atualizar" do plano aparece em alguma tarefa.
+   - cada tarefa lista critérios de aceite cobertos, arquivos, forma de verificação e mensagem de commit no padrão de `docs/convencoes.md`.
+5. Confira a cobertura: todo `CA-xx` da spec aparece em pelo menos uma tarefa. ADR listado no plano vira tarefa própria, antes das que dependem dele.
 6. Crie `docs/specs/NNN-nome/tasks.md` com todas as tarefas desmarcadas (`- [ ]`).
 7. Apresente a lista ao usuário e aplique os ajustes pedidos.
 
 ## Critérios de conclusão
 
 - O arquivo `tasks.md` existe e segue o template.
-- Todos os critérios de aceite e todas as atualizações de documentação estão cobertos.
+- Todos os critérios de aceite estão cobertos.
 - Nenhuma tarefa depende de outra que vem depois dela.
 - O usuário revisou a lista.
 
