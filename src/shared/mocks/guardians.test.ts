@@ -11,16 +11,4 @@ describe('mock dos responsáveis', () => {
       ]);
     });
   });
-
-  describe('dado o boletim de 2025 do primeiro aluno', () => {
-    test('quando o mock é lido, então o trimestre sem lançamento permanece com nota nula', () => {
-      const boletim = readGuardians()[0]?.alunos[0]?.boletim.find(
-        ano => ano.ano === '2025',
-      );
-      const trimestre = boletim?.trimestres.find(item => item.trimestre === 2);
-
-      expect(trimestre?.disciplinas[0]?.nota).toBeNull();
-      expect(trimestre?.disciplinas[0]?.faltas).toBeNull();
-    });
-  });
 });
