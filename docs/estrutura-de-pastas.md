@@ -53,6 +53,7 @@
     │   │   ├── responsavel.dto.ts
     │   │   └── index.ts
     │   ├── validation/        # um schema por entidade; a leitura do arquivo fica em responsavel.validation.ts
+    │   ├── mocks/             # JSON local no lugar da API (responsaveis.json + readResponsaveis)
     │   ├── hooks/             # hooks genéricos
     │   ├── lib/               # utilitários e wrappers de bibliotecas (createVariantBox do Restyle)
     │   ├── theme/             # tema do Restyle: theme.ts (tokens, variants, sizes, motion) e fonts.ts
@@ -81,6 +82,7 @@ As pastas `app/navigation/`, `shared/hooks/`, `shared/config/` e `shared/types/`
 | `src/shared/config/`     | Ponto único de acesso às variáveis de ambiente e constantes      | Segredos versionados                                                       |
 | `src/shared/dto/`        | Contrato externo lido por mais de uma feature (`*.dto.ts`)       | Schema Zod, regra de tela e texto de interface                             |
 | `src/shared/validation/` | Schema Zod do contrato compartilhado (`*.validation.ts`)         | Type do contrato e regra de tela                                           |
+| `src/shared/mocks/`      | Dado local que substitui a API, lido pela validação              | Chamada HTTP, regra de tela e texto de interface                           |
 | `src/shared/types/`      | Tipos sem dono de domínio e que não são contrato externo         | Tipos de uma feature e o JSON dos responsáveis                             |
 | `src/assets/`            | Arquivos estáticos, em `fonts/`, `images/`, `icons/` e `videos/` | Código com lógica                                                          |
 | `docs/`                  | Documentação viva do projeto                                     | Código executável                                                          |

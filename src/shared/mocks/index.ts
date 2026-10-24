@@ -1,0 +1,1 @@
+export { readResponsaveis } from './responsaveis';
