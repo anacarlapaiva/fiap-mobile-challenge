@@ -29,6 +29,7 @@ type SessionContextValue = {
   isSigningIn: boolean;
   signIn: (cpf: string, password: string) => Promise<LoginResult>;
   signOut: () => Promise<void>;
+  selectStudent: (studentRm: number) => Promise<boolean>;
 };
 
 const SessionContext = createContext<SessionContextValue | null>(null);
@@ -40,6 +41,14 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const [isSigningIn, setIsSigningIn] = useState(false);
   const signingIn = useRef<Promise<LoginResult> | null>(null);
   const hadSession = useRef(false);
+  const sessionRef = useRef<Session | null>(null);
+  const storageQueue = useRef<Promise<void>>(Promise.resolve());
+
+  const enqueueStorage = useCallback((task: () => Promise<void>) => {
+    const run = storageQueue.current.then(task);
+    storageQueue.current = run.catch(() => undefined);
+    return run;
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -59,6 +68,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         if (!active) {
           return;
         }
+        sessionRef.current = value;
         setSession(value);
         setIsReady(true);
       })
@@ -66,6 +76,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         if (!active) {
           return;
         }
+        sessionRef.current = null;
         setSession(null);
         setIsReady(true);
       });
@@ -99,35 +110,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
             return result;
           }
           setIsSigningIn(true);
-          await saveSession(result.session);
+          await enqueueStorage(() => saveSession(result.session));
+          sessionRef.current = result.session;
           setSession(result.session);
-          const user = findUser(result.session, guardians);
-          if (user) {
-            console.log({
-              session: result.session,
-              guardian: {
-                id: user.guardian.id,
-                cpf: user.guardian.cpf,
-                email: user.guardian.email,
-                primeiroNome: user.guardian.primeiroNome,
-                sobrenome: user.guardian.sobrenome,
-              },
-              student: {
-                rm: user.student.rm,
-                primeiroNome: user.student.primeiroNome,
-                sobrenome: user.student.sobrenome,
-                turma: user.student.turma,
-                periodo: user.student.periodo,
-              },
-              students: user.guardian.alunos.map(aluno => ({
-                rm: aluno.rm,
-                primeiroNome: aluno.primeiroNome,
-                sobrenome: aluno.sobrenome,
-                turma: aluno.turma,
-                periodo: aluno.periodo,
-              })),
-            });
-          }
           return result;
         } finally {
           signingIn.current = null;
@@ -137,20 +122,47 @@ export function SessionProvider({ children }: PropsWithChildren) {
       signingIn.current = pending;
       return pending;
     },
-    [queryClient],
+    [enqueueStorage, queryClient],
   );
 
   const signOut = useCallback(() => {
-    return clearSession()
+    sessionRef.current = null;
+    return enqueueStorage(clearSession)
       .catch(() => undefined)
       .then(() => {
         setSession(null);
       });
-  }, []);
+  }, [enqueueStorage]);
+
+  const selectStudent = useCallback(
+    async (studentRm: number) => {
+      const current = sessionRef.current;
+      if (!current || current.studentRm === studentRm) {
+        return false;
+      }
+      const next: Session = { guardianId: current.guardianId, studentRm };
+      const guardians = await ensureGuardians(queryClient).catch(() => null);
+      if (!guardians || !findUser(next, guardians)) {
+        return false;
+      }
+      if (sessionRef.current !== current) {
+        return false;
+      }
+      sessionRef.current = next;
+      setSession(next);
+      enqueueStorage(async () => {
+        if (sessionRef.current === next) {
+          await saveSession(next);
+        }
+      }).catch(() => undefined);
+      return true;
+    },
+    [enqueueStorage, queryClient],
+  );
 
   const value = useMemo(
-    () => ({ session, isReady, isSigningIn, signIn, signOut }),
-    [isReady, isSigningIn, session, signIn, signOut],
+    () => ({ session, isReady, isSigningIn, signIn, signOut, selectStudent }),
+    [isReady, isSigningIn, selectStudent, session, signIn, signOut],
   );
 
   return (

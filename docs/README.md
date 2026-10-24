@@ -38,6 +38,7 @@ Contrato de produto. Spec concluída fica só com `spec.md`. Plano e tarefas exi
 | [006](specs/006-bottom-tabs/spec.md)             | Abas                             |
 | [007](specs/007-schedule/spec.md)                | Agenda                           |
 | [008](specs/008-report-card/spec.md)             | Boletim                          |
+| [009](specs/009-student-selection/spec.md)       | Escolha de aluno                 |
 
 ## Instruções para agentes de IA
 

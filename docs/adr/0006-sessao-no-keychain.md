@@ -6,7 +6,7 @@
 
 ## Contexto
 
-O PDF pede que a autenticação continue depois de fechar e reabrir o app. Se a pessoa já estiver autenticada, a primeira tela depois da splash é Aulas, não o login. A senha do JSON não deve ser gravada de novo no aparelho. O projeto é React Native CLI, sem Expo (ADR 0003). O pacote de nome Expo SecureStore (`expo-secure-store` 58.0.2) declara `expo` como peer e puxa esse runtime.
+A autenticação continua depois de fechar e reabrir o app. Se a pessoa já estiver autenticada, a primeira tela depois da splash é a aba AGENDA, não o login. A senha do JSON não deve ser gravada de novo no aparelho. O projeto é React Native CLI, sem Expo (ADR 0003). O pacote de nome Expo SecureStore (`expo-secure-store` 58.0.2) declara `expo` como peer e puxa esse runtime.
 
 ## Decisão
 

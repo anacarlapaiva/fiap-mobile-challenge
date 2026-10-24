@@ -35,6 +35,7 @@ const fill = {
 
 const borderWidths = {
   thin: 1,
+  accentBar: 4,
 } as const;
 
 const sizes = {
@@ -82,6 +83,7 @@ export const theme = createTheme({
     fieldGap: 39,
     xl: 48,
     sectionGap: 64,
+    selectionTitleGap: 169,
     logoGap: 80,
     loginTop: 100,
   },
@@ -106,6 +108,7 @@ export const theme = createTheme({
     short: 150,
     medium: 200,
     caretBlink: 500,
+    toastVisibility: 2500,
   },
   logoVariants: {
     large: { width: 306, height: 49 },
@@ -126,6 +129,15 @@ export const theme = createTheme({
     layer: {
       ...fill,
       alignItems: 'center',
+    },
+  },
+  toastVariants: {
+    container: {
+      backgroundColor: 'surface',
+      borderRadius: 'm',
+      borderLeftWidth: borderWidths.accentBar,
+      borderLeftColor: 'accent',
+      padding: 'm',
     },
   },
   emptyVariants: {

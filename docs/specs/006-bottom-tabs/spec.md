@@ -1,13 +1,13 @@
 # Spec 006: Abas da área autenticada
 
 - **Status:** Concluída
-- **Autor:** Ana Carla Paiva (com Claude Code)
+- **Autor:** Ana Carla Paiva
 - **Aprovado por:** Ana Carla Paiva (2026-10-24)
 - **Data:** 2026-10-24
 
 ## O quê
 
-Rodapé com as abas AGENDA e BOLETIM abaixo do cabeçalho, idêntico ao Figma (normalizado). AGENDA mostra o conteúdo atual; BOLETIM mostra só o título da seção até a spec do boletim.
+Rodapé com as abas AGENDA e BOLETIM abaixo do cabeçalho, idêntico ao Figma (normalizado). O conteúdo da AGENDA está na spec 007; o do BOLETIM, na spec 008.
 
 ## Critérios de aceite
 
@@ -26,7 +26,3 @@ Rodapé com as abas AGENDA e BOLETIM abaixo do cabeçalho, idêntico ao Figma (n
 ## Fora do escopo
 
 - Conteúdo da agenda e do boletim, escolha de aluno, desabilitar aba.
-
-## Verificação pendente
-
-CA-05 (pulso e troca de cor) no aparelho e CA-07 no Android.

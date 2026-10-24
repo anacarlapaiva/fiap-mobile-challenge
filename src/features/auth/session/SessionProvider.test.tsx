@@ -23,7 +23,7 @@ const saveSession = jest.mocked(sessionStorage.saveSession);
 const clearSession = jest.mocked(sessionStorage.clearSession);
 
 function Harness() {
-  const { session, isReady, signIn, signOut } = useSession();
+  const { session, isReady, signIn, signOut, selectStudent } = useSession();
   const guardians = useGuardians();
   return (
     <>
@@ -45,6 +45,18 @@ function Harness() {
         }}
       />
       <Pressable testID="sign-out" onPress={signOut} />
+      <Pressable
+        testID="select-joana"
+        onPress={() => {
+          selectStudent(12568).catch(() => undefined);
+        }}
+      />
+      <Pressable
+        testID="select-foreign"
+        onPress={() => {
+          selectStudent(13752).catch(() => undefined);
+        }}
+      />
     </>
   );
 }
@@ -85,6 +97,17 @@ async function settle() {
       });
     });
   }
+}
+
+async function press(
+  renderer: ReactTestRenderer.ReactTestRenderer,
+  testID: string,
+) {
+  await ReactTestRenderer.act(async () => {
+    renderer.root.findByProps({ testID }).props.onPress();
+    await flush();
+  });
+  await settle();
 }
 
 function texts(renderer: ReactTestRenderer.ReactTestRenderer) {
@@ -197,6 +220,73 @@ describe('provider da sessão', () => {
       await settle();
 
       expect(clear).toHaveBeenCalled();
+      expect(texts(renderer)).toContain('none');
+    });
+  });
+
+  describe('dado o Gustavo logado com o Rafael', () => {
+    async function signedIn() {
+      const view = await renderProvider();
+      await settle();
+      await press(view.renderer, 'sign-in');
+      saveSession.mockClear();
+      return view;
+    }
+
+    test('CA-09: quando a Joana é escolhida, então a sessão troca e é gravada no Keychain', async () => {
+      const { renderer } = await signedIn();
+
+      await press(renderer, 'select-joana');
+
+      expect(saveSession).toHaveBeenCalledWith({
+        guardianId: 1,
+        studentRm: 12568,
+      });
+      expect(texts(renderer)).toContain('1:12568');
+    });
+
+    test('CA-10: quando o Keychain falha ao gravar, então a troca vale na memória', async () => {
+      const { renderer } = await signedIn();
+      saveSession.mockRejectedValue(new Error('keychain'));
+
+      await press(renderer, 'select-joana');
+
+      expect(texts(renderer)).toContain('1:12568');
+    });
+
+    test('CA-11: quando um RM de outro responsável é pedido, então nada muda e nada é gravado', async () => {
+      const { renderer } = await signedIn();
+
+      await press(renderer, 'select-foreign');
+
+      expect(saveSession).not.toHaveBeenCalled();
+      expect(texts(renderer)).toContain('1:12567');
+    });
+
+    test('CA-12: quando SAIR é tocado com a gravação em andamento, então a sessão é apagada depois dela', async () => {
+      const { renderer } = await signedIn();
+      let finishSave: () => void = () => undefined;
+      saveSession.mockImplementation(
+        () =>
+          new Promise<void>(resolve => {
+            finishSave = resolve;
+          }),
+      );
+
+      await press(renderer, 'select-joana');
+      await press(renderer, 'sign-out');
+      expect(clearSession).not.toHaveBeenCalled();
+
+      await ReactTestRenderer.act(async () => {
+        finishSave();
+        await flush();
+      });
+      await settle();
+
+      expect(clearSession).toHaveBeenCalledTimes(1);
+      expect(saveSession.mock.invocationCallOrder[0] ?? Infinity).toBeLessThan(
+        clearSession.mock.invocationCallOrder[0] ?? 0,
+      );
       expect(texts(renderer)).toContain('none');
     });
   });

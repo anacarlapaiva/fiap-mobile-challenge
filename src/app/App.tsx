@@ -7,7 +7,7 @@ import { RootNavigator } from '@/app/navigation/RootNavigator';
 import { AppProviders } from '@/app/providers';
 import { useSession } from '@/features/auth';
 import { SplashScreen } from '@/features/splash';
-import { Box } from '@/shared/components';
+import { Box, ToastHost } from '@/shared/components';
 
 function AppContent() {
   const { isReady } = useSession();
@@ -26,6 +26,7 @@ function AppContent() {
           <SplashScreen onFinish={() => setSplashDone(true)} />
         )}
       </Box>
+      <ToastHost />
     </>
   );
 }

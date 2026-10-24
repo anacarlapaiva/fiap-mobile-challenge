@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { ThemeProvider } from '@shopify/restyle';
+import { useSyncExternalStore } from 'react';
 import { Text as NativeText } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ReactTestRenderer from 'react-test-renderer';
@@ -8,7 +9,7 @@ import { useCurrentUser } from '@/features/auth';
 import { readGuardians } from '@/shared/mocks';
 import { theme } from '@/shared/theme';
 
-import { TabNavigator } from './TabNavigator';
+import { TabNavigator, tabSceneAnimation } from './TabNavigator';
 
 jest.mock('@/features/auth', () => ({
   useCurrentUser: jest.fn(),
@@ -21,22 +22,43 @@ const metrics = {
   insets: { top: 47, bottom: 34, left: 0, right: 0 },
 };
 
-function rafaelUser() {
+function gustavoWith(rm: number) {
   const guardian = readGuardians().find(item => item.id === 1);
-  const student = guardian?.alunos.find(item => item.rm === 12567);
+  const student = guardian?.alunos.find(item => item.rm === rm);
   if (!guardian || !student) {
-    throw new Error('mock do Rafael ausente');
+    throw new Error(`mock do aluno ${rm} ausente`);
   }
-  return { guardian, student };
+  return { status: 'ready' as const, user: { guardian, student } };
+}
+
+let activeUser = gustavoWith(12567);
+const userListeners = new Set<() => void>();
+
+function subscribeUser(listener: () => void) {
+  userListeners.add(listener);
+  return () => {
+    userListeners.delete(listener);
+  };
+}
+
+function readActiveUser() {
+  return activeUser;
+}
+
+async function switchStudent(rm: number) {
+  await ReactTestRenderer.act(() => {
+    activeUser = gustavoWith(rm);
+    userListeners.forEach(listener => listener());
+  });
 }
 
 let renderer: ReactTestRenderer.ReactTestRenderer | undefined;
 
 async function renderTabs() {
-  useCurrentUserMock.mockReturnValue({
-    status: 'ready',
-    user: rafaelUser(),
-  });
+  activeUser = gustavoWith(12567);
+  useCurrentUserMock.mockImplementation(() =>
+    useSyncExternalStore(subscribeUser, readActiveUser),
+  );
   await ReactTestRenderer.act(() => {
     renderer = ReactTestRenderer.create(
       <SafeAreaProvider initialMetrics={metrics}>
@@ -87,8 +109,28 @@ async function renderTabs() {
     press,
     labels: () =>
       root.findAllByType(NativeText).map(node => node.props.children),
+    selected: (id: string) =>
+      root.findAll(
+        node =>
+          node.props.testID === id &&
+          node.props.accessibilityState?.selected === true,
+      ).length > 0,
   };
 }
+
+describe('troca de aba', () => {
+  describe('dado reduzir movimento desligado', () => {
+    test('quando a cena troca, então a transição é fade', () => {
+      expect(tabSceneAnimation(false)).toBe('fade');
+    });
+  });
+
+  describe('dado reduzir movimento ligado', () => {
+    test('quando a cena troca, então não anima', () => {
+      expect(tabSceneAnimation(true)).toBe('none');
+    });
+  });
+});
 
 describe('abas com a agenda', () => {
   afterEach(async () => {
@@ -133,6 +175,29 @@ describe('abas com a agenda', () => {
           'Nota: 9.5',
         ]),
       );
+    });
+  });
+
+  describe('dado o Rafael no BOLETIM com o 1º trimestre de 7EF - 2025 aberto e a AGENDA em 2025-03-17', () => {
+    test('CA-06: quando a Joana é escolhida, então o BOLETIM continua aberto no primeiro ano com os cards fechados e a AGENDA volta ao primeiro dia', async () => {
+      const view = await renderTabs();
+
+      await view.press('agenda-day');
+      await view.press('dropdown-option-1');
+      await view.press('tab-ReportCard');
+      await view.press('term-1');
+      expect(view.labels()).toContain('LÍNGUA PORTUGUESA');
+
+      await switchStudent(12568);
+
+      expect(view.selected('tab-ReportCard')).toBe(true);
+      expect(view.labels()).toContain('2EM - 2025');
+      expect(view.labels()).not.toContain('LÍNGUA PORTUGUESA');
+
+      await view.press('tab-Agenda');
+
+      expect(view.labels()).toContain('16 de março, domingo');
+      expect(view.labels()).not.toContain('17 de março, segunda-feira');
     });
   });
 });

@@ -60,7 +60,7 @@ Caminhos confirmados na documentação oficial de cada ferramenta em 2026-10-23.
 
 ## Como usar em qualquer ferramenta
 
-Sem adaptador, basta pedir ao agente: "Leia e siga `docs/ai/flows/implementar.md` para a tarefa T03 de `docs/specs/001-login`".
+Sem adaptador, basta pedir ao agente: "Leia e siga `docs/ai/flows/implementar.md` para a tarefa T06 de `docs/specs/009-student-selection`".
 
 ## Adicionando um fluxo ou uma skill
 

@@ -1,7 +1,7 @@
 # Spec 001: Design system (tema global)
 
 - **Status:** Concluída
-- **Autor:** Ana Carla Paiva (com Claude Code)
+- **Autor:** Ana Carla Paiva
 - **Aprovado por:** Ana Carla Paiva (2026-10-23)
 - **Data:** 2026-10-23
 
@@ -67,6 +67,7 @@ Montserrat v9.000 (OFL), pesos 400, 500, 600 e 700. Letter-spacing 0. Altura de 
 | 64    | Fim do cabeçalho e o título de seção                                                      |
 | 80    | Logo e o rótulo do CPF no login                                                           |
 | 100   | Topo da área segura e o logo do login                                                     |
+| 169   | Linha do FECHAR e o título da escolha de aluno                                            |
 
 ## Raios, bordas e tamanhos
 
@@ -75,6 +76,7 @@ Montserrat v9.000 (OFL), pesos 400, 500, 600 e 700. Letter-spacing 0. Altura de 
 | Raio de dropdown, lista e cards         | 8                                        |
 | Borda do card de aluno selecionado      | 1, cor destaque                          |
 | Linha dos campos do login               | 1                                        |
+| Barra de destaque da mensagem           | 4, à esquerda, cor destaque              |
 | Marcador da aula                        | 6×6, círculo, borda 1                    |
 | Barra de ações (topo)                   | altura 48                                |
 | Logo na barra de ações                  | 100×16                                   |
@@ -112,7 +114,3 @@ Montserrat v9.000 (OFL), pesos 400, 500, 600 e 700. Letter-spacing 0. Altura de 
 ## Fora do escopo
 
 - Telas, splash, tema claro. Peças visuais ficam em `src/shared/components/` e nos testes ao lado delas.
-
-## Verificação pendente
-
-CA-03 no aparelho (iOS e Android).
