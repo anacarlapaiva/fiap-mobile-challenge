@@ -19,29 +19,42 @@ async function renderStyle(element: ReactElement) {
   return StyleSheet.flatten(renderer.root.findByType(NativeText).props.style);
 }
 
-describe('Text', () => {
-  test('CA-02: aplica o variant sobre os padrões do tema', async () => {
-    const style = await renderStyle(<Text variant="sectionTitle">AGENDA</Text>);
+describe('texto do tema', () => {
+  describe('dado o estilo de título de seção', () => {
+    test('CA-02: quando o estilo é aplicado, então usa a fonte, o tamanho e a altura da tabela', async () => {
+      const style = await renderStyle(
+        <Text variant="sectionTitle">AGENDA</Text>,
+      );
 
-    expect(style).toMatchObject({
-      fontFamily: fonts.bold,
-      fontSize: 20,
-      lineHeight: 24,
-      letterSpacing: 0,
-      includeFontPadding: false,
-      color: theme.colors.accent,
+      expect(style).toMatchObject({
+        fontFamily: fonts.bold,
+        fontSize: 20,
+        lineHeight: 24,
+        letterSpacing: 0,
+        color: theme.colors.accent,
+      });
     });
-    expect(style).not.toHaveProperty('fontWeight');
+
+    test('CA-03: quando o estilo é aplicado, então o sistema não sintetiza negrito nem padding de fonte', async () => {
+      const style = await renderStyle(
+        <Text variant="sectionTitle">AGENDA</Text>,
+      );
+
+      expect(style).toMatchObject({ includeFontPadding: false });
+      expect(style).not.toHaveProperty('fontWeight');
+    });
   });
 
-  test('CA-02: sem variant, usa o corpo', async () => {
-    const style = await renderStyle(<Text>texto</Text>);
+  describe('dado um texto sem estilo pedido', () => {
+    test('CA-02: quando renderizado, então usa o corpo da tabela', async () => {
+      const style = await renderStyle(<Text>texto</Text>);
 
-    expect(style).toMatchObject({
-      fontFamily: fonts.regular,
-      fontSize: 16,
-      lineHeight: 20,
-      color: theme.colors.textPrimary,
+      expect(style).toMatchObject({
+        fontFamily: fonts.regular,
+        fontSize: 16,
+        lineHeight: 20,
+        color: theme.colors.textPrimary,
+      });
     });
   });
 });

@@ -43,11 +43,22 @@
     │   │   ├── …              # Box, Text, Screen, Logo, PressableBox, PressableOpacity,
     │   │   │                  # TextField, TextButton, Card, Dropdown
     │   │   └── index.ts       # API pública de todos os componentes
+    │   ├── dto/               # um arquivo por entidade do JSON (ADR 0008)
+    │   │   ├── aula.dto.ts
+    │   │   ├── agenda.dto.ts
+    │   │   ├── disciplina.dto.ts
+    │   │   ├── trimestre.dto.ts
+    │   │   ├── boletim.dto.ts
+    │   │   ├── aluno.dto.ts
+    │   │   ├── responsavel.dto.ts
+    │   │   └── index.ts
+    │   ├── validation/        # um schema por entidade; a leitura do arquivo fica em responsavel.validation.ts
+    │   ├── mocks/             # JSON local no lugar da API (responsaveis.json + readResponsaveis)
     │   ├── hooks/             # hooks genéricos
     │   ├── lib/               # utilitários e wrappers de bibliotecas (createVariantBox do Restyle)
     │   ├── theme/             # tema do Restyle: theme.ts (tokens, variants, sizes, motion) e fonts.ts
     │   ├── config/            # variáveis de ambiente e constantes
-    │   └── types/             # tipos compartilhados
+    │   └── types/             # tipos compartilhados que não são contrato externo
     └── assets/                # fontes, imagens, ícones e vídeos
         ├── fonts/             # Montserrat (4 pesos) + OFL.txt
         ├── images/            # logo.png exportado do Figma e a declaração de tipo ao lado
@@ -69,7 +80,10 @@ As pastas `app/navigation/`, `shared/hooks/`, `shared/config/` e `shared/types/`
 | `src/shared/lib/`        | Utilitários e adaptadores de bibliotecas                         | Endpoints de uma feature                                                   |
 | `src/shared/theme/`      | Tokens de design                                                 | Componentes                                                                |
 | `src/shared/config/`     | Ponto único de acesso às variáveis de ambiente e constantes      | Segredos versionados                                                       |
-| `src/shared/types/`      | Tipos sem dono de domínio                                        | Tipos de uma feature                                                       |
+| `src/shared/dto/`        | Contrato externo lido por mais de uma feature (`*.dto.ts`)       | Schema Zod, regra de tela e texto de interface                             |
+| `src/shared/validation/` | Schema Zod do contrato compartilhado (`*.validation.ts`)         | Type do contrato e regra de tela                                           |
+| `src/shared/mocks/`      | Dado local que substitui a API, lido pela validação              | Chamada HTTP, regra de tela e texto de interface                           |
+| `src/shared/types/`      | Tipos sem dono de domínio e que não são contrato externo         | Tipos de uma feature e o JSON dos responsáveis                             |
 | `src/assets/`            | Arquivos estáticos, em `fonts/`, `images/`, `icons/` e `videos/` | Código com lógica                                                          |
 | `docs/`                  | Documentação viva do projeto                                     | Código executável                                                          |
 
@@ -81,8 +95,10 @@ src/features/<nome>/
 ├── components/    # componentes usados só nesta feature
 ├── hooks/         # hooks da feature (useProfile.ts)
 ├── api/           # chamadas de rede da feature
+├── dto/           # contrato externo só desta feature (`nome.dto.ts`)
+├── validation/    # schema Zod desse contrato (`nome.validation.ts`)
 ├── store/         # estado da feature
-├── types.ts       # tipos da feature
+├── types.ts       # tipos da feature que não são o contrato externo
 └── index.ts       # API pública: única porta de entrada para outras camadas
 ```
 
@@ -90,6 +106,6 @@ Regras:
 
 1. **`index.ts` é a API pública.** Exporta só o que outras camadas podem usar (telas para a navegação, hooks e tipos públicos). O resto é privado.
 2. **Ninguém importa arquivos internos de outra feature.** `import { X } from '@/features/profile'` ✅ / `import { X } from '@/features/profile/hooks/useProfile'` ❌. O ESLint bloqueia o segundo caso.
-3. **Testes ficam ao lado do arquivo testado**: `ProfileScreen.tsx` + `ProfileScreen.test.tsx`.
+3. **Teste só no arquivo que tem comportamento**, ao lado dele: `ProfileScreen.tsx` + `ProfileScreen.test.tsx`. DTO, `index.ts` e schema que só compõe outro não levam teste. Veja [convencoes.md](convencoes.md#testes).
 4. Subpastas sem conteúdo não são criadas. A feature só tem as pastas de que precisa, mas `index.ts` é obrigatório.
 5. Para criar uma feature, siga a skill [create-feature](ai/skills/create-feature/SKILL.md).

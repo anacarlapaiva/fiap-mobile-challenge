@@ -59,7 +59,7 @@ async function render(
   };
 }
 
-describe('Dropdown', () => {
+describe('lista de opções', () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -68,51 +68,54 @@ describe('Dropdown', () => {
     jest.useRealTimers();
   });
 
-  test('CA-14: abre com as opções na ordem e estado expandido', async () => {
-    const view = await render(options);
+  describe('dado um campo fechado com opções', () => {
+    test('CA-14: quando o campo é tocado, então a lista abre na ordem e fica expandida', async () => {
+      const view = await render(options);
 
-    expect(view.modalVisible()).toBe(false);
-    expect(view.field()?.props.accessibilityState).toEqual({
-      expanded: false,
-    });
+      await view.press('dropdown');
 
-    await view.press('dropdown');
-
-    expect(view.modalVisible()).toBe(true);
-    expect(view.optionLabels()).toEqual(options.map(option => option.label));
-    expect(view.field()?.props.accessibilityState).toEqual({ expanded: true });
-  });
-
-  test('CA-15: tocar numa opção entrega a opção e fecha a lista', async () => {
-    const onSelect = jest.fn();
-    const view = await render(options, onSelect);
-
-    await view.press('dropdown');
-    await view.press('dropdown-option-1');
-
-    expect(onSelect).toHaveBeenCalledWith(options[1]);
-    expect(view.modalVisible()).toBe(false);
-    expect(view.field()?.props.accessibilityState).toEqual({
-      expanded: false,
+      expect(view.modalVisible()).toBe(true);
+      expect(view.optionLabels()).toEqual(options.map(option => option.label));
+      expect(view.field()?.props.accessibilityState).toEqual({
+        expanded: true,
+      });
     });
   });
 
-  test('CA-16: sem opções, o campo não abre', async () => {
-    const view = await render([]);
+  describe('dado um campo aberto', () => {
+    test('CA-15: quando uma opção é tocada, então quem usa recebe a opção e a lista fecha', async () => {
+      const onSelect = jest.fn();
+      const view = await render(options, onSelect);
 
-    await view.press('dropdown');
+      await view.press('dropdown');
+      await view.press('dropdown-option-1');
 
-    expect(view.modalVisible()).toBe(false);
+      expect(onSelect).toHaveBeenCalledWith(options[1]);
+      expect(view.modalVisible()).toBe(false);
+      expect(view.field()?.props.accessibilityState).toEqual({
+        expanded: false,
+      });
+    });
+
+    test('CA-18: quando o toque é fora da lista, então a lista fecha e ninguém recebe opção', async () => {
+      const onSelect = jest.fn();
+      const view = await render(options, onSelect);
+
+      await view.press('dropdown');
+      await view.press('dropdown-backdrop');
+
+      expect(onSelect).not.toHaveBeenCalled();
+      expect(view.modalVisible()).toBe(false);
+    });
   });
 
-  test('CA-18: tocar fora fecha sem selecionar', async () => {
-    const onSelect = jest.fn();
-    const view = await render(options, onSelect);
+  describe('dado um campo sem opções', () => {
+    test('CA-16: quando o campo é tocado, então a lista não abre', async () => {
+      const view = await render([]);
 
-    await view.press('dropdown');
-    await view.press('dropdown-backdrop');
+      await view.press('dropdown');
 
-    expect(onSelect).not.toHaveBeenCalled();
-    expect(view.modalVisible()).toBe(false);
+      expect(view.modalVisible()).toBe(false);
+    });
   });
 });

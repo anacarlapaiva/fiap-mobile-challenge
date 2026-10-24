@@ -15,7 +15,7 @@ Implementar **uma única** tarefa de `docs/specs/NNN-nome/tasks.md`, com testes,
 3. Identifique a tarefa. Confirme que todas as tarefas anteriores estão marcadas `[x]`; se não estiverem, pergunte ao usuário antes de seguir.
 4. Leia `docs/arquitetura.md`, `docs/convencoes.md` e o `AGENTS.md` local das pastas que vai editar, se existir.
 5. Leia os arquivos de código listados na tarefa e os vizinhos deles, para seguir os padrões existentes.
-6. Escreva os testes primeiro, derivados dos critérios de aceite da tarefa: cada `CA-xx` vira pelo menos um caso de teste em `X.test.tsx`, ao lado do arquivo testado. Cubra também os estados de erro, vazio e carregamento descritos na spec.
+6. Escreva os testes primeiro, em BDD, só para o arquivo que tem comportamento observável. DTO, barrel e schema que só compõe outro não levam teste. Cada `CA-xx` com comportamento vira pelo menos um caso em `X.test.tsx`, ao lado desse arquivo. O `describe` é o Dado; o título do caso é o Quando e um único Então. Cubra também os estados de erro, vazio e carregamento descritos na spec. Veja [docs/convencoes.md](../../convencoes.md#testes).
 7. Implemente o mínimo necessário para os testes passarem, dentro do escopo da tarefa. Não implemente partes de outras tarefas.
 8. Rode `yarn validate`. Corrija **todos** os erros e warnings. Repita até passar. Não altere a configuração de lint, de TypeScript ou de testes para fazer passar; respeite as "Proibições" de `AGENTS.md`.
 9. Atualize a documentação:

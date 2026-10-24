@@ -12,7 +12,7 @@ O app vai ler o JSON dos responsáveis e o texto da sessão gravada no aparelho.
 
 1. Todo dado que entra de fora (JSON empacotado e sessão lida do Keychain) é conferido com Zod 4.6.7.
 2. O erro dessa borda é o `ZodError`. A tela não interpreta o texto cru.
-3. Schema e tipo derivado ficam junto do dado (feature ou `shared`, conforme o dono). Zod não vira camada de rede: não há API HTTP nesta decisão.
+3. O type do contrato fica em `dto/` e o schema em `validation/` ([ADR 0008](0008-separar-contrato-em-dto-e-validacao.md)). Zod não vira camada de rede: não há API HTTP nesta decisão.
 
 ## Alternativas consideradas
 
@@ -24,6 +24,6 @@ O app vai ler o JSON dos responsáveis e o texto da sessão gravada no aparelho.
 
 ## Consequências
 
-- **Positivas:** JSON e sessão inválidos falham antes de chegar na tela; o tipo TypeScript sai do schema.
+- **Positivas:** JSON e sessão inválidos falham antes de chegar na tela; o schema só compila se produzir o type do DTO.
 - **Negativas:** uma dependência de runtime só para validar. Não substitui o estado de erro desenhado no Figma: o texto da mensagem continua na spec da tela.
 - **Ações decorrentes:** dependência em `package.json`; schemas entram na tarefa que passar a ler o JSON e a sessão, não nesta decisão.

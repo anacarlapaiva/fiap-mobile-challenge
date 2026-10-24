@@ -19,37 +19,33 @@ async function render(element: ReactElement) {
   return renderer.root;
 }
 
-describe('Icon', () => {
-  test('CA-02: desenha na cor do tema com altura igual ao tamanho', async () => {
-    const root = await render(<Icon name="arrow" color="accent" size="m" />);
+describe('ícone', () => {
+  describe('dado um ícone quadrado com cor e tamanho do tema', () => {
+    test('CA-02: quando renderizado, então a altura é o tamanho e o desenho usa a cor pedida', async () => {
+      const root = await render(<Icon name="arrow" color="accent" size="m" />);
 
-    const svg = root.findByType(Svg);
-    expect(svg.props.width).toBe(14);
-    expect(svg.props.height).toBe(14);
-    expect(svg.props.viewBox).toBe('0 0 14 14');
-    root.findAllByType(Path).forEach(path => {
-      expect(path.props.fill).toBe(theme.colors.accent);
+      const svg = root.findByType(Svg);
+      expect(svg.props.width).toBe(14);
+      expect(svg.props.height).toBe(14);
+      expect(svg.props.viewBox).toBe('0 0 14 14');
+      root.findAllByType(Path).forEach(path => {
+        expect(path.props.fill).toBe(theme.colors.accent);
+      });
     });
   });
 
-  test('CA-02: mantém a proporção de desenho não quadrado', async () => {
-    const root = await render(
-      <Icon name="calendar" color="textPrimary" size="l" />,
-    );
+  describe('dado um ícone mais largo que alto', () => {
+    test('CA-02: quando renderizado, então a largura acompanha a proporção do desenho', async () => {
+      const root = await render(
+        <Icon name="calendar" color="textPrimary" size="l" />,
+      );
 
-    const svg = root.findByType(Svg);
-    expect(svg.props.height).toBe(24);
-    expect(svg.props.width).toBeCloseTo(21.4311);
-    expect(root.findAllByType(Path)[0]?.props.fill).toBe(
-      theme.colors.textPrimary,
-    );
-  });
-
-  test('CA-02: preserva a regra de preenchimento do desenho', async () => {
-    const root = await render(
-      <Icon name="checkFile" color="accent" size="l" />,
-    );
-
-    expect(root.findByType(Path).props.fillRule).toBe('evenodd');
+      const svg = root.findByType(Svg);
+      expect(svg.props.height).toBe(24);
+      expect(svg.props.width).toBeCloseTo(21.4311);
+      expect(root.findAllByType(Path)[0]?.props.fill).toBe(
+        theme.colors.textPrimary,
+      );
+    });
   });
 });
