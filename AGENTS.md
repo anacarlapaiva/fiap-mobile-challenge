@@ -44,7 +44,7 @@ Regras (impostas pelo ESLint; violação quebra o `yarn lint`):
 3. `shared` nunca importa de `features` nem de `app`.
 4. Todo arquivo de código em `src/` pertence a uma camada.
 5. Use sempre os aliases `@/app`, `@/features`, `@/shared` e `@/assets`. Imports com `../` são proibidos em `src/` (erro de lint); import relativo só para arquivos da mesma pasta (`./X`).
-6. O teste fica ao lado do arquivo que tem o comportamento, e só nesse arquivo: `X.tsx` + `X.test.tsx`. DTO, barrel e arquivo sem decisão própria não levam teste (veja [docs/convencoes.md](docs/convencoes.md#testes)).
+6. Teste só o arquivo que **decide** o comportamento, uma vez, ao lado dele. Quem só chama código já testado não ganha teste. DTO, barrel, tema e arquivo sem decisão própria não levam teste (veja [docs/convencoes.md](docs/convencoes.md#testes)).
 
 Nomenclatura, commits e branches: [docs/convencoes.md](docs/convencoes.md).
 
@@ -54,33 +54,38 @@ Uma pasta pode ter um `AGENTS.md` próprio, que complementa este arquivo. Antes 
 
 ## Fluxo SDD obrigatório
 
-O ciclo completo está em [docs/fluxo-sdd.md](docs/fluxo-sdd.md). Regras:
+O ciclo está em [docs/fluxo-sdd.md](docs/fluxo-sdd.md). Regras:
 
 1. Nenhuma feature começa sem `docs/specs/NNN-nome/spec.md` com `Status: Aprovada`.
 2. Nenhuma implementação começa sem `plan.md` com `Status: Aprovado` e sem `tasks.md`.
 3. Implemente **uma** tarefa de `tasks.md` por vez e marque-a com `[x]` ao concluir.
+4. Spec `Concluída` fica só com `spec.md`. Apague `plan.md` e `tasks.md`.
 
-Para executar cada etapa, leia e siga o arquivo correspondente:
+| Etapa              | Arquivo                                                      |
+| ------------------ | ------------------------------------------------------------ |
+| Escrever uma spec  | [docs/ai/flows/spec.md](docs/ai/flows/spec.md)               |
+| Gerar o plano      | [docs/ai/flows/plano.md](docs/ai/flows/plano.md)             |
+| Quebrar em tarefas | [docs/ai/flows/tarefas.md](docs/ai/flows/tarefas.md)         |
+| Implementar        | [docs/ai/flows/implementar.md](docs/ai/flows/implementar.md) |
 
-| Etapa                                   | Arquivo                                                            |
-| --------------------------------------- | ------------------------------------------------------------------ |
-| Escrever uma spec                       | [docs/ai/flows/spec.md](docs/ai/flows/spec.md)                     |
-| Gerar o plano                           | [docs/ai/flows/plano.md](docs/ai/flows/plano.md)                   |
-| Quebrar em tarefas                      | [docs/ai/flows/tarefas.md](docs/ai/flows/tarefas.md)               |
-| Implementar uma tarefa                  | [docs/ai/flows/implementar.md](docs/ai/flows/implementar.md)       |
-| Sincronizar a documentação com o código | [docs/ai/flows/atualizar-docs.md](docs/ai/flows/atualizar-docs.md) |
+## Documentação
 
-## Documentação viva
+`docs/` guarda o contrato (arquitetura, convenções, ADRs, specs). Não é diário de sessão. Não crie arquivo novo em `docs/` e não reescreva árvore, plano ou spec porque um arquivo de código nasceu, mudou de nome ou ganhou um detalhe interno.
 
-Toda alteração de estrutura, arquitetura, convenção, dependência ou comportamento atualiza os documentos afetados em `docs/` (e este `AGENTS.md`, se for o caso) **na mesma tarefa e no mesmo commit**. Tarefa sem documentação atualizada não está concluída.
+Atualize documentação **somente** quando a tarefa alterar:
+
+- camada, regra de dependência ou pasta de camada;
+- convenção;
+- decisão arquitetural (ADR novo ou mudança de um existente);
+- critério de aceite de uma spec ainda em implementação.
 
 ## Definição de pronto
 
 Uma tarefa só está pronta quando:
 
 1. `yarn validate` termina sem erros e sem warnings;
-2. os documentos afetados foram atualizados (seção anterior);
-3. a tarefa está marcada com `[x]` em `tasks.md`, quando fizer parte de uma spec.
+2. se a tarefa mudou arquitetura, convenção, ADR ou contrato da spec em andamento, esses documentos foram atualizados;
+3. a tarefa está marcada com `[x]` em `tasks.md`, quando a spec ainda tem esse arquivo.
 
 ## Dúvidas e decisões
 
@@ -89,13 +94,14 @@ Uma tarefa só está pronta quando:
 
 ## Proibições
 
-1. Adicionar dependência sem justificativa na seção "Dependências novas" do `plan.md` da spec.
+1. Adicionar dependência estrutural (navegação, estado, rede, persistência) sem ADR, ou outra dependência de runtime sem constar no `plan.md` da spec em implementação.
 2. Usar `any`. Use `unknown` e refine o tipo.
 3. Desabilitar regra de lint sem justificativa no próprio comentário (`// eslint-disable-next-line <regra> -- <motivo>`).
 4. Alterar `android/` ou `ios/` sem pedido explícito.
 5. Fazer commit, push ou merge sem pedido explícito, ou commitar com `--no-verify`.
 6. Importar arquivos internos de outra feature, ou contornar as regras de camada.
-7. Escrever comentários em código ou configuração (`.js`, `.jsx`, `.ts`, `.tsx`). Explicações e decisões vão para `docs/`. Única exceção: a justificativa obrigatória de um `eslint-disable`.
+7. Escrever comentários em código ou configuração (`.js`, `.jsx`, `.ts`, `.tsx`). Única exceção: a justificativa obrigatória de um `eslint-disable`.
+8. Criar teste, spec, ADR ou outro arquivo em `docs/` só para completar pasta ou registrar o que o código já diz.
 
 ## Skills
 
