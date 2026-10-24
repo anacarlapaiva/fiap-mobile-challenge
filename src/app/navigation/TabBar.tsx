@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withSequence,
   withTiming,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,6 +16,7 @@ import {
   Text,
   type IconName,
 } from '@/shared/components';
+import { usePulse } from '@/shared/hooks/usePulse';
 import { createVariantBox } from '@/shared/lib/createVariantBox';
 import type { Theme } from '@/shared/theme';
 
@@ -45,23 +45,17 @@ type TabItemProps = {
 
 function TabItem({ label, icon, focused, onPress, testID }: TabItemProps) {
   const { motion } = useTheme<Theme>();
-  const scale = useSharedValue(1);
+  const { pulseStyle, pulse } = usePulse();
   const active = useSharedValue(focused ? 1 : 0);
 
   useEffect(() => {
     active.value = withTiming(focused ? 1 : 0, { duration: motion.short });
   }, [active, focused, motion.short]);
 
-  const pulseStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
   const accentStyle = useAnimatedStyle(() => ({ opacity: active.value }));
 
   const handlePress = () => {
-    scale.value = withSequence(
-      withTiming(motion.pulseScale, { duration: motion.short }),
-      withTiming(1, { duration: motion.short }),
-    );
+    pulse();
     onPress();
   };
 

@@ -22,7 +22,7 @@ Splash entrega login sem sessão e a área autenticada com sessão. Login só co
 - **CA-09:** **Dado** um CPF válido e uma senha que não formam um responsável do mock, **Quando** FAZER LOGIN é tocado, **Então** aparece "CPF ou senha não conferem.".
 - **CA-10:** **Dado** o CPF e a senha de um responsável do mock, **Quando** FAZER LOGIN é tocado, **Então** a sessão gravada tem o id desse responsável e o RM do primeiro aluno, e a área autenticada abre.
 - **CA-11:** **Dado** a área autenticada de um responsável com mais de um aluno, **Quando** a tela é exibida, **Então** SAIR e TROCAR PERFIL aparecem. **Quando** o responsável tem um aluno, **Então** só SAIR aparece.
-- **CA-12:** **Dado** TROCAR PERFIL visível, **Quando** o botão é tocado, **Então** a sessão permanece e a área autenticada continua na tela.
+- **CA-12:** **Dado** TROCAR PERFIL visível, **Quando** o botão é tocado, **Então** a sessão permanece. A tela que abre é a da spec 009.
 - **CA-13:** **Dado** a área autenticada, **Quando** SAIR é tocado, **Então** a sessão sai do Keychain, o cache do React Query fica vazio e o login volta. **Quando** o Keychain falha, **Então** o cache ainda é limpo e o login volta.
 - **CA-14:** **Dado** um texto de sessão que não é o contrato, **Quando** ele é lido, **Então** o resultado é nenhuma sessão.
 - **CA-15:** **Dado** uma sessão com id de responsável e RM, **Quando** o hook de usuário é lido, **Então** ele devolve esse responsável e o aluno desse RM. **Dado** nenhuma sessão, **Quando** o hook é lido, **Então** não há usuário.
@@ -31,7 +31,6 @@ Splash entrega login sem sessão e a área autenticada com sessão. Login só co
 - **CA-18:** **Dado** o Gustavo com o Rafael, **Quando** o cabeçalho é exibido, **Então** aparecem "Olá, ", "GUSTAVO", "RAFAEL", "7EF - RM 12567 - Matutino", SAIR e TROCAR PERFIL.
 - **CA-19:** **Dado** a Adelaide, **Quando** o cabeçalho é exibido, **Então** aparecem "Olá, ", "ADELAIDE", "BIANCA", "1EF - RM 13752 - Tarde" e SAIR, e TROCAR PERFIL não aparece.
 - **CA-20:** **Dado** o estado vazio com uma frase, **Quando** renderizado, **Então** a ilustração ocupa 328×208 (menos em tela mais estreita, na proporção) sem distorção e a frase aparece 20 abaixo, no estilo de rótulo do campo, centralizada.
-- **CA-21:** **Dado** a área autenticada sem lista de aulas neste corte, **Quando** a tela é exibida, **Então** o estado vazio mostra "Sem aulas neste dia".
 
 ## Regras
 

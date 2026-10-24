@@ -43,6 +43,9 @@ export function ReportCardScreen() {
   const [openTerm, setOpenTerm] = useState<number | undefined>(undefined);
   const [openSubjects, setOpenSubjects] = useState<readonly string[]>([]);
   const [scrollAreaHeight, setScrollAreaHeight] = useState(0);
+  const [contentHeight, setContentHeight] = useState(0);
+  const [anchor, setAnchor] = useState<{ top: number } | null>(null);
+  const pendingScroll = useRef<number | null>(null);
   const scrollRef = useRef<ScrollViewInstance>(null);
   const contentRef = useRef<HostView>(null);
   const scrollOffset = useRef(0);
@@ -68,7 +71,8 @@ export function ReportCardScreen() {
           ) {
             return;
           }
-          scrollRef.current?.scrollTo({ y, animated: true });
+          pendingScroll.current = y;
+          setAnchor({ top: y });
         },
         () => undefined,
       );
@@ -108,11 +112,30 @@ export function ReportCardScreen() {
   }, []);
 
   useEffect(() => {
+    pendingScroll.current = null;
+    setAnchor(null);
     if (openTerm === undefined) {
       return;
     }
     alignTop(termNodes.current.get(openTerm) ?? null);
   }, [alignTop, openTerm]);
+
+  const bottomSpace =
+    anchor === null
+      ? theme.spacing.m
+      : Math.max(
+          theme.spacing.m,
+          anchor.top + scrollAreaHeight - contentHeight,
+        );
+
+  useEffect(() => {
+    const target = pendingScroll.current;
+    if (target === null) {
+      return;
+    }
+    pendingScroll.current = null;
+    scrollRef.current?.scrollTo({ y: target, animated: true });
+  }, [anchor, bottomSpace]);
 
   if (currentUser.status !== 'ready') {
     return (
@@ -182,7 +205,7 @@ export function ReportCardScreen() {
           ref={scrollRef}
           testID="report-terms"
           style={styles.terms}
-          contentContainerStyle={{ paddingBottom: scrollAreaHeight }}
+          contentContainerStyle={{ paddingBottom: bottomSpace }}
           keyboardShouldPersistTaps="handled"
           nestedScrollEnabled
           scrollEventThrottle={16}
@@ -197,7 +220,16 @@ export function ReportCardScreen() {
             );
           }}
         >
-          <View ref={contentRef} collapsable={false}>
+          <View
+            ref={contentRef}
+            collapsable={false}
+            onLayout={event => {
+              const height = event.nativeEvent.layout.height;
+              setContentHeight(current =>
+                current === height ? current : height,
+              );
+            }}
+          >
             <Box paddingHorizontal="m" paddingTop="m">
               {selected.trimestres.map((term, index) => (
                 <TermSection

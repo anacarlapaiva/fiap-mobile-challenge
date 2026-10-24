@@ -1,4 +1,4 @@
-import { formatAgendaDay } from './utils/formatAgendaDay';
+import { formatAgendaDay } from './formatAgendaDay';
 
 describe('rótulo do dia da agenda', () => {
   describe('dado o ISO do JSON', () => {

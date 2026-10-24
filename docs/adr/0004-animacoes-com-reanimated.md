@@ -6,7 +6,7 @@
 
 ## Contexto
 
-O teste técnico exige animação fluida em todas as telas, sem prejudicar a performance. O Figma não define animações: elas são decisão do projeto. Os componentes globais já precisam de rotação (seta do dropdown), abertura e fechamento de lista, opacidade no toque e troca de cor; as telas seguintes vão precisar de transição de altura (accordion do boletim) e de entrada e saída de listas. O projeto é React Native CLI 0.88, com a nova arquitetura ligada, sem Expo.
+As telas precisam de animação fluida, sem prejudicar a performance. O Figma não define animações: elas são decisão do projeto. Os componentes globais precisam de rotação (seta do dropdown), abertura e fechamento de lista, opacidade no toque e troca de cor; o accordion do boletim e as listas precisam de transição de altura e de entrada e saída. O projeto é React Native CLI 0.88, com a nova arquitetura ligada, sem Expo.
 
 ## Decisão
 

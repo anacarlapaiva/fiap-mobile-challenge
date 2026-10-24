@@ -11,6 +11,7 @@ type TextButtonProps = {
   onPress: () => void;
   icon?: IconName;
   tone?: TextButtonTone;
+  accessibilityLabel?: string;
   testID?: string;
 };
 
@@ -24,6 +25,7 @@ export function TextButton({
   onPress,
   icon,
   tone = 'default',
+  accessibilityLabel,
   testID,
 }: TextButtonProps) {
   const { textVariant, iconColor, iconSize } = tones[tone];
@@ -35,7 +37,7 @@ export function TextButton({
       flexDirection="row"
       alignItems="center"
       accessibilityRole="button"
-      accessibilityLabel={label}
+      accessibilityLabel={accessibilityLabel ?? label}
     >
       <Text variant={textVariant}>{label}</Text>
       {icon ? (

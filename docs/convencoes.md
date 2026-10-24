@@ -2,7 +2,7 @@
 
 ## Nomenclatura
 
-Nomes de pastas são sempre em inglês e em `kebab-case` (ex.: `src/features/user-profile/`, `docs/specs/001-email-login/`, `docs/ai/skills/create-feature/`). Única exceção: a pasta de um componente do design system leva o nome do componente em `PascalCase` (`src/shared/components/Button/`). O conteúdo da documentação continua em português.
+Nomes de pastas são sempre em inglês e em `kebab-case` (ex.: `src/features/auth/`, `docs/specs/007-schedule/`, `docs/ai/skills/create-feature/`). Única exceção: a pasta de um componente do design system leva o nome do componente em `PascalCase` (`src/shared/components/Button/`). O conteúdo da documentação continua em português.
 
 | Item                 | Padrão                                                                                            | Exemplo                                                                       |
 | -------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |

@@ -14,3 +14,4 @@ export { Card } from './Card';
 export { Dropdown } from './Dropdown';
 export type { DropdownOption } from './Dropdown';
 export { Empty } from './Empty';
+export { ToastHost } from './Toast';

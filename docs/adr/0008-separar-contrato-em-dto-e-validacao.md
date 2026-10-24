@@ -6,7 +6,7 @@
 
 ## Contexto
 
-O JSON dos responsáveis é lido por mais de um domínio (acesso, aulas e boletim). O [ADR 0007](0007-validar-com-zod.md) já exige Zod nessa borda. O type do contrato e o schema estavam no mesmo arquivo, e o type nascia do schema. O padrão já usado no Franchisee App intl separa as duas coisas: o formato do dado fica em `dto/`, escrito como interface; a checagem em runtime fica em outra pasta.
+O JSON dos responsáveis é lido por mais de um domínio (acesso, aulas e boletim). O [ADR 0007](0007-validar-com-zod.md) já exige Zod nessa borda. O type do contrato e o schema estavam no mesmo arquivo, e o type nascia do schema. O formato do dado fica em `dto/`, escrito como interface; a checagem em runtime fica em outra pasta.
 
 ## Decisão
 
@@ -17,10 +17,10 @@ O JSON dos responsáveis é lido por mais de um domínio (acesso, aulas e boleti
 
 ## Alternativas consideradas
 
-| Alternativa                                            | Prós                                              | Contras                                             | Motivo da rejeição                                        |
-| ------------------------------------------------------ | ------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------------- |
-| Type derivado com `z.infer` no mesmo arquivo do schema | Uma definição só, sem risco de os dois divergirem | Mistura o formato do dado com a checagem de runtime | Não é a separação pedida, já usada no Franchisee App intl |
-| Pasta `schemas/`, como no Franchisee                   | Nome idêntico ao outro app                        | O pedido foi uma pasta de validação                 | O papel é o mesmo; o nome fica `validation/`              |
+| Alternativa                                            | Prós                                              | Contras                                             | Motivo da rejeição                                       |
+| ------------------------------------------------------ | ------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------- |
+| Type derivado com `z.infer` no mesmo arquivo do schema | Uma definição só, sem risco de os dois divergirem | Mistura o formato do dado com a checagem de runtime | O type do contrato e o schema de runtime ficam separados |
+| Pasta `schemas/`                                       | Nome curto                                        | O pedido foi uma pasta de validação                 | O papel é o mesmo; o nome fica `validation/`             |
 
 ## Consequências
 
