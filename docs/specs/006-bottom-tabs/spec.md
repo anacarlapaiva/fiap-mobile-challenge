@@ -1,6 +1,6 @@
 # Spec 006: Abas da área autenticada
 
-- **Status:** Aprovada
+- **Status:** Concluída
 - **Autor:** Ana Carla Paiva (com Claude Code)
 - **Aprovado por:** Ana Carla Paiva (2026-10-24)
 - **Data:** 2026-10-24
@@ -26,3 +26,7 @@ Rodapé com as abas AGENDA e BOLETIM abaixo do cabeçalho, idêntico ao Figma (n
 ## Fora do escopo
 
 - Conteúdo da agenda e do boletim, escolha de aluno, desabilitar aba.
+
+## Verificação pendente
+
+CA-05 (pulso e troca de cor) no aparelho e CA-07 no Android.
