@@ -31,10 +31,14 @@ Splash entrega login sem sessão e a área autenticada com sessão. Login só co
 - **CA-18:** **Dado** o Gustavo com o Rafael, **Quando** o cabeçalho é exibido, **Então** aparecem "Olá, ", "GUSTAVO", "RAFAEL", "7EF - RM 12567 - Matutino", SAIR e TROCAR PERFIL.
 - **CA-19:** **Dado** a Adelaide, **Quando** o cabeçalho é exibido, **Então** aparecem "Olá, ", "ADELAIDE", "BIANCA", "1EF - RM 13752 - Tarde" e SAIR, e TROCAR PERFIL não aparece.
 - **CA-20:** **Dado** o estado vazio com uma frase, **Quando** renderizado, **Então** a ilustração ocupa 328×208 (menos em tela mais estreita, na proporção) sem distorção e a frase aparece 20 abaixo, no estilo de rótulo do campo, centralizada.
+- **CA-21:** **Dado** o CPF e a senha de um responsável sem alunos, **Quando** FAZER LOGIN é tocado, **Então** aparece "Nenhum aluno vinculado a este responsável." e a sessão não é gravada.
+- **CA-22:** **Dado** que o Keychain falha ao gravar, **Quando** FAZER LOGIN é tocado com o CPF e a senha de um responsável do mock, **Então** a sessão vale na memória, a área autenticada abre e nenhum erro aparece.
+- **CA-23:** **Dado** que o Keychain não responde à leitura, **Quando** passam 3 s, **Então** não há sessão e a tela é o login; uma resposta que chega depois é ignorada.
+- **CA-24:** **Dado** uma tela que falha ao renderizar, **Quando** a falha acontece, **Então** aparece, no fundo preto, "Algo deu errado." e o botão TENTAR NOVAMENTE, que monta as telas de novo.
 
 ## Regras
 
-- CPF compara só dígitos. Frases nesta ordem: vazio, quantidade, dígitos iguais, verificador, senha vazia, par fora do mock.
+- CPF compara só dígitos. Frases nesta ordem: vazio, quantidade, dígitos iguais, verificador, senha vazia, par fora do mock, responsável sem alunos.
 - Login e restauração leem o mock pela mesma query. A splash só entrega a rota depois da leitura (e conferência contra o mock, se havia registro).
 - Sessão inválida ou órfã = sem sessão. Keychain apagado; se falhar, a memória fica sem sessão e a tela é o login.
 - Nome do responsável: primeiro nome do JSON, maiúsculas. Aluno: o da sessão.
