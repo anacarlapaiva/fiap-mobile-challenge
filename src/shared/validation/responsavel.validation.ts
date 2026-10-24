@@ -18,6 +18,6 @@ export const responsaveisSchema = z.array(
   responsavelSchema,
 ) satisfies z.ZodType<ResponsavelDto[]>;
 
-export function parseResponsaveis(input: unknown): ResponsavelDto[] {
+export function parseGuardians(input: unknown): ResponsavelDto[] {
   return responsaveisSchema.parse(input);
 }

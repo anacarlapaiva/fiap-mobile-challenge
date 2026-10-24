@@ -4,7 +4,7 @@ export { aulaSchema } from './aula.validation';
 export { boletimSchema } from './boletim.validation';
 export { disciplinaSchema } from './disciplina.validation';
 export {
-  parseResponsaveis,
+  parseGuardians,
   responsaveisSchema,
   responsavelSchema,
 } from './responsavel.validation';

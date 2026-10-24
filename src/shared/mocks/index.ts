@@ -1,1 +1,1 @@
-export { readResponsaveis } from './responsaveis';
+export { readGuardians } from './guardians';
