@@ -1,27 +1,38 @@
+import type { NavigatorScreenParams } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { Header, LoggedScreen } from '@/features/auth';
+import {
+  TabNavigator,
+  type PrivateTabParamList,
+} from '@/app/navigation/TabNavigator';
+import { Header } from '@/features/auth';
 import { Box } from '@/shared/components';
 import { theme } from '@/shared/theme';
 
 export type PrivateStackParamList = {
-  Logged: undefined;
+  Main: NavigatorScreenParams<PrivateTabParamList>;
 };
 
 const Stack = createNativeStackNavigator<PrivateStackParamList>();
 
-export function PrivateNavigator() {
+function MainScreen() {
   return (
     <Box flex={1} backgroundColor="background">
       <Header />
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: theme.colors.background },
-        }}
-      >
-        <Stack.Screen name="Logged" component={LoggedScreen} />
-      </Stack.Navigator>
+      <TabNavigator />
     </Box>
+  );
+}
+
+export function PrivateNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: theme.colors.background },
+      }}
+    >
+      <Stack.Screen name="Main" component={MainScreen} />
+    </Stack.Navigator>
   );
 }

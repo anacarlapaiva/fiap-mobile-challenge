@@ -50,8 +50,10 @@ Montserrat v9.000 (OFL), pesos 400, 500, 600 e 700. Letter-spacing 0. Altura de 
 
 | Valor | Onde                                                                                      |
 | ----- | ----------------------------------------------------------------------------------------- |
+| 4     | Ícone e rótulo da aba                                                                     |
 | 7     | Dropdown e lista aberta                                                                   |
 | 8     | Valor do campo do login e a linha                                                         |
+| 11    | Topo do rodapé e o ícone da aba                                                           |
 | 12    | Texto no dropdown e no card de trimestre                                                  |
 | 16    | Margem lateral do boletim e da seleção; espaço entre cards; barra de ações; card de aluno |
 | 20    | Imagem "sem aulas" e a frase                                                              |
@@ -61,6 +63,7 @@ Montserrat v9.000 (OFL), pesos 400, 500, 600 e 700. Letter-spacing 0. Altura de 
 | 36    | Saudação e nome do aluno no cabeçalho                                                     |
 | 39    | Linha do CPF e o rótulo da senha                                                          |
 | 48    | Margem lateral dos campos do login                                                        |
+| 64    | Fim do cabeçalho e o título de seção                                                      |
 | 80    | Logo e o rótulo do CPF no login                                                           |
 | 100   | Topo da área segura e o logo do login                                                     |
 

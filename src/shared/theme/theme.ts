@@ -67,9 +67,11 @@ export const theme = createTheme({
   },
   spacing: {
     none: 0,
+    tabLabelGap: 4,
     xs: 7,
     fieldLineGap: 8,
     iconGap: 8,
+    tabTop: 11,
     s: 12,
     m: 16,
     emptyGap: 20,
@@ -79,6 +81,7 @@ export const theme = createTheme({
     greetingGap: 36,
     fieldGap: 39,
     xl: 48,
+    sectionGap: 64,
     logoGap: 80,
     loginTop: 100,
   },
@@ -99,6 +102,7 @@ export const theme = createTheme({
   },
   motion: {
     pressedOpacity: 0.8,
+    pulseScale: 0.85,
     short: 150,
     medium: 200,
     caretBlink: 500,
@@ -106,6 +110,24 @@ export const theme = createTheme({
   logoVariants: {
     large: { width: 306, height: 49 },
     small: { width: 100, height: 16 },
+  },
+  tabBarVariants: {
+    bar: {
+      flexDirection: 'row',
+      backgroundColor: 'surface',
+    },
+    item: {
+      height: sizes.tabBarHeight,
+      alignItems: 'center',
+      paddingTop: 'tabTop',
+    },
+    label: {
+      marginTop: 'tabLabelGap',
+    },
+    layer: {
+      ...fill,
+      alignItems: 'center',
+    },
   },
   emptyVariants: {
     root: {

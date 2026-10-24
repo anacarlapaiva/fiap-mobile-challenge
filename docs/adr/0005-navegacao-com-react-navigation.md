@@ -14,7 +14,7 @@ O PDF pede login, duas telas principais (aulas e boletim) com troca no rodapé, 
 2. A stack raiz tem o login e a área autenticada. Dentro da área autenticada ficam as abas Aulas e Boletim, e a escolha de aluno é outra tela dessa stack, nunca uma aba.
 3. Sair da sessão faz `reset` para o login.
 4. Os navegadores ficam em `src/app/navigation/`. Telas continuam nas features. A splash não é uma rota.
-5. Login não tem header. O cabeçalho autenticado é chrome do `PrivateNavigator`, acima da stack (`headerShown: false`). Telas autenticadas não montam o cabeçalho.
+5. Login não tem header. O cabeçalho autenticado é chrome da rota principal da stack autenticada, acima das abas (`headerShown: false`); a escolha de aluno, rota irmã, fica sem cabeçalho e sem rodapé. Telas das abas não montam o cabeçalho.
 
 ## Alternativas consideradas
 
