@@ -1,6 +1,6 @@
 import type { AulaDto } from './aula.dto';
 
-export type AgendaDiaDto = {
+export interface AgendaDiaDto {
   dia: string;
   aulas: AulaDto[];
-};
+}

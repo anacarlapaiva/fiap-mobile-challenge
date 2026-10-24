@@ -14,6 +14,8 @@ Nomes de pastas são sempre em inglês e em `kebab-case` (ex.: `src/features/use
 | Hook                 | `camelCase` com prefixo `use`                                                                     | `useProfile.ts`                                                               |
 | Função utilitária    | `camelCase.ts`                                                                                    | `formatCurrency.ts`                                                           |
 | Tipos e interfaces   | `PascalCase`, sem prefixo `I`                                                                     | `type UserProfile`                                                            |
+| DTO                  | `kebab-case.dto.ts`; a interface termina em `Dto`                                                 | `responsavel.dto.ts` → `interface ResponsavelDto`                             |
+| Validação            | `kebab-case.validation.ts`, na pasta `validation/`, ao lado do DTO                                | `responsavel.validation.ts`                                                   |
 | Constantes globais   | `UPPER_SNAKE_CASE`                                                                                | `API_TIMEOUT_MS`                                                              |
 | Arquivo de teste     | mesmo nome do arquivo testado + `.test`                                                           | `UserCard.test.tsx`                                                           |
 | Barrel (API pública) | `index.ts`                                                                                        | `src/features/profile/index.ts`                                               |
@@ -39,16 +41,23 @@ Regras:
 
 ## Testes
 
-- Framework: Jest (`@react-native/jest-preset`) com `react-test-renderer`.
-- O teste fica ao lado do arquivo testado: `X.tsx` + `X.test.tsx`. Não existe pasta `__tests__/`.
-- Cada critério de aceite da spec (Dado/Quando/Então) vira pelo menos um caso de teste.
+- Framework: Jest (`@react-native/jest-preset`) com `react-test-renderer`. Sem Cucumber: o BDD fica no próprio Jest.
+- Teste só onde há comportamento observável. O arquivo sem decisão própria não leva teste, e ninguém cria um teste só para completar a pasta. Ficam sem teste:
+  - DTO (`*.dto.ts`), que só descreve o formato;
+  - barrel (`index.ts`), que só reexporta;
+  - schema que só compõe outro (`aula.validation.ts`, `agenda.validation.ts` e os demais da mesma pasta). A leitura do JSON é um comportamento só, testado ao lado de `parseResponsaveis`;
+  - token de tema, declaração de tipo e repasse de prop sem regra própria.
+- Onde o teste existe, fica ao lado do arquivo do comportamento: `X.tsx` + `X.test.tsx`. Não existe pasta `__tests__/`.
+- Todo caso descreve um comportamento observável em **Dado** / **Quando** / **Então**. O `describe` traz o contexto (Dado). O título do caso traz a ação e um único resultado (Quando / Então). O corpo só arranja esse contexto, executa a ação e confere o resultado.
+- O título nomeia o que se observa (o contrato, a tela, quem usa o componente). Não nomeia detalhe interno.
+- Cada critério de aceite da spec, já escrito em Dado/Quando/Então, vira pelo menos um caso, com `CA-xx` no título. Critério que só se confere no aparelho não ganha um teste de unidade no lugar.
 - Rode com `yarn test`, ou com `yarn test <caminho>` para um arquivo.
 
 ## TypeScript
 
 - Modo `strict` com `noUncheckedIndexedAccess`; veja `tsconfig.json`.
 - `any` é proibido (erro de lint). Use `unknown` e refine o tipo.
-- Prefira `type` para formatos de dados e `interface` só quando precisar de extensão por declaração.
+- O DTO do contrato externo é `interface`. Nos demais formatos de dado, prefira `type`. `interface` também quando outro arquivo precisa ampliar o tipo por declaração.
 
 ## Lint e formatação
 

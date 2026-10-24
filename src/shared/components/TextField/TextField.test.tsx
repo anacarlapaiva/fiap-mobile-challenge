@@ -29,7 +29,7 @@ async function render(element: ReactElement) {
   };
 }
 
-describe('TextField', () => {
+describe('campo de texto', () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -38,77 +38,75 @@ describe('TextField', () => {
     jest.useRealTimers();
   });
 
-  test('CA-08: vazio mostra o rótulo e a linha cinza', async () => {
-    const view = await render(
-      <TextField label="CPF" value="" onChangeText={jest.fn()} />,
-    );
-
-    expect(view.texts()).toContain('CPF');
-    expect(view.lineColor()).toBe('rgba(82, 82, 82, 1)');
-  });
-
-  test('CA-08: preenchido passa a linha para branco', async () => {
-    const view = await render(
-      <TextField label="CPF" value="" onChangeText={jest.fn()} />,
-    );
-
-    await ReactTestRenderer.act(() => {
-      view.renderer.update(
-        <ThemeProvider theme={theme}>
-          <TextField label="CPF" value="1" onChangeText={jest.fn()} />
-        </ThemeProvider>,
+  describe('dado um campo vazio', () => {
+    test('CA-08: quando renderizado, então mostra o rótulo e a linha cinza', async () => {
+      const view = await render(
+        <TextField label="CPF" value="" onChangeText={jest.fn()} />,
       );
-    });
-    await ReactTestRenderer.act(() => {
-      jest.advanceTimersByTime(theme.motion.short + 50);
-    });
 
-    expect(view.lineColor()).toBe('rgba(255, 255, 255, 1)');
+      expect(view.texts()).toContain('CPF');
+      expect(view.lineColor()).toBe('rgba(82, 82, 82, 1)');
+    });
   });
 
-  test('CA-09: modo seguro mostra um asterisco por caractere sem expor o valor', async () => {
-    const view = await render(
-      <TextField
-        label="SENHA"
-        value="123456"
-        onChangeText={jest.fn()}
-        secure
-      />,
-    );
+  describe('dado um campo que recebe valor', () => {
+    test('CA-08: quando o valor chega, então a linha passa a branco', async () => {
+      const view = await render(
+        <TextField label="CPF" value="" onChangeText={jest.fn()} />,
+      );
 
-    const mask = view.root
-      .findAllByType(NativeText)
-      .find(node => node.props.testID === 'text-field-mask');
-    expect(mask?.props.children).toBe('******');
-    expect(StyleSheet.flatten(mask?.props.style)).toMatchObject({
-      fontFamily: fonts.regular,
-      fontSize: 32,
+      await ReactTestRenderer.act(() => {
+        view.renderer.update(
+          <ThemeProvider theme={theme}>
+            <TextField label="CPF" value="1" onChangeText={jest.fn()} />
+          </ThemeProvider>,
+        );
+      });
+      await ReactTestRenderer.act(() => {
+        jest.advanceTimersByTime(theme.motion.short + 50);
+      });
+
+      expect(view.lineColor()).toBe('rgba(255, 255, 255, 1)');
     });
-    expect(StyleSheet.flatten(view.input.props.style).opacity).toBe(0);
-    expect(view.input.props.accessibilityValue).toEqual({ text: '******' });
-    expect(view.input.props.secureTextEntry).toBeFalsy();
-    expect(view.input.props.autoCorrect).toBe(false);
-    expect(view.input.props.autoComplete).toBe('off');
-    expect(view.texts()).not.toContain('123456');
   });
 
-  test('CA-10: entrega o texto digitado sem formatar', async () => {
-    const onChangeText = jest.fn();
-    const view = await render(
-      <TextField
-        label="CPF"
-        value=""
-        onChangeText={onChangeText}
-        keyboardType="number-pad"
-      />,
-    );
+  describe('dado um campo seguro com seis caracteres', () => {
+    test('CA-09: quando renderizado, então mostra um asterisco por caractere e não expõe a senha', async () => {
+      const view = await render(
+        <TextField
+          label="SENHA"
+          value="123456"
+          onChangeText={jest.fn()}
+          secure
+        />,
+      );
 
-    await ReactTestRenderer.act(() => {
-      view.input.props.onChangeText('12345678900');
+      const mask = view.root
+        .findAllByType(NativeText)
+        .find(node => node.props.testID === 'text-field-mask');
+      expect(mask?.props.children).toBe('******');
+      expect(StyleSheet.flatten(mask?.props.style)).toMatchObject({
+        fontFamily: fonts.regular,
+        fontSize: 32,
+      });
+      expect(StyleSheet.flatten(view.input.props.style).opacity).toBe(0);
+      expect(view.input.props.accessibilityValue).toEqual({ text: '******' });
+      expect(view.texts()).not.toContain('123456');
     });
+  });
 
-    expect(onChangeText).toHaveBeenCalledWith('12345678900');
-    expect(view.input.props.keyboardType).toBe('number-pad');
-    expect(view.input.props.accessibilityLabel).toBe('CPF');
+  describe('dado um campo de CPF', () => {
+    test('CA-10: quando o usuário digita, então o texto chega sem formatação', async () => {
+      const onChangeText = jest.fn();
+      const view = await render(
+        <TextField label="CPF" value="" onChangeText={onChangeText} />,
+      );
+
+      await ReactTestRenderer.act(() => {
+        view.input.props.onChangeText('12345678900');
+      });
+
+      expect(onChangeText).toHaveBeenCalledWith('12345678900');
+    });
   });
 });

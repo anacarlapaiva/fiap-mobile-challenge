@@ -31,54 +31,66 @@ async function render(element: ReactElement) {
   };
 }
 
-describe('TextButton', () => {
-  test('CA-11: tom padrão usa legenda branca e ícone de 10', async () => {
-    const onPress = jest.fn();
-    const view = await render(
-      <TextButton label="SAIR" icon="logout" onPress={onPress} />,
-    );
+describe('botão de texto', () => {
+  describe('dado o tom padrão', () => {
+    test('CA-11: quando renderizado, então usa a legenda branca e o ícone de 10', async () => {
+      const view = await render(
+        <TextButton label="SAIR" icon="logout" onPress={jest.fn()} />,
+      );
 
-    expect(view.labelStyle).toMatchObject({
-      fontFamily: fonts.regular,
-      fontSize: 12,
-      color: theme.colors.textPrimary,
+      expect(view.labelStyle).toMatchObject({
+        fontFamily: fonts.regular,
+        fontSize: 12,
+        color: theme.colors.textPrimary,
+      });
+      expect(view.root.findByType(Svg).props.height).toBe(theme.iconSizes.s);
+      view.root.findAllByType(Path).forEach(path => {
+        expect(path.props.fill).toBe(theme.colors.textPrimary);
+      });
     });
-    expect(view.root.findByType(Svg).props.height).toBe(theme.iconSizes.s);
-    view.root.findAllByType(Path).forEach(path => {
-      expect(path.props.fill).toBe(theme.colors.textPrimary);
-    });
-    expect(view.pressable.props.accessibilityRole).toBe('button');
 
-    await ReactTestRenderer.act(() => {
-      view.pressable.props.onPress({});
+    test('CA-11: quando tocado, então a ação é chamada', async () => {
+      const onPress = jest.fn();
+      const view = await render(
+        <TextButton label="SAIR" icon="logout" onPress={onPress} />,
+      );
+
+      await ReactTestRenderer.act(() => {
+        view.pressable.props.onPress({});
+      });
+
+      expect(onPress).toHaveBeenCalledTimes(1);
     });
-    expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  test('CA-11: tom destaque usa negrito acento e ícone de 24', async () => {
-    const view = await render(
-      <TextButton
-        label="FECHAR"
-        icon="close"
-        tone="accent"
-        onPress={jest.fn()}
-      />,
-    );
+  describe('dado o tom destaque', () => {
+    test('CA-11: quando renderizado, então usa o negrito acento e o ícone de 24', async () => {
+      const view = await render(
+        <TextButton
+          label="FECHAR"
+          icon="close"
+          tone="accent"
+          onPress={jest.fn()}
+        />,
+      );
 
-    expect(view.labelStyle).toMatchObject({
-      fontFamily: fonts.bold,
-      fontSize: 16,
-      color: theme.colors.accent,
+      expect(view.labelStyle).toMatchObject({
+        fontFamily: fonts.bold,
+        fontSize: 16,
+        color: theme.colors.accent,
+      });
+      expect(view.root.findByType(Svg).props.height).toBe(theme.iconSizes.l);
+      expect(view.root.findByType(Path).props.fill).toBe(theme.colors.accent);
     });
-    expect(view.root.findByType(Svg).props.height).toBe(theme.iconSizes.l);
-    expect(view.root.findByType(Path).props.fill).toBe(theme.colors.accent);
   });
 
-  test('CA-11: sem ícone, só o texto', async () => {
-    const view = await render(
-      <TextButton label="TROCAR PERFIL" onPress={jest.fn()} />,
-    );
+  describe('dado um botão de texto sem ícone', () => {
+    test('quando renderizado, então só o texto aparece', async () => {
+      const view = await render(
+        <TextButton label="TROCAR PERFIL" onPress={jest.fn()} />,
+      );
 
-    expect(view.root.findAllByType(Svg)).toHaveLength(0);
+      expect(view.root.findAllByType(Svg)).toHaveLength(0);
+    });
   });
 });

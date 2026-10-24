@@ -1,4 +1,4 @@
-export type AulaDto = {
+export interface AulaDto {
   horario: string;
   disciplina: string;
-};
+}

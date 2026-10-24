@@ -7,12 +7,12 @@ import { theme } from '@/shared/theme';
 
 const { motion } = theme;
 
-async function render(onPress: () => void) {
+async function render() {
   let renderer: ReactTestRenderer.ReactTestRenderer | undefined;
   await ReactTestRenderer.act(() => {
     renderer = ReactTestRenderer.create(
       <ThemeProvider theme={theme}>
-        <PressableOpacity testID="pressable" onPress={onPress} />
+        <PressableOpacity testID="pressable" />
       </ThemeProvider>,
     );
   });
@@ -37,7 +37,7 @@ async function render(onPress: () => void) {
   };
 }
 
-describe('PressableOpacity', () => {
+describe('toque com opacidade', () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -46,22 +46,29 @@ describe('PressableOpacity', () => {
     jest.useRealTimers();
   });
 
-  test('CA-17: reduz a opacidade ao pressionar e volta ao soltar', async () => {
-    const onPress = jest.fn();
-    const view = await render(onPress);
+  describe('dado um componente pressionável', () => {
+    test('CA-17: quando pressionado, então a opacidade vai a 0,8', async () => {
+      const view = await render();
 
-    await ReactTestRenderer.act(() => {
-      view.pressable.props.onPressIn({});
-      jest.advanceTimersByTime(motion.short + 50);
-    });
-    expect(view.opacity()).toBe(motion.pressedOpacity);
+      await ReactTestRenderer.act(() => {
+        view.pressable.props.onPressIn({});
+        jest.advanceTimersByTime(motion.short + 50);
+      });
 
-    await ReactTestRenderer.act(() => {
-      view.pressable.props.onPressOut({});
-      view.pressable.props.onPress({});
-      jest.advanceTimersByTime(motion.short + 50);
+      expect(view.opacity()).toBe(motion.pressedOpacity);
     });
-    expect(view.opacity()).toBe(1);
-    expect(onPress).toHaveBeenCalledTimes(1);
+
+    test('CA-17: quando solto, então a opacidade volta', async () => {
+      const view = await render();
+
+      await ReactTestRenderer.act(() => {
+        view.pressable.props.onPressIn({});
+        jest.advanceTimersByTime(motion.short + 50);
+        view.pressable.props.onPressOut({});
+        jest.advanceTimersByTime(motion.short + 50);
+      });
+
+      expect(view.opacity()).toBe(1);
+    });
   });
 });

@@ -30,55 +30,65 @@ afterEach(() => {
   renderer = undefined;
 });
 
-test('CA-05: renderiza a raiz com o tema e fundo #000000', async () => {
+async function renderApp() {
   await ReactTestRenderer.act(() => {
     renderer = ReactTestRenderer.create(<App />);
   });
   if (!renderer) {
     throw new Error('render falhou');
   }
+  return renderer;
+}
 
-  const root = renderer.root
-    .findAllByType(View)
-    .find(node => node.props.testID === 'app-root');
+describe('abertura do app', () => {
+  describe('dado o app iniciado', () => {
+    test('CA-05: quando a raiz é exibida, então o fundo é preto', async () => {
+      const view = await renderApp();
 
-  expect(StyleSheet.flatten(root?.props.style)).toMatchObject({
-    flex: 1,
-    backgroundColor: '#000000',
-  });
-});
+      const root = view.root
+        .findAllByType(View)
+        .find(node => node.props.testID === 'app-root');
 
-test('CA-06: esconde a barra de status durante a splash e a mostra ao terminar', async () => {
-  await ReactTestRenderer.act(() => {
-    renderer = ReactTestRenderer.create(<App />);
-  });
-  if (!renderer) {
-    throw new Error('render falhou');
-  }
-
-  expect(renderer.root.findByType(StatusBar).props.hidden).toBe(true);
-  expect(
-    renderer.root
-      .findAllByType(View)
-      .filter(view => view.props.testID === 'splash-screen'),
-  ).toHaveLength(1);
-
-  await ReactTestRenderer.act(() => {
-    renderer?.root
-      .findAllByType(View)
-      .find(view => view.props.testID === 'splash-video')
-      ?.props.onEnd();
+      expect(StyleSheet.flatten(root?.props.style)).toMatchObject({
+        flex: 1,
+        backgroundColor: '#000000',
+      });
+    });
   });
 
-  expect(renderer.root.findByType(StatusBar).props.hidden).toBe(false);
-  expect(
-    renderer.root
-      .findAllByType(View)
-      .filter(view => view.props.testID === 'splash-screen'),
-  ).toHaveLength(0);
-  expect(
-    renderer.root
-      .findAllByType(View)
-      .filter(view => view.props.testID === 'app-root'),
-  ).toHaveLength(1);
+  describe('dado a splash visível', () => {
+    test('CA-06: quando a abertura está na tela, então a barra de status fica oculta', async () => {
+      const view = await renderApp();
+
+      expect(view.root.findByType(StatusBar).props.hidden).toBe(true);
+      expect(
+        view.root
+          .findAllByType(View)
+          .filter(node => node.props.testID === 'splash-screen'),
+      ).toHaveLength(1);
+    });
+
+    test('CA-06: quando a splash termina, então a barra de status volta e a raiz continua', async () => {
+      const view = await renderApp();
+
+      await ReactTestRenderer.act(() => {
+        view.root
+          .findAllByType(View)
+          .find(node => node.props.testID === 'splash-video')
+          ?.props.onEnd();
+      });
+
+      expect(view.root.findByType(StatusBar).props.hidden).toBe(false);
+      expect(
+        view.root
+          .findAllByType(View)
+          .filter(node => node.props.testID === 'splash-screen'),
+      ).toHaveLength(0);
+      expect(
+        view.root
+          .findAllByType(View)
+          .filter(node => node.props.testID === 'app-root'),
+      ).toHaveLength(1);
+    });
+  });
 });

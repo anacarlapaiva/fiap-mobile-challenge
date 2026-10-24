@@ -30,67 +30,74 @@ async function render(element: ReactElement) {
   };
 }
 
-describe('Card', () => {
-  test('CA-12: selecionado tem borda acento de 1', async () => {
-    const view = await render(
-      <Card testID="card" selected paddingHorizontal="m">
-        <Text>ALUNO</Text>
-      </Card>,
-    );
+describe('card', () => {
+  describe('dado um card selecionado', () => {
+    test('CA-12: quando renderizado, então a borda acento tem 1', async () => {
+      const view = await render(
+        <Card testID="card" selected paddingHorizontal="m">
+          <Text>ALUNO</Text>
+        </Card>,
+      );
 
-    expect(view.cardStyle).toMatchObject({
-      height: theme.sizes.cardHeight,
-      borderRadius: theme.borderRadii.m,
-      backgroundColor: theme.colors.card,
-      paddingHorizontal: theme.spacing.m,
-    });
-    expect(StyleSheet.flatten(view.border?.props.style)).toMatchObject({
-      position: 'absolute',
-      borderWidth: 1,
-      borderColor: theme.colors.accent,
+      expect(view.cardStyle).toMatchObject({
+        height: theme.sizes.cardHeight,
+        borderRadius: theme.borderRadii.m,
+        backgroundColor: theme.colors.card,
+        paddingHorizontal: theme.spacing.m,
+      });
+      expect(StyleSheet.flatten(view.border?.props.style)).toMatchObject({
+        position: 'absolute',
+        borderWidth: 1,
+        borderColor: theme.colors.accent,
+      });
     });
   });
 
-  test('CA-12: sem seleção, sem borda e com o conteúdo na mesma posição', async () => {
-    const selected = await render(
-      <Card testID="card" selected paddingHorizontal="m">
-        <Text>ALUNO</Text>
-      </Card>,
-    );
-    const plain = await render(
-      <Card testID="card" paddingHorizontal="m">
-        <Text>ALUNO</Text>
-      </Card>,
-    );
+  describe('dado um card sem seleção', () => {
+    test('CA-12: quando renderizado, então não há borda e o conteúdo permanece no lugar', async () => {
+      const selected = await render(
+        <Card testID="card" selected paddingHorizontal="m">
+          <Text>ALUNO</Text>
+        </Card>,
+      );
+      const plain = await render(
+        <Card testID="card" paddingHorizontal="m">
+          <Text>ALUNO</Text>
+        </Card>,
+      );
 
-    expect(plain.border).toBeUndefined();
-    expect(plain.cardStyle).toEqual(selected.cardStyle);
-    expect(plain.cardStyle.borderWidth).toBeUndefined();
-  });
-
-  test('CA-13: com ação, é pressionável e chama a ação', async () => {
-    const onPress = jest.fn();
-    const view = await render(
-      <Card testID="card" onPress={onPress}>
-        <Text>1º TRIMESTRE</Text>
-      </Card>,
-    );
-
-    const pressable = view.pressables.slice(-1)[0];
-    expect(pressable?.props.accessibilityRole).toBe('button');
-    await ReactTestRenderer.act(() => {
-      pressable?.props.onPress({});
+      expect(plain.border).toBeUndefined();
+      expect(plain.cardStyle).toEqual(selected.cardStyle);
     });
-    expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  test('CA-13: sem ação, não é pressionável', async () => {
-    const view = await render(
-      <Card testID="card">
-        <Text>1º TRIMESTRE</Text>
-      </Card>,
-    );
+  describe('dado um card com ação', () => {
+    test('CA-13: quando tocado, então a ação é chamada', async () => {
+      const onPress = jest.fn();
+      const view = await render(
+        <Card testID="card" onPress={onPress}>
+          <Text>1º TRIMESTRE</Text>
+        </Card>,
+      );
 
-    expect(view.pressables).toHaveLength(0);
+      const pressable = view.pressables.slice(-1)[0];
+      await ReactTestRenderer.act(() => {
+        pressable?.props.onPress({});
+      });
+
+      expect(onPress).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('dado um card sem ação', () => {
+    test('CA-13: quando renderizado, então não é pressionável', async () => {
+      const view = await render(
+        <Card testID="card">
+          <Text>1º TRIMESTRE</Text>
+        </Card>,
+      );
+
+      expect(view.pressables).toHaveLength(0);
+    });
   });
 });

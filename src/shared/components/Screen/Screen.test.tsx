@@ -29,21 +29,27 @@ async function renderStyle(element: React.ReactElement) {
   return StyleSheet.flatten(screen?.props.style);
 }
 
-describe('Screen', () => {
-  test('CA-01: fundo preto e área segura no topo e na base por padrão', async () => {
-    const style = await renderStyle(<Screen testID="screen" />);
+describe('tela', () => {
+  describe('dado uma tela sem bordas pedidas', () => {
+    test('CA-01: quando renderizada, então o fundo é preto e a área segura fica no topo e na base', async () => {
+      const style = await renderStyle(<Screen testID="screen" />);
 
-    expect(style).toMatchObject({
-      flex: 1,
-      backgroundColor: theme.colors.background,
-      paddingTop: 47,
-      paddingBottom: 34,
+      expect(style).toMatchObject({
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        paddingTop: 47,
+        paddingBottom: 34,
+      });
     });
   });
 
-  test('CA-01: aplica a área segura só nas bordas pedidas', async () => {
-    const style = await renderStyle(<Screen testID="screen" edges={['top']} />);
+  describe('dado uma tela só com a borda superior', () => {
+    test('CA-01: quando renderizada, então a área segura fica só nessa borda', async () => {
+      const style = await renderStyle(
+        <Screen testID="screen" edges={['top']} />,
+      );
 
-    expect(style).toMatchObject({ paddingTop: 47, paddingBottom: 0 });
+      expect(style).toMatchObject({ paddingTop: 47, paddingBottom: 0 });
+    });
   });
 });

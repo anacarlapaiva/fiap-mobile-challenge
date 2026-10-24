@@ -44,7 +44,7 @@ Regras (impostas pelo ESLint; violação quebra o `yarn lint`):
 3. `shared` nunca importa de `features` nem de `app`.
 4. Todo arquivo de código em `src/` pertence a uma camada.
 5. Use sempre os aliases `@/app`, `@/features`, `@/shared` e `@/assets`. Imports com `../` são proibidos em `src/` (erro de lint); import relativo só para arquivos da mesma pasta (`./X`).
-6. O teste fica ao lado do arquivo testado: `X.tsx` + `X.test.tsx`.
+6. O teste fica ao lado do arquivo que tem o comportamento, e só nesse arquivo: `X.tsx` + `X.test.tsx`. DTO, barrel e arquivo sem decisão própria não levam teste (veja [docs/convencoes.md](docs/convencoes.md#testes)).
 
 Nomenclatura, commits e branches: [docs/convencoes.md](docs/convencoes.md).
 

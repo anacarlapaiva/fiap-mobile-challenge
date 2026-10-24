@@ -20,18 +20,28 @@ async function renderImage(size: 'large' | 'small') {
   return renderer.root.findByType(Image).props;
 }
 
-describe('Logo', () => {
-  test('CA-03: tamanho grande sem distorção', async () => {
-    const props = await renderImage('large');
+describe('logo', () => {
+  describe('dado o logo grande', () => {
+    test('CA-03: quando renderizado, então ocupa 306 por 49 sem distorção', async () => {
+      const props = await renderImage('large');
 
-    expect(StyleSheet.flatten(props.style)).toEqual({ width: 306, height: 49 });
-    expect(props.resizeMode).toBe('contain');
+      expect(StyleSheet.flatten(props.style)).toEqual({
+        width: 306,
+        height: 49,
+      });
+      expect(props.resizeMode).toBe('contain');
+    });
   });
 
-  test('CA-03: tamanho pequeno sem distorção', async () => {
-    const props = await renderImage('small');
+  describe('dado o logo pequeno', () => {
+    test('CA-03: quando renderizado, então ocupa 100 por 16 sem distorção', async () => {
+      const props = await renderImage('small');
 
-    expect(StyleSheet.flatten(props.style)).toEqual({ width: 100, height: 16 });
-    expect(props.resizeMode).toBe('contain');
+      expect(StyleSheet.flatten(props.style)).toEqual({
+        width: 100,
+        height: 16,
+      });
+      expect(props.resizeMode).toBe('contain');
+    });
   });
 });

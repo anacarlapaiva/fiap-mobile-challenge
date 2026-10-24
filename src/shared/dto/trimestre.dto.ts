@@ -1,6 +1,6 @@
 import type { DisciplinaDto } from './disciplina.dto';
 
-export type TrimestreDto = {
+export interface TrimestreDto {
   trimestre: number;
   disciplinas: DisciplinaDto[];
-};
+}

@@ -1,6 +1,6 @@
 import type { AlunoDto } from './aluno.dto';
 
-export type ResponsavelDto = {
+export interface ResponsavelDto {
   id: number;
   cpf: string;
   email: string;
@@ -8,4 +8,4 @@ export type ResponsavelDto = {
   primeiroNome: string;
   sobrenome: string;
   alunos: AlunoDto[];
-};
+}
