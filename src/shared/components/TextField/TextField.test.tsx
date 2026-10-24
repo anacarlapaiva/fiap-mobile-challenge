@@ -71,7 +71,7 @@ describe('campo de texto', () => {
   });
 
   describe('dado um campo seguro com seis caracteres', () => {
-    test('CA-09: quando renderizado, então mostra um asterisco por caractere e não expõe a senha', async () => {
+    test('CA-09: quando renderizado, então mostra um asterisco por caractere, não expõe a senha e o toque chega no campo', async () => {
       const view = await render(
         <TextField
           label="SENHA"
@@ -89,7 +89,9 @@ describe('campo de texto', () => {
         fontFamily: fonts.regular,
         fontSize: 32,
       });
-      expect(StyleSheet.flatten(view.input.props.style).opacity).toBe(0);
+      const inputStyle = StyleSheet.flatten(view.input.props.style);
+      expect(inputStyle.color).toBe('transparent');
+      expect(inputStyle.opacity ?? 1).toBe(1);
       expect(view.input.props.accessibilityValue).toEqual({ text: '******' });
       expect(view.texts()).not.toContain('123456');
     });
