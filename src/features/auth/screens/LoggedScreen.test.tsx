@@ -17,7 +17,6 @@ jest.mock('@/features/auth/session/sessionStorage', () => ({
 }));
 
 const readSession = jest.mocked(sessionStorage.readSession);
-const clearSession = jest.mocked(sessionStorage.clearSession);
 
 const metrics = {
   frame: { x: 0, y: 0, width: 414, height: 736 },
@@ -66,58 +65,24 @@ async function settle() {
   }
 }
 
-function labels(renderer: ReactTestRenderer.ReactTestRenderer) {
-  return renderer.root
-    .findAllByType(NativeText)
-    .map(node => node.props.children);
-}
-
 describe('área autenticada', () => {
   beforeEach(() => {
-    clearSession.mockReset();
-    clearSession.mockResolvedValue(undefined);
     readSession.mockReset();
   });
 
-  describe('dado um responsável com mais de um aluno', () => {
-    test('CA-11: quando a tela é exibida, então SAIR e TROCAR PERFIL aparecem', async () => {
+  describe('dado a área autenticada sem lista de aulas neste corte', () => {
+    test('CA-06: quando a tela é exibida, então o estado vazio mostra Sem aulas neste dia', async () => {
       const { renderer } = await renderLogged({
         guardianId: 1,
         studentRm: 12567,
       });
       await settle();
 
-      expect(labels(renderer)).toEqual(
-        expect.arrayContaining(['SAIR', 'TROCAR PERFIL', 'LOGOU']),
-      );
-    });
-
-    test('CA-12: quando TROCAR PERFIL é tocado, então a tela continua em LOGOU', async () => {
-      const { renderer } = await renderLogged({
-        guardianId: 1,
-        studentRm: 12567,
-      });
-      await settle();
-
-      await ReactTestRenderer.act(() => {
-        renderer.root.findByProps({ testID: 'switch-profile' }).props.onPress();
-      });
-
-      expect(labels(renderer)).toContain('LOGOU');
-      expect(clearSession).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('dado um responsável com um aluno', () => {
-    test('CA-11: quando a tela é exibida, então só SAIR aparece', async () => {
-      const { renderer } = await renderLogged({
-        guardianId: 2,
-        studentRm: 13752,
-      });
-      await settle();
-
-      expect(labels(renderer)).toContain('SAIR');
-      expect(labels(renderer)).not.toContain('TROCAR PERFIL');
+      expect(
+        renderer.root
+          .findAllByType(NativeText)
+          .map(node => node.props.children),
+      ).toContain('Sem aulas neste dia');
     });
   });
 });

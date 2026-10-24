@@ -1,6 +1,6 @@
 import * as Keychain from 'react-native-keychain';
 import type { UserCredentials } from 'react-native-keychain';
-import { StatusBar, StyleSheet, Text as NativeText, View } from 'react-native';
+import { StatusBar, StyleSheet, View } from 'react-native';
 import ReactTestRenderer from 'react-test-renderer';
 
 import App from '@/app/App';
@@ -168,7 +168,7 @@ describe('abertura do app', () => {
   });
 
   describe('dado a splash concluída e uma sessão válida', () => {
-    test('CA-02: quando a rota abre, então a tela mostra LOGOU', async () => {
+    test('CA-02: quando a rota abre, então a tela autenticada aparece', async () => {
       getGenericPassword.mockResolvedValue({
         username: 'session',
         password: JSON.stringify({ guardianId: 1, studentRm: 12567 }),
@@ -183,9 +183,6 @@ describe('abertura do app', () => {
           .findAllByType(View)
           .filter(node => node.props.testID === 'logged-screen'),
       ).toHaveLength(1);
-      expect(
-        view.root.findAllByType(NativeText).map(node => node.props.children),
-      ).toContain('LOGOU');
     });
   });
 

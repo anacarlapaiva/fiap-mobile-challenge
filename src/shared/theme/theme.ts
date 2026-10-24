@@ -73,6 +73,7 @@ export const theme = createTheme({
     m: 16,
     l: 24,
     fieldLabelGap: 25,
+    greetingGap: 36,
     xl: 48,
   },
   borderRadii: {

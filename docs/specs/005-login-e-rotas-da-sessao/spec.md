@@ -28,8 +28,8 @@ Splash entrega login sem sessão e a área autenticada com sessão. Login só co
 - **CA-15:** **Dado** uma sessão com id de responsável e RM, **Quando** o hook de usuário é lido, **Então** ele devolve esse responsável e o aluno desse RM. **Dado** nenhuma sessão, **Quando** o hook é lido, **Então** não há usuário.
 - **CA-16:** **Dado** uma sessão com o formato do contrato cujo responsável ou aluno não está no mock, **Quando** a leitura termina, **Então** não há sessão, o Keychain é apagado e a tela é o login. **Quando** o Keychain falha ao apagar, **Então** a memória mesmo assim fica sem sessão e a tela é o login.
 - **CA-17:** **Dado** o cabeçalho, **Quando** renderizado, **Então** a barra de ações tem altura 48, margem lateral 16 e o logo pequeno 100×16; TROCAR PERFIL e SAIR ficam nessa barra; a saudação fica abaixo.
-- **CA-18:** **Dado** o Gustavo com o Rafael, **Quando** o cabeçalho é exibido, **Então** aparecem "Olá, ", "GUSTAVO", "Rafael", "12567", "7EF", "Matutino", SAIR e TROCAR PERFIL.
-- **CA-19:** **Dado** a Adelaide, **Quando** o cabeçalho é exibido, **Então** aparecem "Olá, ", "ADELAIDE", "Bianca", "13752", "1EF", "Tarde" e SAIR, e TROCAR PERFIL não aparece.
+- **CA-18:** **Dado** o Gustavo com o Rafael, **Quando** o cabeçalho é exibido, **Então** aparecem "Olá, ", "GUSTAVO", "RAFAEL", "7EF - RM 12567 - Matutino", SAIR e TROCAR PERFIL.
+- **CA-19:** **Dado** a Adelaide, **Quando** o cabeçalho é exibido, **Então** aparecem "Olá, ", "ADELAIDE", "BIANCA", "1EF - RM 13752 - Tarde" e SAIR, e TROCAR PERFIL não aparece.
 - **CA-20:** **Dado** o estado vazio com uma frase, **Quando** renderizado, **Então** a ilustração ocupa 328×208 sem distorção e a frase aparece no estilo de rótulo do campo, centralizada.
 - **CA-21:** **Dado** a área autenticada sem lista de aulas neste corte, **Quando** a tela é exibida, **Então** o estado vazio mostra "Sem aulas neste dia".
 
