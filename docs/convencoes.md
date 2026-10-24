@@ -57,6 +57,17 @@ Regras:
 - Toda desativação de regra precisa de justificativa após `--`:
   `// eslint-disable-next-line react-hooks/exhaustive-deps -- efeito deve rodar só na montagem`
 
+## Estilo e design system
+
+- Todo valor visual (cor, fonte, tamanho de fonte, espaçamento, raio, borda, tamanho fixo) vem do tema em `src/shared/theme/`. Valor do Figma que não existe no tema exige atualizar a [spec 001](specs/001-design-system/spec.md) antes.
+- Use os componentes do Restyle tipados pelo tema (`Box`, `Text`, de `@/shared/components`) e as props do tema (`backgroundColor="surface"`, `padding="m"`, `variant="body"`). Tamanhos fixos e bordas entram como props do `Box` (`height={sizes.buttonHeight}`, `borderWidth={borderWidths.thin}`); `StyleSheet` só quando não houver prop equivalente.
+- Texto sempre por `variant`. `fonts.*` só é usado ao criar variants no tema; o peso vem do `fontFamily`, nunca de `fontWeight`.
+- Ícones só pelo `Icon` (`@/shared/components`), com `color` do tema e `size` como altura. Ícone novo entra em `icons.ts` com o `path` e o `viewBox` exportados do Figma; o preenchimento vem sempre da prop `color`.
+- Tela começa com `Screen` (fundo e área segura). Área pressionável usa `PressableOpacity` (feedback de toque padrão) ou `PressableBox` (sem feedback), nunca `TouchableOpacity`.
+- Animações usam `react-native-reanimated` ([ADR 0004](adr/0004-animacoes-com-reanimated.md)); durações e opacidades vêm de `motion` (`@/shared/theme`), nunca escritas no componente.
+- Restyle primeiro: cores, espaçamentos, raios e textos sempre por props do tema (`backgroundColor`, `padding`, `borderRadius`, `variant`). Componente nativo que precisa dessas props é tipado com `createBox<Theme, Props>(Componente)` (como o `Pressable`); componente animado usa `Animated.createAnimatedComponent` sobre o `Box`. Cor passada para API que não é do Restyle (SVG, `ActivityIndicator`, `TextInput`) é resolvida com `useTheme()`, nunca com hex. Estilos alternativos de um mesmo componente viram variants no tema, não condicionais de estilo soltas.
+- Larguras que dependem da tela vêm do layout (flex e margens), não de pixels fixos (decisão de escala na [spec 001](specs/001-design-system/spec.md#regras-de-negócio-e-validações)).
+
 ## Commits: Conventional Commits
 
 Formato: `<tipo>(<escopo opcional>): <descrição no imperativo, em português, minúscula>`
