@@ -2,20 +2,21 @@
 
 ## Nomenclatura
 
-Nomes de pastas são sempre em inglês e em `kebab-case` (ex.: `src/features/user-profile/`, `docs/specs/001-email-login/`, `docs/ai/skills/create-feature/`). O conteúdo da documentação continua em português.
+Nomes de pastas são sempre em inglês e em `kebab-case` (ex.: `src/features/user-profile/`, `docs/specs/001-email-login/`, `docs/ai/skills/create-feature/`). Única exceção: a pasta de um componente do design system leva o nome do componente em `PascalCase` (`src/shared/components/Button/`). O conteúdo da documentação continua em português.
 
-| Item                 | Padrão                                                                | Exemplo                                     |
-| -------------------- | --------------------------------------------------------------------- | ------------------------------------------- |
-| Pasta de feature     | `kebab-case` em inglês, substantivo do domínio                        | `src/features/user-profile/`                |
-| Subpastas de camada  | minúsculas, plural                                                    | `screens/`, `components/`, `hooks/`         |
-| Componente React     | `PascalCase.tsx`, um componente exportado por arquivo, export nomeado | `UserCard.tsx` → `export function UserCard` |
-| Tela                 | `PascalCase` terminado em `Screen`                                    | `ProfileScreen.tsx`                         |
-| Hook                 | `camelCase` com prefixo `use`                                         | `useProfile.ts`                             |
-| Função utilitária    | `camelCase.ts`                                                        | `formatCurrency.ts`                         |
-| Tipos e interfaces   | `PascalCase`, sem prefixo `I`                                         | `type UserProfile`                          |
-| Constantes globais   | `UPPER_SNAKE_CASE`                                                    | `API_TIMEOUT_MS`                            |
-| Arquivo de teste     | mesmo nome do arquivo testado + `.test`                               | `UserCard.test.tsx`                         |
-| Barrel (API pública) | `index.ts`                                                            | `src/features/profile/index.ts`             |
+| Item                 | Padrão                                                                                            | Exemplo                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Pasta de feature     | `kebab-case` em inglês, substantivo do domínio                                                    | `src/features/user-profile/`                                                  |
+| Subpastas de camada  | minúsculas, plural                                                                                | `screens/`, `components/`, `hooks/`                                           |
+| Componente React     | `PascalCase.tsx`, um componente exportado por arquivo, export nomeado                             | `UserCard.tsx` → `export function UserCard`                                   |
+| Pasta de componente  | `PascalCase`, igual ao componente; contém o componente, o teste, arquivos só dele e um `index.ts` | `src/shared/components/Button/` → `Button.tsx`, `Button.test.tsx`, `index.ts` |
+| Tela                 | `PascalCase` terminado em `Screen`                                                                | `ProfileScreen.tsx`                                                           |
+| Hook                 | `camelCase` com prefixo `use`                                                                     | `useProfile.ts`                                                               |
+| Função utilitária    | `camelCase.ts`                                                                                    | `formatCurrency.ts`                                                           |
+| Tipos e interfaces   | `PascalCase`, sem prefixo `I`                                                                     | `type UserProfile`                                                            |
+| Constantes globais   | `UPPER_SNAKE_CASE`                                                                                | `API_TIMEOUT_MS`                                                              |
+| Arquivo de teste     | mesmo nome do arquivo testado + `.test`                                                           | `UserCard.test.tsx`                                                           |
+| Barrel (API pública) | `index.ts`                                                                                        | `src/features/profile/index.ts`                                               |
 
 Exports default só onde o framework exige (ex.: `App.tsx` registrado em `index.js`). No resto, use exports nomeados.
 
@@ -56,6 +57,22 @@ Regras:
 - Código sem comentários: o código deve se explicar por nomes claros. Contexto e decisões ficam em `docs/` (veja as proibições em [AGENTS.md](../AGENTS.md#proibições)).
 - Toda desativação de regra precisa de justificativa após `--`:
   `// eslint-disable-next-line react-hooks/exhaustive-deps -- efeito deve rodar só na montagem`
+
+## Estilo e design system
+
+- Todo valor visual (cor, fonte, tamanho de fonte, espaçamento, raio, borda, tamanho fixo) vem do tema em `src/shared/theme/`. Valor do Figma que não existe no tema exige atualizar a [spec 001](specs/001-design-system/spec.md) antes.
+- Tudo o que é visual vive dentro do `createTheme` (`src/shared/theme/theme.ts`), que é a fonte única entregue pelo `ThemeProvider`. Não existem constantes visuais exportadas fora do tema.
+  - Tokens nativos do Restyle: `colors`, `spacing`, `borderRadii`, `breakpoints` e `textVariants`, usados por props (`backgroundColor="surface"`, `padding="m"`, `borderRadius="m"`, `variant="body"`).
+  - Variants de componente (`buttonVariants`, `cardVariants`, `dropdownVariants`, `textFieldVariants`, `logoVariants`): cada parte visual de um componente é um variant, aplicado com `createVariant` + `createRestyleComponent` (`createVariantBox` em `@/shared/lib/createVariantBox`). Medidas fixas (altura, borda) ficam dentro do variant.
+  - Chaves próprias do tema para valores que vão para APIs fora do Restyle: `sizes`, `iconSizes`, `borderWidths` e `motion`. São lidas sempre por `useTheme()`, nunca importadas.
+- Componente nativo que precisa das props do Restyle é tipado com `createBox<Theme, Props>(Componente)` (como `PressableBox`) ou `createText<Theme, Props>(Componente)` (como o `TextInput` do `TextField`); componente animado usa `Animated.createAnimatedComponent` sobre um componente do Restyle.
+- Cor, tamanho ou duração passados para API que não é do Restyle (SVG, `ActivityIndicator`, `TextInput`, Reanimated) vêm de `useTheme()`, nunca de hex ou número solto.
+- `style` só para valores calculados em tempo de execução (área segura, posição medida, estilo animado). `StyleSheet` não é usado em `src/shared/components`.
+- Texto sempre por `variant`. `fonts.*` só é usado ao criar variants no tema; o peso vem do `fontFamily`, nunca de `fontWeight`.
+- Ícones só pelo `Icon` (`@/shared/components`), com `color` do tema e `size` como chave de `iconSizes` (altura). Ícone novo entra em `icons.ts` com o `path` e o `viewBox` exportados do Figma; o preenchimento vem sempre da prop `color`.
+- Tela começa com `Screen` (fundo e área segura). Área pressionável usa `PressableOpacity` (feedback de toque padrão) ou `PressableBox` (sem feedback), nunca `TouchableOpacity`.
+- Animações usam `react-native-reanimated` ([ADR 0004](adr/0004-animacoes-com-reanimated.md)); durações e opacidades vêm de `theme.motion` (via `useTheme()`), nunca escritas no componente.
+- Larguras que dependem da tela vêm do layout (flex e margens), não de pixels fixos (decisão de escala na [spec 001](specs/001-design-system/spec.md#regras-de-negócio-e-validações)).
 
 ## Commits: Conventional Commits
 

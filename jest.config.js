@@ -1,5 +1,10 @@
 module.exports = {
   preset: '@react-native/jest-preset',
+  resolver: 'react-native-reanimated/jest/resolver',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  transformIgnorePatterns: [
+    'node_modules/(?!((jest-)?react-native(-svg|-reanimated|-worklets)?|@react-native(-community)?)/)',
+  ],
   moduleNameMapper: {
     '^@/app/(.*)$': '<rootDir>/src/app/$1',
     '^@/features/(.*)$': '<rootDir>/src/features/$1',

@@ -9,8 +9,10 @@
 ├── README.md
 ├── index.js                   # registro do app (AppRegistry) -> src/app/App.tsx
 ├── app.json
-├── babel.config.js            # preset RN + aliases (module-resolver)
-├── jest.config.js             # preset RN + aliases (moduleNameMapper)
+├── babel.config.js            # preset RN + aliases (module-resolver) + plugin do worklets (último)
+├── jest.config.js             # preset RN + aliases + resolver e transform do Reanimated e do svg
+├── jest.setup.js              # setup de testes do Reanimated
+├── react-native.config.js     # fontes registradas pelo react-native-asset
 ├── tsconfig.json              # strict + paths
 ├── .eslintrc.js               # regras de camadas (boundaries)
 ├── .prettierrc.js  .prettierignore
@@ -29,37 +31,47 @@
     ├── app/
     │   ├── App.tsx
     │   ├── App.test.tsx
-    │   ├── providers/         # composição dos providers globais
-    │   └── navigation/        # navegação raiz (sem biblioteca ainda)
-    ├── features/              # uma pasta por domínio (nenhuma ainda)
+    │   ├── nativeLaunch.test.ts
+    │   ├── providers/         # composição dos providers globais (safe area + tema)
+    │   └── navigation/        # navegação raiz (React Navigation: stack e abas, ADR 0005)
+    ├── features/
+    │   └── splash/            # abertura animada (SplashScreen na API pública)
     ├── shared/
-    │   ├── components/        # design system
+    │   ├── components/        # design system (spec 001 e 003): uma pasta por componente
+    │   │   ├── Button/        # Button.tsx, Button.test.tsx, index.ts
+    │   │   ├── Icon/          # Icon.tsx, Icon.test.tsx, icons.ts, index.ts
+    │   │   ├── …              # Box, Text, Screen, Logo, PressableBox, PressableOpacity,
+    │   │   │                  # TextField, TextButton, Card, Dropdown
+    │   │   └── index.ts       # API pública de todos os componentes
     │   ├── hooks/             # hooks genéricos
-    │   ├── lib/               # utilitários e wrappers de bibliotecas
-    │   ├── theme/             # tokens de cor, espaçamento e tipografia
+    │   ├── lib/               # utilitários e wrappers de bibliotecas (createVariantBox do Restyle)
+    │   ├── theme/             # tema do Restyle: theme.ts (tokens, variants, sizes, motion) e fonts.ts
     │   ├── config/            # variáveis de ambiente e constantes
     │   └── types/             # tipos compartilhados
-    └── assets/                # fontes, imagens e ícones
+    └── assets/                # fontes, imagens, ícones e vídeos
+        ├── fonts/             # Montserrat (4 pesos) + OFL.txt
+        ├── images/            # logo.png exportado do Figma e a declaração de tipo ao lado
+        └── videos/            # splash.mp4 e a declaração de tipo ao lado
 ```
 
-Cada pasta vazia de `src/` tem um `README.md` dizendo o que pode e o que não pode ficar ali.
+As pastas `app/navigation/`, `shared/hooks/`, `shared/config/` e `shared/types/` ainda não existem no repositório: o git não versiona pastas vazias. Cada uma é criada pela primeira tarefa que precisar dela, seguindo a tabela abaixo.
 
 ## Propósito de cada pasta
 
-| Pasta                    | Propósito                                     | Não pode conter                      |
-| ------------------------ | --------------------------------------------- | ------------------------------------ |
-| `src/app/`               | Bootstrap, providers globais e navegação raiz | Telas e regras de negócio            |
-| `src/app/providers/`     | Composição dos providers (`AppProviders`)     | Lógica de feature                    |
-| `src/app/navigation/`    | Navigators e rotas raiz                       | Telas (ficam nas features)           |
-| `src/features/`          | Uma pasta por domínio                         | Código compartilhado entre features  |
-| `src/shared/components/` | Componentes de UI genéricos                   | Componentes que conhecem uma feature |
-| `src/shared/hooks/`      | Hooks genéricos                               | Hooks de uma única feature           |
-| `src/shared/lib/`        | Utilitários e adaptadores de bibliotecas      | Endpoints de uma feature             |
-| `src/shared/theme/`      | Tokens de design                              | Componentes                          |
-| `src/shared/config/`     | Variáveis de ambiente e constantes            | Segredos versionados                 |
-| `src/shared/types/`      | Tipos sem dono de domínio                     | Tipos de uma feature                 |
-| `src/assets/`            | Arquivos estáticos                            | Código com lógica                    |
-| `docs/`                  | Documentação viva do projeto                  | Código executável                    |
+| Pasta                    | Propósito                                                        | Não pode conter                                                            |
+| ------------------------ | ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `src/app/`               | Bootstrap, providers globais e navegação raiz                    | Telas e regras de negócio                                                  |
+| `src/app/providers/`     | Composição dos providers (`AppProviders`)                        | Lógica de feature                                                          |
+| `src/app/navigation/`    | Navigators e rotas raiz                                          | Telas (ficam nas features)                                                 |
+| `src/features/`          | Uma pasta por domínio                                            | Código compartilhado entre features                                        |
+| `src/shared/components/` | Componentes de UI genéricos, só por props                        | Componentes que conhecem uma feature, chamam API ou leem estado de domínio |
+| `src/shared/hooks/`      | Hooks genéricos                                                  | Hooks de uma única feature                                                 |
+| `src/shared/lib/`        | Utilitários e adaptadores de bibliotecas                         | Endpoints de uma feature                                                   |
+| `src/shared/theme/`      | Tokens de design                                                 | Componentes                                                                |
+| `src/shared/config/`     | Ponto único de acesso às variáveis de ambiente e constantes      | Segredos versionados                                                       |
+| `src/shared/types/`      | Tipos sem dono de domínio                                        | Tipos de uma feature                                                       |
+| `src/assets/`            | Arquivos estáticos, em `fonts/`, `images/`, `icons/` e `videos/` | Código com lógica                                                          |
+| `docs/`                  | Documentação viva do projeto                                     | Código executável                                                          |
 
 ## Anatomia de uma feature
 
