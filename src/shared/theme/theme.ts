@@ -100,6 +100,22 @@ export const theme = createTheme({
     large: { width: 306, height: 49 },
     small: { width: 100, height: 16 },
   },
+  emptyVariants: {
+    root: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    message: {
+      marginTop: 'm',
+    },
+  },
+  emptyImageVariants: {
+    illustration: {
+      width: sizes.emptyImage.width,
+      height: sizes.emptyImage.height,
+    },
+  },
   buttonVariants: {
     primary: {
       height: sizes.buttonHeight,
