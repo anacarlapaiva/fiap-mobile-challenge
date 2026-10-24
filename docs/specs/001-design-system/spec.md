@@ -54,9 +54,15 @@ Montserrat v9.000 (OFL), pesos 400, 500, 600 e 700. Letter-spacing 0. Altura de 
 | 8     | Valor do campo do login e a linha                                                         |
 | 12    | Texto no dropdown e no card de trimestre                                                  |
 | 16    | Margem lateral do boletim e da seleção; espaço entre cards; barra de ações; card de aluno |
+| 20    | Imagem "sem aulas" e a frase                                                              |
 | 24    | Margem lateral do dropdown da agenda                                                      |
 | 25    | Rótulo e valor do campo do login                                                          |
+| 31    | Linha da senha e a frase de erro do login                                                 |
+| 36    | Saudação e nome do aluno no cabeçalho                                                     |
+| 39    | Linha do CPF e o rótulo da senha                                                          |
 | 48    | Margem lateral dos campos do login                                                        |
+| 80    | Logo e o rótulo do CPF no login                                                           |
+| 100   | Topo da área segura e o logo do login                                                     |
 
 ## Raios, bordas e tamanhos
 
@@ -71,6 +77,7 @@ Montserrat v9.000 (OFL), pesos 400, 500, 600 e 700. Letter-spacing 0. Altura de 
 | Logo no login                           | 306×49                                   |
 | Botão de login                          | altura 60, largura total, sem raio       |
 | Campo do login (rótulo + valor + linha) | altura 96; margem lateral 48             |
+| Largura mínima do campo do login        | 260 (cabe o CPF mais largo em 32)        |
 | Dropdown fechado                        | altura 45                                |
 | Card de trimestre e card de aluno       | altura 90                                |
 | Linha da lista de opções do dropdown    | altura 36                                |
@@ -84,6 +91,8 @@ Montserrat v9.000 (OFL), pesos 400, 500, 600 e 700. Letter-spacing 0. Altura de 
 
 - Valor visual só pelo tema. Sem arredondar para grade 4/8.
 - Medidas do Figma em 414 de largura, sem escala proporcional. Larguras de tela = espaço disponível menos as margens do tema.
+- Tela estreita: a margem lateral do login encolhe só o bastante para o campo manter 260; a imagem "sem aulas" encolhe na proporção abaixo de 328 de largura.
+- O texto não acompanha o tamanho de fonte do sistema: as caixas do Figma têm altura fixa.
 - Desalinhamentos do Figma: aulas começam em 40; texto do card de aluno em 32 nas duas linhas. Margens 24 (agenda) e 16 (boletim/seleção) ficam.
 - Só os quatro pesos usados. Fonte registrada em `ios/` e `android/` (autorizado em 2026-10-23).
 

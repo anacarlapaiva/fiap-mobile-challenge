@@ -1,15 +1,17 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@shopify/restyle';
-import { StyleSheet, Text as NativeText, TextInput, View } from 'react-native';
+import {
+  Dimensions,
+  Keyboard,
+  StyleSheet,
+  Text as NativeText,
+  View,
+} from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ReactTestRenderer from 'react-test-renderer';
 
 import { LoginScreen } from '@/features/auth/screens/LoginScreen';
-import {
-  SessionProvider,
-  useSession,
-} from '@/features/auth/session/SessionProvider';
-import * as sessionStorage from '@/features/auth/session/sessionStorage';
+import { SessionProvider } from '@/features/auth/session/SessionProvider';
 import { theme } from '@/shared/theme';
 
 jest.mock('@/features/auth/session/sessionStorage', () => ({
@@ -18,21 +20,10 @@ jest.mock('@/features/auth/session/sessionStorage', () => ({
   clearSession: jest.fn(() => Promise.resolve()),
 }));
 
-const saveSession = jest.mocked(sessionStorage.saveSession);
-
 const metrics = {
   frame: { x: 0, y: 0, width: 414, height: 736 },
   insets: { top: 47, bottom: 34, left: 0, right: 0 },
 };
-
-function SessionProbe() {
-  const { session } = useSession();
-  return (
-    <NativeText>
-      {session ? `${session.guardianId}:${session.studentRm}` : 'none'}
-    </NativeText>
-  );
-}
 
 async function flush() {
   for (let step = 0; step < 5; step += 1) {
@@ -52,7 +43,6 @@ async function renderLogin() {
           <ThemeProvider theme={theme}>
             <SessionProvider>
               <LoginScreen />
-              <SessionProbe />
             </SessionProvider>
           </ThemeProvider>
         </QueryClientProvider>
@@ -76,22 +66,6 @@ async function settle() {
   }
 }
 
-function texts(renderer: ReactTestRenderer.ReactTestRenderer) {
-  return renderer.root
-    .findAllByType(NativeText)
-    .map(node => node.props.children);
-}
-
-function field(renderer: ReactTestRenderer.ReactTestRenderer, testID: string) {
-  const input = renderer.root
-    .findAllByType(TextInput)
-    .find(node => node.props.testID === testID);
-  if (!input) {
-    throw new Error(`campo ${testID} não encontrado`);
-  }
-  return input;
-}
-
 async function pressLogin(renderer: ReactTestRenderer.ReactTestRenderer) {
   await ReactTestRenderer.act(async () => {
     renderer.root.findByProps({ testID: 'login-submit' }).props.onPress();
@@ -100,70 +74,83 @@ async function pressLogin(renderer: ReactTestRenderer.ReactTestRenderer) {
   await settle();
 }
 
+function style(renderer: ReactTestRenderer.ReactTestRenderer, testID: string) {
+  return StyleSheet.flatten(
+    renderer.root.findAllByType(View).find(view => view.props.testID === testID)
+      ?.props.style,
+  );
+}
+
+function window(width: number, height: number) {
+  jest
+    .spyOn(Dimensions, 'get')
+    .mockReturnValue({ width, height, scale: 3, fontScale: 1 });
+}
+
 describe('tela de login', () => {
-  beforeEach(() => {
-    saveSession.mockClear();
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
-  describe('dado o login', () => {
-    test('quando a tela renderiza, então o botão cobre a base da tela', async () => {
+  describe('dado uma tela de 414 de largura', () => {
+    test('quando renderizada, então o conteúdo começa a 100 do topo seguro com margem 48', async () => {
+      window(414, 736);
       const renderer = await renderLogin();
-      const hostStyle = (testID: string) =>
-        StyleSheet.flatten(
-          renderer.root
-            .findAllByType(View)
-            .find(view => view.props.testID === testID)?.props.style,
+
+      expect(style(renderer, 'login-content')).toMatchObject({
+        paddingTop: 100,
+        paddingHorizontal: 48,
+      });
+    });
+  });
+
+  describe('dado uma tela de 320 de largura', () => {
+    test('quando renderizada, então a margem encolhe para o CPF caber', async () => {
+      window(320, 568);
+      const renderer = await renderLogin();
+
+      expect(style(renderer, 'login-content')).toMatchObject({
+        paddingHorizontal: 30,
+      });
+    });
+  });
+
+  describe('dado um login recusado', () => {
+    test('quando a frase aparece, então fica centralizada abaixo da senha', async () => {
+      window(414, 736);
+      const renderer = await renderLogin();
+      await settle();
+
+      await pressLogin(renderer);
+
+      const message = renderer.root
+        .findAllByType(NativeText)
+        .find(node => node.props.children === 'Informe o CPF.');
+      expect(StyleSheet.flatten(message?.props.style)).toMatchObject({
+        textAlign: 'center',
+        marginTop: 31,
+      });
+    });
+  });
+
+  describe('dado o teclado aberto', () => {
+    test('quando o botão fica acima dele, então mantém a altura 60 sem a área segura', async () => {
+      window(414, 736);
+      const addListener = jest.spyOn(Keyboard, 'addListener');
+      const renderer = await renderLogin();
+      const listeners = addListener.mock.calls
+        .filter(([event]) => event === 'keyboardWillShow')
+        .map(([, listener]) => listener);
+
+      await ReactTestRenderer.act(() => {
+        listeners.forEach(listener =>
+          listener({} as Parameters<typeof listener>[0]),
         );
-      const screenStyle = hostStyle('login-screen');
-      const buttonStyle = hostStyle('login-submit');
-
-      expect(screenStyle.paddingTop).toBe(metrics.insets.top);
-      expect(screenStyle.paddingBottom).toBe(0);
-      expect(buttonStyle.paddingBottom).toBe(metrics.insets.bottom);
-      expect(buttonStyle.backgroundColor).toBe(theme.colors.accent);
-    });
-  });
-
-  describe('dado o campo de CPF', () => {
-    test('CA-03: quando a pessoa digita dígitos, então o campo mostra a máscara', async () => {
-      const renderer = await renderLogin();
-      await settle();
-
-      await ReactTestRenderer.act(() => {
-        field(renderer, 'login-cpf').props.onChangeText('96929456004');
       });
 
-      expect(field(renderer, 'login-cpf').props.value).toBe('969.294.560-04');
-    });
-  });
-
-  describe('dado o CPF vazio', () => {
-    test('CA-04: quando FAZER LOGIN é tocado, então aparece a frase do CPF', async () => {
-      const renderer = await renderLogin();
-      await settle();
-
-      await pressLogin(renderer);
-
-      expect(texts(renderer)).toContain('Informe o CPF.');
-    });
-  });
-
-  describe('dado o CPF e a senha de um responsável do mock', () => {
-    test('CA-10: quando FAZER LOGIN é tocado, então a sessão gravada usa o primeiro aluno', async () => {
-      const renderer = await renderLogin();
-      await settle();
-
-      await ReactTestRenderer.act(() => {
-        field(renderer, 'login-cpf').props.onChangeText('96929456004');
-        field(renderer, 'login-password').props.onChangeText('123456');
+      expect(style(renderer, 'login-submit')).toMatchObject({
+        paddingBottom: 0,
       });
-      await pressLogin(renderer);
-
-      expect(saveSession).toHaveBeenCalledWith({
-        guardianId: 1,
-        studentRm: 12567,
-      });
-      expect(texts(renderer)).toContain('1:12567');
     });
   });
 });

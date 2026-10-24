@@ -71,7 +71,7 @@ describe('área autenticada', () => {
   });
 
   describe('dado a área autenticada sem lista de aulas neste corte', () => {
-    test('CA-06: quando a tela é exibida, então o estado vazio mostra Sem aulas neste dia', async () => {
+    test('CA-21: quando a tela é exibida, então o estado vazio mostra Sem aulas neste dia', async () => {
       const { renderer } = await renderLogged({
         guardianId: 1,
         studentRm: 12567,

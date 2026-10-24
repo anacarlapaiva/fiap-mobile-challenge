@@ -111,4 +111,17 @@ describe('campo de texto', () => {
       expect(onChangeText).toHaveBeenCalledWith('12345678900');
     });
   });
+
+  describe('dado qualquer aparelho', () => {
+    test('quando o campo é renderizado, então o valor tem a altura 39 do Figma e não segue a fonte do sistema', async () => {
+      const view = await render(
+        <TextField label="CPF" value="" onChangeText={jest.fn()} />,
+      );
+
+      expect(StyleSheet.flatten(view.input.props.style)).toMatchObject({
+        height: 39,
+      });
+      expect(view.input.props.allowFontScaling).toBe(false);
+    });
+  });
 });

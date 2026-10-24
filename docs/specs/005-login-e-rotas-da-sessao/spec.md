@@ -30,7 +30,7 @@ Splash entrega login sem sessão e a área autenticada com sessão. Login só co
 - **CA-17:** **Dado** o cabeçalho, **Quando** renderizado, **Então** a barra de ações tem altura 48, margem lateral 16 e o logo pequeno 100×16; TROCAR PERFIL e SAIR ficam nessa barra; a saudação fica abaixo.
 - **CA-18:** **Dado** o Gustavo com o Rafael, **Quando** o cabeçalho é exibido, **Então** aparecem "Olá, ", "GUSTAVO", "RAFAEL", "7EF - RM 12567 - Matutino", SAIR e TROCAR PERFIL.
 - **CA-19:** **Dado** a Adelaide, **Quando** o cabeçalho é exibido, **Então** aparecem "Olá, ", "ADELAIDE", "BIANCA", "1EF - RM 13752 - Tarde" e SAIR, e TROCAR PERFIL não aparece.
-- **CA-20:** **Dado** o estado vazio com uma frase, **Quando** renderizado, **Então** a ilustração ocupa 328×208 sem distorção e a frase aparece no estilo de rótulo do campo, centralizada.
+- **CA-20:** **Dado** o estado vazio com uma frase, **Quando** renderizado, **Então** a ilustração ocupa 328×208 (menos em tela mais estreita, na proporção) sem distorção e a frase aparece 20 abaixo, no estilo de rótulo do campo, centralizada.
 - **CA-21:** **Dado** a área autenticada sem lista de aulas neste corte, **Quando** a tela é exibida, **Então** o estado vazio mostra "Sem aulas neste dia".
 
 ## Regras

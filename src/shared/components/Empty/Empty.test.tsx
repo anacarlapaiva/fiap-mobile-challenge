@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@shopify/restyle';
-import { Image, StyleSheet, Text as NativeText } from 'react-native';
+import { Image, StyleSheet, Text as NativeText, View } from 'react-native';
 import ReactTestRenderer from 'react-test-renderer';
 
 import { Empty } from '@/shared/components/Empty';
@@ -22,13 +22,14 @@ async function renderEmpty(message: string) {
 
 describe('estado vazio', () => {
   describe('dado uma frase', () => {
-    test('CA-01: quando renderizado, então a ilustração ocupa 328 por 208 sem distorção e a frase usa o rótulo do campo', async () => {
+    test('CA-20: quando renderizado, então a ilustração ocupa até 328 por 208 sem distorção e a frase usa o rótulo do campo 20 abaixo', async () => {
       const root = await renderEmpty('Sem aulas neste dia');
       const image = root.findByType(Image);
 
       expect(StyleSheet.flatten(image.props.style)).toEqual({
-        width: 328,
-        height: 208,
+        width: '100%',
+        maxWidth: 328,
+        aspectRatio: 328 / 208,
       });
       expect(image.props.resizeMode).toBe('contain');
       expect(image.props.accessibilityLabel).toBe('Sem aulas neste dia');
@@ -42,6 +43,11 @@ describe('estado vazio', () => {
           textAlign: 'center',
         }),
       );
+      expect(
+        root
+          .findAllByType(View)
+          .some(node => StyleSheet.flatten(node.props.style)?.marginTop === 20),
+      ).toBe(true);
       expect(root.findByType(NativeText).props.children).toBe(
         'Sem aulas neste dia',
       );

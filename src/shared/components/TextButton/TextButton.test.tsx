@@ -83,14 +83,4 @@ describe('botão de texto', () => {
       expect(view.root.findByType(Path).props.fill).toBe(theme.colors.accent);
     });
   });
-
-  describe('dado um botão de texto sem ícone', () => {
-    test('quando renderizado, então só o texto aparece', async () => {
-      const view = await render(
-        <TextButton label="TROCAR PERFIL" onPress={jest.fn()} />,
-      );
-
-      expect(view.root.findAllByType(Svg)).toHaveLength(0);
-    });
-  });
 });

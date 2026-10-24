@@ -81,7 +81,7 @@ describe('cabeçalho autenticado', () => {
   });
 
   describe('dado o cabeçalho', () => {
-    test('CA-02: quando renderizado, então a barra tem altura 48, margem 16, inset no topo e o logo 100 por 16', async () => {
+    test('CA-17: quando renderizado, então a barra tem altura 48, margem 16, inset no topo e o logo 100 por 16', async () => {
       const renderer = await renderHeader({
         guardianId: 1,
         studentRm: 12567,
@@ -111,7 +111,7 @@ describe('cabeçalho autenticado', () => {
   });
 
   describe('dado o Gustavo com o Rafael', () => {
-    test('CA-03: quando o cabeçalho é exibido, então a saudação, o aluno e as ações aparecem', async () => {
+    test('CA-18: quando o cabeçalho é exibido, então a saudação, o aluno e as ações aparecem', async () => {
       const renderer = await renderHeader({
         guardianId: 1,
         studentRm: 12567,
@@ -131,7 +131,7 @@ describe('cabeçalho autenticado', () => {
   });
 
   describe('dado a Adelaide', () => {
-    test('CA-04: quando o cabeçalho é exibido, então só SAIR aparece com os dados dela', async () => {
+    test('CA-19: quando o cabeçalho é exibido, então só SAIR aparece com os dados dela', async () => {
       const renderer = await renderHeader({
         guardianId: 2,
         studentRm: 13752,
@@ -152,7 +152,7 @@ describe('cabeçalho autenticado', () => {
   });
 
   describe('dado TROCAR PERFIL visível', () => {
-    test('CA-05: quando o botão é tocado, então a sessão permanece', async () => {
+    test('CA-12: quando o botão é tocado, então a sessão permanece', async () => {
       const renderer = await renderHeader({
         guardianId: 1,
         studentRm: 12567,

@@ -78,7 +78,7 @@ describe('avaliação do login', () => {
   });
 
   describe('dado o CPF e a senha de um responsável do mock', () => {
-    test('CA-10: quando o login é avaliado, então a sessão usa o id dele e o RM do primeiro aluno', () => {
+    test('quando o login é avaliado, então a sessão usa o id dele e o RM do primeiro aluno', () => {
       expect(assessLogin('969.294.560-04', '123456', [gustavo])).toEqual({
         ok: true,
         session: { guardianId: 1, studentRm: 12567 },

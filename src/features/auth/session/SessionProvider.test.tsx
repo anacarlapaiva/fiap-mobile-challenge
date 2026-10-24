@@ -163,7 +163,7 @@ describe('provider da sessão', () => {
   });
 
   describe('dado um CPF válido que não está no mock', () => {
-    test('CA-09: quando o login é pedido, então a sessão não é gravada', async () => {
+    test('quando o login é pedido, então a sessão não é gravada', async () => {
       const { renderer } = await renderProvider();
       await settle();
 

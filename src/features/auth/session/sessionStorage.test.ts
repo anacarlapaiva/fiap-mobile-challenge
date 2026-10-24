@@ -21,7 +21,7 @@ describe('armazenamento da sessão', () => {
   });
 
   describe('dado uma sessão para gravar', () => {
-    test('CA-10: quando ela é gravada, então o Keychain recebe o id e o RM', async () => {
+    test('quando ela é gravada, então o Keychain recebe o id e o RM', async () => {
       await saveSession({ guardianId: 1, studentRm: 12567 });
 
       expect(setGenericPassword).toHaveBeenCalledWith(
@@ -33,7 +33,7 @@ describe('armazenamento da sessão', () => {
   });
 
   describe('dado uma sessão válida no Keychain', () => {
-    test('CA-02: quando ela é lida, então a sessão volta', async () => {
+    test('quando ela é lida, então a sessão volta', async () => {
       getGenericPassword.mockResolvedValue({
         username: 'session',
         password: JSON.stringify({ guardianId: 2, studentRm: 13752 }),
@@ -49,7 +49,7 @@ describe('armazenamento da sessão', () => {
   });
 
   describe('dado um texto de sessão que não é o contrato', () => {
-    test('CA-14: quando ele é lido, então o resultado é nenhuma sessão', async () => {
+    test('quando ele é lido, então o resultado é nenhuma sessão', async () => {
       getGenericPassword.mockResolvedValue({
         username: 'session',
         password: '{',
@@ -62,7 +62,7 @@ describe('armazenamento da sessão', () => {
   });
 
   describe('dado uma sessão gravada', () => {
-    test('CA-13: quando a sessão é apagada, então o Keychain remove o registro', async () => {
+    test('quando a sessão é apagada, então o Keychain remove o registro', async () => {
       await clearSession();
 
       expect(resetGenericPassword).toHaveBeenCalledWith({

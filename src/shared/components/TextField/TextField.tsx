@@ -83,6 +83,7 @@ export function TextField({
   }));
 
   const mask = '*'.repeat(value.length);
+  const valueHeight = { height: theme.textVariants.inputValue.lineHeight };
 
   return (
     <FieldBox variant="container">
@@ -95,7 +96,11 @@ export function TextField({
             accessibilityElementsHidden
             importantForAccessibility="no-hide-descendants"
           >
-            <Text variant="inputValue" testID="text-field-mask">
+            <Text
+              variant="inputValue"
+              testID="text-field-mask"
+              numberOfLines={1}
+            >
               {mask}
             </Text>
             <AnimatedFieldBox variant="caret" style={caretStyle} />
@@ -112,12 +117,14 @@ export function TextField({
           keyboardType={keyboardType}
           maxLength={maxLength}
           textAlign="center"
+          allowFontScaling={false}
+          underlineColorAndroid="transparent"
           selectionColor={theme.colors.textPrimary}
           accessibilityLabel={label}
           autoCorrect={false}
           autoCapitalize="none"
           spellCheck={false}
-          style={secure ? styles.hiddenValue : undefined}
+          style={[valueHeight, secure ? styles.hiddenValue : undefined]}
           {...(secure
             ? {
                 caretHidden: true,
