@@ -1,6 +1,6 @@
 import { createText, useTheme } from '@shopify/restyle';
 import { useEffect, useState } from 'react';
-import { TextInput, type TextInputProps } from 'react-native';
+import { StyleSheet, TextInput, type TextInputProps } from 'react-native';
 import Animated, {
   cancelAnimation,
   interpolateColor,
@@ -18,6 +18,10 @@ import type { Theme } from '@/shared/theme';
 const ThemedTextInput = createText<Theme, TextInputProps>(TextInput);
 const FieldBox = createVariantBox('textFieldVariants');
 const AnimatedFieldBox = Animated.createAnimatedComponent(FieldBox);
+
+const styles = StyleSheet.create({
+  hiddenValue: { color: 'transparent' },
+});
 
 type TextFieldProps = {
   label: string;
@@ -79,11 +83,29 @@ export function TextField({
   }));
 
   const mask = '*'.repeat(value.length);
+  const valueHeight = { height: theme.textVariants.inputValue.lineHeight };
 
   return (
     <FieldBox variant="container">
       <Text variant="inputLabel">{label}</Text>
       <FieldBox variant="value">
+        {secure ? (
+          <FieldBox
+            variant="mask"
+            pointerEvents="none"
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          >
+            <Text
+              variant="inputValue"
+              testID="text-field-mask"
+              numberOfLines={1}
+            >
+              {mask}
+            </Text>
+            <AnimatedFieldBox variant="caret" style={caretStyle} />
+          </FieldBox>
+        ) : null}
         <ThemedTextInput
           testID={testID}
           variant="inputValue"
@@ -95,14 +117,16 @@ export function TextField({
           keyboardType={keyboardType}
           maxLength={maxLength}
           textAlign="center"
+          allowFontScaling={false}
+          underlineColorAndroid="transparent"
           selectionColor={theme.colors.textPrimary}
           accessibilityLabel={label}
           autoCorrect={false}
           autoCapitalize="none"
           spellCheck={false}
+          style={[valueHeight, secure ? styles.hiddenValue : undefined]}
           {...(secure
             ? {
-                opacity: 0,
                 caretHidden: true,
                 contextMenuHidden: true,
                 autoComplete: 'off',
@@ -112,19 +136,6 @@ export function TextField({
               }
             : {})}
         />
-        {secure ? (
-          <FieldBox
-            variant="mask"
-            pointerEvents="none"
-            accessibilityElementsHidden
-            importantForAccessibility="no-hide-descendants"
-          >
-            <Text variant="inputValue" testID="text-field-mask">
-              {mask}
-            </Text>
-            <AnimatedFieldBox variant="caret" style={caretStyle} />
-          </FieldBox>
-        ) : null}
       </FieldBox>
       <AnimatedFieldBox
         variant="line"

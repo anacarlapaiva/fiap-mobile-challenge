@@ -834,7 +834,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-export-namespace-from@npm:^7.29.7":
+"@babel/plugin-transform-export-namespace-from@npm:7.29.7, @babel/plugin-transform-export-namespace-from@npm:^7.29.7":
   version: 7.29.7
   resolution: "@babel/plugin-transform-export-namespace-from@npm:7.29.7"
   dependencies:
@@ -2611,6 +2611,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.104.5":
+  version: 5.104.5
+  resolution: "@tanstack/query-core@npm:5.104.5"
+  checksum: d5708d01140456f3f0745c9e74cc386f7c1e03eaa869a9b7641d0ebb57552ebab9b34e85cdb0959cdd29fe967b0b173a7d233d6847176723ef423064e6b9e444
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.104.5":
+  version: 5.104.5
+  resolution: "@tanstack/react-query@npm:5.104.5"
+  dependencies:
+    "@tanstack/query-core": 5.104.5
+  peerDependencies:
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 506d2be68f4af432ebcd6d496a66ae377e4f4831c80033cdcc48e9d24f561440301004051205056ea405781f1ceaec815a59b50ac8a16b17e02ac442f3e2ef87
+  languageName: node
+  linkType: hard
+
 "@tybys/wasm-util@npm:^0.10.3":
   version: 0.10.4
   resolution: "@tybys/wasm-util@npm:0.10.4"
@@ -3074,6 +3096,7 @@ __metadata:
   resolution: "AppFiap@workspace:."
   dependencies:
     "@babel/core": ^7.25.2
+    "@babel/plugin-transform-export-namespace-from": 7.29.7
     "@babel/preset-env": ^7.25.3
     "@babel/runtime": ^7.25.0
     "@react-native-community/cli": 20.2.0
@@ -3088,6 +3111,7 @@ __metadata:
     "@react-navigation/native": 7.5.1
     "@react-navigation/native-stack": 7.21.0
     "@shopify/restyle": ^2.4.5
+    "@tanstack/react-query": ^5.104.5
     "@types/jest": ^29.5.13
     "@types/react": ^19.2.0
     "@types/react-test-renderer": ^19.1.0

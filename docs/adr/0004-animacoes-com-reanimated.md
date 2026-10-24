@@ -6,12 +6,12 @@
 
 ## Contexto
 
-O teste técnico exige animação fluida em todas as telas, sem prejudicar a performance. O Figma não define animações: elas são decisão do projeto. Os componentes globais ([spec 003](../specs/003-shared-components/spec.md)) já precisam de rotação (seta do dropdown), abertura e fechamento de lista, opacidade no toque e troca de cor; as telas seguintes vão precisar de transição de altura (accordion do boletim) e de entrada e saída de listas. O projeto é React Native CLI 0.88, com a nova arquitetura ligada, sem Expo.
+O teste técnico exige animação fluida em todas as telas, sem prejudicar a performance. O Figma não define animações: elas são decisão do projeto. Os componentes globais já precisam de rotação (seta do dropdown), abertura e fechamento de lista, opacidade no toque e troca de cor; as telas seguintes vão precisar de transição de altura (accordion do boletim) e de entrada e saída de listas. O projeto é React Native CLI 0.88, com a nova arquitetura ligada, sem Expo.
 
 ## Decisão
 
 1. Animações de interface usam `react-native-reanimated` 4.7.1, com `react-native-worklets` 0.13.0 (dependência obrigatória da versão 4; ambas declaram suporte ao React Native 0.86 a 0.88).
-2. O plugin Babel exigido pela biblioteca entra em `babel.config.js`, como último plugin. Depois de mudar a configuração do Babel, o Metro é reiniciado com `yarn start --reset-cache`.
+2. O plugin Babel exigido pela biblioteca entra em `babel.config.js`, como último plugin. Antes dele fica `@babel/plugin-transform-export-namespace-from`, porque o plugin do worklets não aceita `export * as` sem transformar (usado pelo `zod`). Depois de mudar a configuração do Babel, o Metro é reiniciado com `yarn start --reset-cache`.
 3. O módulo nativo entra por autolinking; no iOS, `bundle exec pod install` atualiza o `Podfile.lock`. Mudança em `ios/` autorizada pela responsável em 2026-10-24.
 4. O Jest usa a configuração de testes oficial da biblioteca, num arquivo de setup referenciado em `jest.config.js`.
 5. Durações e opacidades das animações vêm do tema (`src/shared/theme/`), nunca escritas nos componentes.

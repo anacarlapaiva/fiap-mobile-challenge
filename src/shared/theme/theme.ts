@@ -48,6 +48,7 @@ const sizes = {
   lessonRowHeight: 59,
   tabBarHeight: 64,
   bullet: 6,
+  fieldMinWidth: 260,
   emptyImage: { width: 328, height: 208 },
 } as const;
 
@@ -71,9 +72,15 @@ export const theme = createTheme({
     iconGap: 8,
     s: 12,
     m: 16,
+    emptyGap: 20,
     l: 24,
     fieldLabelGap: 25,
+    errorGap: 31,
+    greetingGap: 36,
+    fieldGap: 39,
     xl: 48,
+    logoGap: 80,
+    loginTop: 100,
   },
   borderRadii: {
     none: 0,
@@ -99,6 +106,23 @@ export const theme = createTheme({
   logoVariants: {
     large: { width: 306, height: 49 },
     small: { width: 100, height: 16 },
+  },
+  emptyVariants: {
+    root: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    message: {
+      marginTop: 'emptyGap',
+    },
+  },
+  emptyImageVariants: {
+    illustration: {
+      width: '100%',
+      maxWidth: sizes.emptyImage.width,
+      aspectRatio: sizes.emptyImage.width / sizes.emptyImage.height,
+    },
   },
   buttonVariants: {
     primary: {

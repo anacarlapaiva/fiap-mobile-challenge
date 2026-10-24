@@ -71,7 +71,7 @@ describe('campo de texto', () => {
   });
 
   describe('dado um campo seguro com seis caracteres', () => {
-    test('CA-09: quando renderizado, então mostra um asterisco por caractere e não expõe a senha', async () => {
+    test('CA-09: quando renderizado, então mostra um asterisco por caractere, não expõe a senha e o toque chega no campo', async () => {
       const view = await render(
         <TextField
           label="SENHA"
@@ -89,7 +89,9 @@ describe('campo de texto', () => {
         fontFamily: fonts.regular,
         fontSize: 32,
       });
-      expect(StyleSheet.flatten(view.input.props.style).opacity).toBe(0);
+      const inputStyle = StyleSheet.flatten(view.input.props.style);
+      expect(inputStyle.color).toBe('transparent');
+      expect(inputStyle.opacity ?? 1).toBe(1);
       expect(view.input.props.accessibilityValue).toEqual({ text: '******' });
       expect(view.texts()).not.toContain('123456');
     });
@@ -107,6 +109,19 @@ describe('campo de texto', () => {
       });
 
       expect(onChangeText).toHaveBeenCalledWith('12345678900');
+    });
+  });
+
+  describe('dado qualquer aparelho', () => {
+    test('quando o campo é renderizado, então o valor tem a altura 39 do Figma e não segue a fonte do sistema', async () => {
+      const view = await render(
+        <TextField label="CPF" value="" onChangeText={jest.fn()} />,
+      );
+
+      expect(StyleSheet.flatten(view.input.props.style)).toMatchObject({
+        height: 39,
+      });
+      expect(view.input.props.allowFontScaling).toBe(false);
     });
   });
 });

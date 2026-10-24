@@ -2,47 +2,36 @@
 
 ## Objetivo
 
-Comparar o estado real do repositório com `docs/` e `AGENTS.md` e corrigir o que estiver desatualizado, sem mudar código.
+Corrigir contrato desatualizado em `docs/` e `AGENTS.md`. Não é etapa de toda tarefa. Use quando arquitetura, convenção, ADR ou spec divergirem do código, ou quando o usuário pedir uma revisão.
 
 ## Entradas esperadas
 
-- Opcional: escopo (uma pasta, uma feature ou um documento específico). Sem escopo, revise tudo.
+- Opcional: escopo (uma pasta, uma feature ou um documento). Sem escopo, revise o contrato, não a árvore arquivo a arquivo.
 
 ## Passos
 
-1. Leia `AGENTS.md` (raiz do repositório) e `docs/README.md`.
-2. Levante o estado real:
-   - árvore de `src/` (pastas e arquivos `index.ts`);
-   - `package.json` (versões, scripts, dependências);
-   - `tsconfig.json`, `babel.config.js`, `jest.config.js`, `.eslintrc.js`, `lint-staged.config.js`, `.husky/`;
-   - pastas em `docs/specs/` e `docs/adr/`;
-   - adaptadores de ferramentas listados em `docs/ai/README.md`.
-3. Compare cada documento com o estado real:
+1. Leia `AGENTS.md` e `docs/README.md`.
+2. Compare só o que é contrato:
 
-   | Documento                     | Verificar                                                                  |
-   | ----------------------------- | -------------------------------------------------------------------------- |
-   | `AGENTS.md`                   | versões da stack, comandos, lista de fluxos e skills                       |
-   | `docs/arquitetura.md`         | camadas e regras de dependência iguais às de `.eslintrc.js`                |
-   | `docs/estrutura-de-pastas.md` | árvore igual à real                                                        |
-   | `docs/convencoes.md`          | aliases iguais aos três arquivos de configuração                           |
-   | `docs/README.md`              | todos os documentos e ADRs listados                                        |
-   | `docs/ai/README.md`           | todos os adaptadores existentes listados e apontando para caminhos válidos |
-   | `docs/specs/*/tasks.md`       | tarefas marcadas coerentes com o código existente                          |
+   | Documento                     | Verificar                                                |
+   | ----------------------------- | -------------------------------------------------------- |
+   | `AGENTS.md`                   | stack, comandos, fluxos e skills                         |
+   | `docs/arquitetura.md`         | camadas iguais às de `.eslintrc.js`                      |
+   | `docs/estrutura-de-pastas.md` | pastas de camada e anatomia da feature, não cada arquivo |
+   | `docs/convencoes.md`          | aliases iguais aos três arquivos de configuração         |
+   | `docs/adr/`                   | decisões ainda verdadeiras                               |
+   | `docs/specs/*/spec.md`        | critérios de aceite ainda descrevem o produto            |
 
-4. Verifique se todos os links relativos dos arquivos `.md` apontam para arquivos existentes.
-5. Verifique se nenhum adaptador de ferramenta contém regras (só ponteiros, além do `name` e da `description` das skills).
-6. Liste as divergências encontradas ao usuário, separando:
-   - **documentação desatualizada**: corrija o documento;
-   - **código fora da regra documentada**: não corrija o código; informe o usuário e sugira uma spec ou tarefa.
-7. Corrija os documentos desatualizados.
-8. Rode `yarn validate` para garantir que nada além de documentação mudou e que tudo continua passando.
+3. Não recrie `plan.md` nem `tasks.md` de spec `Concluída`.
+4. Liste divergências ao usuário: documentação errada (corrija) versus código fora da regra (não altere o código; sugira spec ou ADR).
+5. Corrija só o contrato desatualizado.
+6. Rode `yarn validate`.
 
 ## Critérios de conclusão
 
-- Nenhuma divergência restante entre documentação e código, exceto as reportadas como "código fora da regra".
-- Todos os links relativos são válidos.
-- O usuário recebeu a lista do que foi corrigido e do que foi apenas reportado.
+- Contrato alinhado ao código, ou divergência reportada como "código fora da regra".
+- O usuário recebeu o que foi corrigido e o que só foi reportado.
 
 ## Em caso de dúvida
 
-Se não estiver claro se o correto é o código ou o documento, não altere nenhum dos dois: pergunte ao usuário. Decisões arquiteturais registradas em `docs/adr/` prevalecem sobre o código.
+Se não estiver claro se o correto é o código ou o documento, pergunte. ADR prevalece sobre o código.

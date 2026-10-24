@@ -1,15 +1,15 @@
 # Documentação do AppFiap
 
-Índice de toda a documentação do projeto. As regras operacionais para agentes de IA ficam em [AGENTS.md](../AGENTS.md).
+Regras operacionais para agentes ficam em [AGENTS.md](../AGENTS.md). Esta pasta guarda o contrato do projeto, não o diário de implementação.
 
 ## Projeto
 
-| Documento                                        | Conteúdo                                                            |
-| ------------------------------------------------ | ------------------------------------------------------------------- |
-| [arquitetura.md](arquitetura.md)                 | Visão geral, camadas, regras de dependência e diagrama              |
-| [estrutura-de-pastas.md](estrutura-de-pastas.md) | Árvore completa, propósito de cada pasta e anatomia de uma feature  |
-| [convencoes.md](convencoes.md)                   | Nomenclatura, imports com alias, testes, estilo, commits e branches |
-| [fluxo-sdd.md](fluxo-sdd.md)                     | Ciclo de Spec-Driven Development usado no projeto                   |
+| Documento                                        | Conteúdo                                                      |
+| ------------------------------------------------ | ------------------------------------------------------------- |
+| [arquitetura.md](arquitetura.md)                 | Camadas, regras de dependência e diagrama                     |
+| [estrutura-de-pastas.md](estrutura-de-pastas.md) | Papel de cada pasta e anatomia de uma feature                 |
+| [convencoes.md](convencoes.md)                   | Nomenclatura, imports, testes, estilo, commits e branches     |
+| [fluxo-sdd.md](fluxo-sdd.md)                     | Como uma feature nova nasce (spec → plano → tarefas → código) |
 
 ## Decisões arquiteturais (ADR)
 
@@ -24,12 +24,18 @@
 | [0006](adr/0006-sessao-no-keychain.md)                  | Sessão no Keychain                    |
 | [0007](adr/0007-validar-com-zod.md)                     | Validar dados externos com Zod        |
 | [0008](adr/0008-separar-contrato-em-dto-e-validacao.md) | Separar o contrato em DTO e validação |
+| [0009](adr/0009-cache-do-mock-com-react-query.md)       | Cache do mock com React Query         |
 
 ## Specs
 
-- [specs/README.md](specs/README.md): como criar uma spec nova.
-- Templates: [spec.md](specs/_templates/spec.md), [plan.md](specs/_templates/plan.md), [tasks.md](specs/_templates/tasks.md).
+Contrato de produto. Spec concluída fica só com `spec.md`. Plano e tarefas existem apenas enquanto a spec está em implementação. Como criar uma nova: [specs/README.md](specs/README.md).
+
+| Spec                                             | Contrato                         |
+| ------------------------------------------------ | -------------------------------- |
+| [001](specs/001-design-system/spec.md)           | Tema (valores do Figma)          |
+| [002](specs/002-splash-screen/spec.md)           | Splash                           |
+| [005](specs/005-login-e-rotas-da-sessao/spec.md) | Login, sessão e área autenticada |
 
 ## Instruções para agentes de IA
 
-[ai/README.md](ai/README.md): estratégia multi-ferramenta, fluxos, skills e tabela de adaptadores.
+[ai/README.md](ai/README.md): fluxos SDD, skills e adaptadores.

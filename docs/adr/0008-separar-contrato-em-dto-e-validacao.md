@@ -13,7 +13,7 @@ O JSON dos responsáveis é lido por mais de um domínio (acesso, aulas e boleti
 1. O contrato externo é uma interface com sufixo `Dto`, em um `*.dto.ts` por entidade. Fica em `src/shared/dto/` quando mais de uma feature lê o mesmo dado, ou em `src/features/<nome>/dto/` quando só uma feature é dona. O JSON dos responsáveis está em `aula`, `agenda`, `disciplina`, `trimestre`, `boletim`, `aluno` e `responsavel`.
 2. O schema Zod de cada entidade fica em `*.validation.ts` de mesmo nome, na pasta `validation/` ao lado (`src/shared/validation/` ou `src/features/<nome>/validation/`).
 3. O schema declara `satisfies z.ZodType<Dto>`, então ele só compila se produzir o type do DTO.
-4. Quem lê o dado externo chama a função da validação (`parseResponsaveis`). O erro continua sendo `ZodError` (ADR 0007).
+4. Quem lê o dado externo chama a função da validação (`parseGuardians`). O erro continua sendo `ZodError` (ADR 0007).
 
 ## Alternativas consideradas
 
@@ -26,4 +26,4 @@ O JSON dos responsáveis é lido por mais de um domínio (acesso, aulas e boleti
 
 - **Positivas:** o DTO descreve o JSON sem Zod; a validação é a única borda que aceita `unknown`.
 - **Negativas:** o type e o schema são dois arquivos. O `satisfies` segura a divergência no typecheck, não na revisão visual.
-- **Ações decorrentes:** um arquivo por entidade em `src/shared/dto/` e o schema correspondente em `src/shared/validation/`; a leitura do arquivo continua em `parseResponsaveis`. O item 3 do ADR 0007 aponta para esta decisão.
+- **Ações decorrentes:** um arquivo por entidade em `src/shared/dto/` e o schema correspondente em `src/shared/validation/`; a leitura do arquivo continua em `parseGuardians`. O item 3 do ADR 0007 aponta para esta decisão.

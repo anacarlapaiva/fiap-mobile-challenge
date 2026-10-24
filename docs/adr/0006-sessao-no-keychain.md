@@ -11,7 +11,7 @@ O PDF pede que a autenticação continue depois de fechar e reabrir o app. Se a 
 ## Decisão
 
 1. A sessão fica no armazenamento seguro do sistema, via `react-native-keychain` 10.0.0: Keychain no iOS e Keystore no Android.
-2. O valor gravado é só `{ responsavelId, alunoRm }`. A senha não entra no disco.
+2. O valor gravado é só `{ guardianId, studentRm }`. A senha não entra no disco.
 3. Na leitura, o texto gravado passa pelo schema Zod (ADR 0007). Payload inválido é tratado como sessão ausente.
 4. Nenhum outro armazenamento de sessão é adicionado enquanto o Keychain cobrir esse registro.
 

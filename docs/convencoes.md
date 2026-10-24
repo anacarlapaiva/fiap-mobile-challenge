@@ -42,15 +42,14 @@ Regras:
 ## Testes
 
 - Framework: Jest (`@react-native/jest-preset`) com `react-test-renderer`. Sem Cucumber: o BDD fica no próprio Jest.
-- Teste só onde há comportamento observável. O arquivo sem decisão própria não leva teste, e ninguém cria um teste só para completar a pasta. Ficam sem teste:
-  - DTO (`*.dto.ts`), que só descreve o formato;
-  - barrel (`index.ts`), que só reexporta;
-  - schema que só compõe outro (`aula.validation.ts`, `agenda.validation.ts` e os demais da mesma pasta). A leitura do JSON é um comportamento só, testado ao lado de `parseResponsaveis`;
-  - token de tema, declaração de tipo e repasse de prop sem regra própria.
-- Onde o teste existe, fica ao lado do arquivo do comportamento: `X.tsx` + `X.test.tsx`. Não existe pasta `__tests__/`.
-- Todo caso descreve um comportamento observável em **Dado** / **Quando** / **Então**. O `describe` traz o contexto (Dado). O título do caso traz a ação e um único resultado (Quando / Então). O corpo só arranja esse contexto, executa a ação e confere o resultado.
-- O título nomeia o que se observa (o contrato, a tela, quem usa o componente). Não nomeia detalhe interno.
-- Cada critério de aceite da spec, já escrito em Dado/Quando/Então, vira pelo menos um caso, com `CA-xx` no título. Critério que só se confere no aparelho não ganha um teste de unidade no lugar.
+- Um comportamento, um dono, um teste. O arquivo que **decide** leva o caso. Quem só chama esse arquivo não repete o caso.
+- Ninguém cria teste para completar pasta. Ficam sem teste:
+  - DTO (`*.dto.ts`), barrel (`index.ts`), tipo e token de tema;
+  - schema que só compõe outro; a leitura do JSON é um comportamento só, ao lado de `parseGuardians`;
+  - hook que só encapsula `useQuery` ou tela/provider que só encaminha chamada já testada.
+- Onde o teste existe: `X.tsx` + `X.test.tsx` ao lado. Não existe pasta `__tests__/`.
+- Todo caso é **Dado** / **Quando** / **Então**. O `describe` é o Dado. O título é um Quando e um Então. O título nomeia o que se observa, não o detalhe interno.
+- Cada CA unit-testável tem **um** caso, no arquivo dono, com `CA-xx` no título. Não copie o mesmo CA para tela, provider e storage. Critério só conferível no aparelho não vira teste de unidade.
 - Rode com `yarn test`, ou com `yarn test <caminho>` para um arquivo.
 
 ## TypeScript
@@ -77,11 +76,11 @@ Regras:
 - Componente nativo que precisa das props do Restyle é tipado com `createBox<Theme, Props>(Componente)` (como `PressableBox`) ou `createText<Theme, Props>(Componente)` (como o `TextInput` do `TextField`); componente animado usa `Animated.createAnimatedComponent` sobre um componente do Restyle.
 - Cor, tamanho ou duração passados para API que não é do Restyle (SVG, `ActivityIndicator`, `TextInput`, Reanimated) vêm de `useTheme()`, nunca de hex ou número solto.
 - `style` só para valores calculados em tempo de execução (área segura, posição medida, estilo animado). `StyleSheet` não é usado em `src/shared/components`.
-- Texto sempre por `variant`. `fonts.*` só é usado ao criar variants no tema; o peso vem do `fontFamily`, nunca de `fontWeight`.
+- Texto sempre pelo `Text` de `@/shared/components`, que desliga a escala de fonte do sistema; o `TextInput` também leva `allowFontScaling={false}`. Texto sempre por `variant`. `fonts.*` só é usado ao criar variants no tema; o peso vem do `fontFamily`, nunca de `fontWeight`.
 - Ícones só pelo `Icon` (`@/shared/components`), com `color` do tema e `size` como chave de `iconSizes` (altura). Ícone novo entra em `icons.ts` com o `path` e o `viewBox` exportados do Figma; o preenchimento vem sempre da prop `color`.
 - Tela começa com `Screen` (fundo e área segura). Área pressionável usa `PressableOpacity` (feedback de toque padrão) ou `PressableBox` (sem feedback), nunca `TouchableOpacity`.
 - Animações usam `react-native-reanimated` ([ADR 0004](adr/0004-animacoes-com-reanimated.md)); durações e opacidades vêm de `theme.motion` (via `useTheme()`), nunca escritas no componente.
-- Larguras que dependem da tela vêm do layout (flex e margens), não de pixels fixos (decisão de escala na [spec 001](specs/001-design-system/spec.md#regras-de-negócio-e-validações)).
+- Larguras que dependem da tela vêm do layout (flex e margens), não de pixels fixos (decisão de escala na [spec 001](specs/001-design-system/spec.md#regras)).
 
 ## Commits: Conventional Commits
 
@@ -101,7 +100,7 @@ Formato: `<tipo>(<escopo opcional>): <descrição no imperativo, em português, 
 
 Exemplos: `feat(profile): adiciona tela de edição de perfil`, `chore: configura aliases`.
 
-Código e documentação afetada entram no **mesmo commit** (veja [AGENTS.md](../AGENTS.md#documentação-viva)).
+Código e documentação afetada entram no **mesmo commit** (veja [AGENTS.md](../AGENTS.md#documentação)). Só há documentação afetada se a tarefa mudou contrato (arquitetura, convenção, ADR ou spec em implementação).
 
 ## Branches
 

@@ -19,8 +19,8 @@ Cada fluxo e cada skill é autocontido: um modelo que receba apenas o caminho do
 | [flows/spec.md](flows/spec.md)                                   | Entrevistar o usuário e gerar `docs/specs/NNN-nome/spec.md`        |
 | [flows/plano.md](flows/plano.md)                                 | Gerar `plan.md` a partir de uma spec aprovada e parar para revisão |
 | [flows/tarefas.md](flows/tarefas.md)                             | Quebrar o plano em `tasks.md`                                      |
-| [flows/implementar.md](flows/implementar.md)                     | Implementar uma tarefa com testes, validação e documentação        |
-| [flows/atualizar-docs.md](flows/atualizar-docs.md)               | Corrigir documentação desatualizada em relação ao código           |
+| [flows/implementar.md](flows/implementar.md)                     | Implementar uma tarefa com testes e validação                      |
+| [flows/atualizar-docs.md](flows/atualizar-docs.md)               | Revisar contrato em `docs/` quando ele divergir do código          |
 | [skills/create-feature/SKILL.md](skills/create-feature/SKILL.md) | Criar a estrutura de uma feature nova                              |
 | [skills/record-adr/SKILL.md](skills/record-adr/SKILL.md)         | Registrar uma decisão arquitetural                                 |
 

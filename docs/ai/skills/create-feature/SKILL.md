@@ -26,7 +26,7 @@ Criar `src/features/<nome>/` com a anatomia padrão e o `index.ts` como API púb
 6. Crie `src/features/<nome>/types.ts` contendo só `export {};`, sem comentários (proibição 7 do `AGENTS.md`).
 7. Crie `src/features/<nome>/index.ts` contendo só `export {};`. Outras camadas só podem importar a feature por este arquivo (`@/features/<nome>`).
 8. Rode `yarn validate` e corrija o que falhar.
-9. Se `docs/estrutura-de-pastas.md` ou outro documento listar as features existentes, atualize-o.
+9. Se a feature for um domínio novo, acrescente o nome dela em `docs/estrutura-de-pastas.md` na lista de `features/`. Não inventarie arquivos.
 10. Informe ao usuário os arquivos criados.
 
 ## Critérios de conclusão

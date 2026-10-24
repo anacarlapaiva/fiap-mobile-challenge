@@ -1,8 +1,8 @@
 import { ZodError } from 'zod';
 
-import { parseResponsaveis } from './responsavel.validation';
+import { parseGuardians } from './responsavel.validation';
 
-const responsavel = {
+const guardian = {
   id: 1,
   cpf: '96929456004',
   email: 'gustavo-da-silva@example.com',
@@ -57,11 +57,11 @@ const responsavel = {
   ],
 };
 
-const responsavelSemNota = {
-  ...responsavel,
+const guardianWithoutGrade = {
+  ...guardian,
   alunos: [
     {
-      ...responsavel.alunos[0],
+      ...guardian.alunos[0],
       boletim: [
         {
           ano: '2025',
@@ -81,35 +81,35 @@ const responsavelSemNota = {
 describe('leitura do JSON de responsáveis', () => {
   describe('dado um responsável com boletim de 2024 e de 2025', () => {
     test('quando o JSON é lido, então a turma do boletim de 2024 permanece', () => {
-      const lidos = parseResponsaveis([responsavel]);
+      const parsed = parseGuardians([guardian]);
 
-      expect(lidos[0]?.alunos[0]?.boletim[1]?.turma).toBe('6EF');
+      expect(parsed[0]?.alunos[0]?.boletim[1]?.turma).toBe('6EF');
     });
   });
 
   describe('dado uma disciplina com nota decimal', () => {
     test('quando o JSON é lido, então a nota permanece com a casa decimal', () => {
-      const lidos = parseResponsaveis([responsavel]);
+      const parsed = parseGuardians([guardian]);
 
       expect(
-        lidos[0]?.alunos[0]?.boletim[0]?.trimestres[0]?.disciplinas[0]?.nota,
+        parsed[0]?.alunos[0]?.boletim[0]?.trimestres[0]?.disciplinas[0]?.nota,
       ).toBe(9.5);
     });
   });
 
   describe('dado um trimestre ainda sem lançamento', () => {
     test('quando o JSON é lido, então nota e faltas permanecem nulas', () => {
-      const lidos = parseResponsaveis([responsavel]);
+      const parsed = parseGuardians([guardian]);
 
       expect(
-        lidos[0]?.alunos[0]?.boletim[0]?.trimestres[1]?.disciplinas[0],
+        parsed[0]?.alunos[0]?.boletim[0]?.trimestres[1]?.disciplinas[0],
       ).toEqual({ nome: 'Língua Portuguesa', nota: null, faltas: null });
     });
   });
 
   describe('dado um boletim cuja disciplina não informa a nota', () => {
     test('quando o JSON é lido, então a leitura é recusada', () => {
-      expect(() => parseResponsaveis([responsavelSemNota])).toThrow(ZodError);
+      expect(() => parseGuardians([guardianWithoutGrade])).toThrow(ZodError);
     });
   });
 });
