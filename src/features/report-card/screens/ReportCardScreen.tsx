@@ -1,17 +1,5 @@
-import { useTheme } from '@shopify/restyle';
-import {
-  type ComponentRef,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  type ScrollViewInstance,
-} from 'react-native';
+import { useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { useCurrentUser, UserFallback } from '@/features/auth';
 import { TermSection } from '@/features/report-card/components/TermSection';
@@ -19,14 +7,12 @@ import {
   formatYearLabel,
   yearKey,
 } from '@/features/report-card/formatReportCard';
+import { useReportScroll } from '@/features/report-card/hooks/useReportScroll';
 import { Box, Dropdown, Empty, Screen, Text } from '@/shared/components';
-import type { Theme } from '@/shared/theme';
 
 const styles = StyleSheet.create({
   terms: { flex: 1 },
 });
-
-type HostView = ComponentRef<typeof View>;
 
 function ReportTitle() {
   return (
@@ -37,100 +23,11 @@ function ReportTitle() {
 }
 
 export function ReportCardScreen() {
-  const theme = useTheme<Theme>();
   const currentUser = useCurrentUser();
   const [pickedKey, setPickedKey] = useState<string | undefined>(undefined);
   const [openTerm, setOpenTerm] = useState<number | undefined>(undefined);
   const [openSubjects, setOpenSubjects] = useState<readonly string[]>([]);
-  const [scrollAreaHeight, setScrollAreaHeight] = useState(0);
-  const [contentHeight, setContentHeight] = useState(0);
-  const [anchor, setAnchor] = useState<{ top: number } | null>(null);
-  const pendingScroll = useRef<number | null>(null);
-  const scrollRef = useRef<ScrollViewInstance>(null);
-  const contentRef = useRef<HostView>(null);
-  const scrollOffset = useRef(0);
-  const scrollAreaRef = useRef(0);
-  const termNodes = useRef(new Map<number, HostView>());
-
-  const alignTop = useCallback(
-    (node: HostView | null) => {
-      const content = contentRef.current;
-      if (!node || !content) {
-        return;
-      }
-      node.measureLayout(
-        content,
-        (_x, y, _width, height) => {
-          const offset = scrollOffset.current;
-          const viewHeight = scrollAreaRef.current;
-          const cardBottom = y + Math.min(height, theme.sizes.cardHeight);
-          if (
-            viewHeight > 0 &&
-            y >= offset &&
-            cardBottom <= offset + viewHeight
-          ) {
-            return;
-          }
-          pendingScroll.current = y;
-          setAnchor({ top: y });
-        },
-        () => undefined,
-      );
-    },
-    [theme.sizes.cardHeight],
-  );
-
-  const revealSubject = useCallback((node: HostView | null) => {
-    const content = contentRef.current;
-    const viewHeight = scrollAreaRef.current;
-    if (!node || !content || viewHeight === 0) {
-      return;
-    }
-    node.measureLayout(
-      content,
-      (_x, y, _width, height) => {
-        const offset = scrollOffset.current;
-        if (height >= viewHeight) {
-          scrollRef.current?.scrollTo({ y, animated: true });
-          return;
-        }
-        const bottom = y + height;
-        if (bottom > offset + viewHeight) {
-          scrollRef.current?.scrollTo({
-            y: bottom - viewHeight,
-            animated: true,
-          });
-        }
-      },
-      () => undefined,
-    );
-  }, []);
-
-  useEffect(() => {
-    pendingScroll.current = null;
-    setAnchor(null);
-    if (openTerm === undefined) {
-      return;
-    }
-    alignTop(termNodes.current.get(openTerm) ?? null);
-  }, [alignTop, openTerm]);
-
-  const bottomSpace =
-    anchor === null
-      ? theme.spacing.m
-      : Math.max(
-          theme.spacing.m,
-          anchor.top + scrollAreaHeight - contentHeight,
-        );
-
-  useEffect(() => {
-    const target = pendingScroll.current;
-    if (target === null) {
-      return;
-    }
-    pendingScroll.current = null;
-    scrollRef.current?.scrollTo({ y: target, animated: true });
-  }, [anchor, bottomSpace]);
+  const scroll = useReportScroll(openTerm);
 
   if (currentUser.status !== 'ready') {
     return (
@@ -157,6 +54,15 @@ export function ReportCardScreen() {
 
   const selectedKey = yearKey(selected.turma, selected.ano);
 
+  const selectYear = (key: string) => {
+    if (key === selectedKey) {
+      return;
+    }
+    setPickedKey(key);
+    setOpenTerm(undefined);
+    setOpenSubjects([]);
+  };
+
   const toggleTerm = (trimestre: number) => {
     setOpenTerm(current => (current === trimestre ? undefined : trimestre));
     setOpenSubjects([]);
@@ -182,46 +88,18 @@ export function ReportCardScreen() {
             label: formatYearLabel(item.turma, item.ano),
             value: yearKey(item.turma, item.ano),
           }))}
-          onSelect={option => {
-            if (option.value === selectedKey) {
-              return;
-            }
-            setPickedKey(option.value);
-            setOpenTerm(undefined);
-            setOpenSubjects([]);
-          }}
+          onSelect={option => selectYear(option.value)}
         />
       </Box>
       <Box flex={1}>
         <ScrollView
-          ref={scrollRef}
+          {...scroll.scrollProps}
           testID="report-terms"
           style={styles.terms}
-          contentContainerStyle={{ paddingBottom: bottomSpace }}
           keyboardShouldPersistTaps="handled"
           nestedScrollEnabled
-          scrollEventThrottle={16}
-          onScroll={event => {
-            scrollOffset.current = event.nativeEvent.contentOffset.y;
-          }}
-          onLayout={event => {
-            const height = event.nativeEvent.layout.height;
-            scrollAreaRef.current = height;
-            setScrollAreaHeight(current =>
-              current === height ? current : height,
-            );
-          }}
         >
-          <View
-            ref={contentRef}
-            collapsable={false}
-            onLayout={event => {
-              const height = event.nativeEvent.layout.height;
-              setContentHeight(current =>
-                current === height ? current : height,
-              );
-            }}
-          >
+          <View {...scroll.contentProps} collapsable={false}>
             <Box paddingHorizontal="m" paddingTop="m">
               {selected.trimestres.map((term, index) => (
                 <TermSection
@@ -233,14 +111,8 @@ export function ReportCardScreen() {
                   spaced={index > 0}
                   onToggle={() => toggleTerm(term.trimestre)}
                   onToggleSubject={toggleSubject}
-                  onRevealSubject={revealSubject}
-                  sectionRef={node => {
-                    if (node) {
-                      termNodes.current.set(term.trimestre, node);
-                      return;
-                    }
-                    termNodes.current.delete(term.trimestre);
-                  }}
+                  onRevealSubject={scroll.revealSubject}
+                  sectionRef={scroll.registerTerm(term.trimestre)}
                 />
               ))}
             </Box>

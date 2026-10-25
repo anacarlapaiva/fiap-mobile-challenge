@@ -1,9 +1,11 @@
 import { useTheme } from '@shopify/restyle';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator } from 'react-native';
 
 import type { UserState } from '@/features/auth/types';
 import { loginMessages } from '@/features/auth/validation/login.validation';
 import { Box, Text, TextButton } from '@/shared/components';
+import { isOffline } from '@/shared/lib/reachability';
 import type { Theme } from '@/shared/theme';
 
 type UserFallbackProps = {
@@ -12,6 +14,25 @@ type UserFallbackProps = {
 
 export function UserFallback({ state }: UserFallbackProps) {
   const { colors } = useTheme<Theme>();
+  const [offline, setOffline] = useState(false);
+
+  useEffect(() => {
+    if (state.status !== 'error') {
+      setOffline(false);
+      return;
+    }
+    let active = true;
+    isOffline().then(value => {
+      if (active) {
+        setOffline(value);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [state.status]);
+
+  const message = offline ? loginMessages.offline : loginMessages.unavailable;
 
   return (
     <Box
@@ -28,7 +49,7 @@ export function UserFallback({ state }: UserFallbackProps) {
             textAlign="center"
             accessibilityRole="alert"
           >
-            {loginMessages.unavailable}
+            {message}
           </Text>
           <Box marginTop="m">
             <TextButton

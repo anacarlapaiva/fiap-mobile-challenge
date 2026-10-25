@@ -4,7 +4,15 @@ import ReactTestRenderer from 'react-test-renderer';
 
 import { UserFallback } from '@/features/auth/components/UserFallback';
 import type { UserState } from '@/features/auth/types';
+import { loginMessages } from '@/features/auth/validation/login.validation';
+import { isOffline } from '@/shared/lib/reachability';
 import { theme } from '@/shared/theme';
+
+jest.mock('@/shared/lib/reachability', () => ({
+  isOffline: jest.fn(),
+}));
+
+let resolveOffline: (value: boolean) => void = () => undefined;
 
 async function renderFallback(state: Exclude<UserState, { status: 'ready' }>) {
   let renderer: ReactTestRenderer.ReactTestRenderer | undefined;
@@ -21,7 +29,23 @@ async function renderFallback(state: Exclude<UserState, { status: 'ready' }>) {
   return renderer.root;
 }
 
+async function settleOffline(value: boolean) {
+  await ReactTestRenderer.act(async () => {
+    resolveOffline(value);
+  });
+}
+
 describe('estado do usuário fora do pronto', () => {
+  beforeEach(() => {
+    jest.mocked(isOffline).mockReset();
+    jest.mocked(isOffline).mockImplementation(
+      () =>
+        new Promise(resolve => {
+          resolveOffline = resolve;
+        }),
+    );
+  });
+
   describe('dado o usuário carregando', () => {
     test('quando renderizado, então só o indicador de carregamento aparece', async () => {
       const root = await renderFallback({ status: 'loading' });
@@ -35,17 +59,26 @@ describe('estado do usuário fora do pronto', () => {
     test('quando TENTAR NOVAMENTE é tocado, então a leitura é refeita', async () => {
       const retry = jest.fn();
       const root = await renderFallback({ status: 'error', retry });
+      await settleOffline(false);
 
       expect(
         root.findAllByType(NativeText).map(node => node.props.children),
-      ).toEqual([
-        'Não foi possível carregar seus dados. Tente novamente.',
-        'TENTAR NOVAMENTE',
-      ]);
+      ).toEqual([loginMessages.unavailable, 'TENTAR NOVAMENTE']);
       await ReactTestRenderer.act(() => {
         root.findByProps({ testID: 'user-retry' }).props.onPress();
       });
       expect(retry).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('dado a leitura sem internet', () => {
+    test('CA-08: quando o erro aparece, então a frase pede para verificar a rede', async () => {
+      const root = await renderFallback({ status: 'error', retry: jest.fn() });
+      await settleOffline(true);
+
+      expect(
+        root.findAllByType(NativeText).map(node => node.props.children),
+      ).toContain(loginMessages.offline);
     });
   });
 });

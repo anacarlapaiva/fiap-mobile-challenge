@@ -293,6 +293,17 @@ describe('tela do boletim', () => {
     });
   });
 
+  describe('dado os cards fechados', () => {
+    test('CA-12: quando a lista é exibida, então o fim fica 16 abaixo do conteúdo', async () => {
+      const view = await renderReport();
+
+      expect(
+        view.root.findByProps({ testID: 'report-terms' }).props
+          .contentContainerStyle,
+      ).toMatchObject({ paddingBottom: theme.spacing.m });
+    });
+  });
+
   describe('dado o boletim do Rafael', () => {
     test('CA-09: quando renderizado, então a margem lateral é 16 e o card seguinte fica 16 abaixo', async () => {
       const view = await renderReport();

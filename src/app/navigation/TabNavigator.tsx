@@ -45,6 +45,7 @@ export function TabNavigator() {
 
   return (
     <Tab.Navigator
+      backBehavior="firstRoute"
       tabBar={renderTabBar}
       screenOptions={{
         headerShown: false,
