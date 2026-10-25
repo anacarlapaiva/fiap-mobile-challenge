@@ -11,7 +11,11 @@ import {
 } from 'react-native';
 
 import { useSession } from '@/features/auth/session/SessionProvider';
-import { applyCpfMask } from '@/features/auth/validation/login.validation';
+import {
+  formatLoginIdentifier,
+  LOGIN_IDENTIFIER_MAX_LENGTH,
+  PASSWORD_MAX_LENGTH,
+} from '@/features/auth/validation/login.validation';
 import {
   Box,
   Button,
@@ -31,7 +35,7 @@ export function LoginScreen() {
   const theme = useTheme<Theme>();
   const { width } = useWindowDimensions();
   const { isSigningIn, signIn } = useSession();
-  const [cpf, setCpf] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
@@ -91,7 +95,7 @@ export function LoginScreen() {
 
   function submit() {
     setMessage(null);
-    signIn(cpf, password)
+    signIn(identifier, password)
       .then(result => {
         if (!result.ok) {
           setMessage(result.message);
@@ -124,11 +128,13 @@ export function LoginScreen() {
             <Box marginTop="logoGap">
               <TextField
                 testID="login-cpf"
-                label="CPF"
-                value={cpf}
-                onChangeText={value => setCpf(applyCpfMask(value))}
-                keyboardType="number-pad"
-                maxLength={14}
+                label="CPF OU E-MAIL"
+                value={identifier}
+                onChangeText={value =>
+                  setIdentifier(formatLoginIdentifier(value))
+                }
+                keyboardType="email-address"
+                maxLength={LOGIN_IDENTIFIER_MAX_LENGTH}
               />
             </Box>
             <Box marginTop="fieldGap">
@@ -137,6 +143,7 @@ export function LoginScreen() {
                 label="SENHA"
                 value={password}
                 onChangeText={setPassword}
+                maxLength={PASSWORD_MAX_LENGTH}
                 secure
               />
             </Box>

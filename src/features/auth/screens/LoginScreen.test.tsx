@@ -146,7 +146,7 @@ describe('tela de login', () => {
 
       const message = renderer.root
         .findAllByType(NativeText)
-        .find(node => node.props.children === 'Informe o CPF.');
+        .find(node => node.props.children === 'Informe seu CPF ou e-mail.');
       expect(StyleSheet.flatten(message?.props.style)).toMatchObject({
         textAlign: 'center',
         marginTop: 31,
@@ -199,7 +199,7 @@ describe('tela de login', () => {
         scroll.props.onContentSizeChange(414, 600);
       });
 
-      expect(texts(renderer)).toContain('Informe o CPF.');
+      expect(texts(renderer)).toContain('Informe seu CPF ou e-mail.');
       expect(scrollToEnd).toHaveBeenCalledWith({ animated: true });
     });
   });
