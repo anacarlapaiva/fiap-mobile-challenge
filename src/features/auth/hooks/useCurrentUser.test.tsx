@@ -113,7 +113,7 @@ describe('hook do usuário', () => {
     test('quando a leitura falha, então o hook pede nova tentativa e a nova tentativa traz o usuário', async () => {
       jest.useFakeTimers();
       jest
-        .spyOn(firestore, 'getDocs')
+        .spyOn(firestore, 'getDoc')
         .mockRejectedValue(new Error('unavailable'));
       const renderer = await mountCurrentUser({
         guardianId: 1,

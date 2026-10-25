@@ -12,6 +12,8 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { createVariantBox } from '@/shared/lib/createVariantBox';
+import { Icon } from '@/shared/components/Icon';
+import { PressableOpacity } from '@/shared/components/PressableOpacity';
 import { Text } from '@/shared/components/Text';
 import type { Theme } from '@/shared/theme';
 
@@ -43,8 +45,11 @@ export function TextField({
   testID,
 }: TextFieldProps) {
   const theme = useTheme<Theme>();
-  const { motion } = theme;
+  const { motion, spacing } = theme;
   const [focused, setFocused] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+  const masked = secure && !revealed;
+  const inset = secure ? 'fieldToggleInset' : 'none';
   const filled = useSharedValue(value.length > 0 ? 1 : 0);
   const caretOpacity = useSharedValue(0);
 
@@ -55,7 +60,7 @@ export function TextField({
   }, [filled, motion.short, value]);
 
   useEffect(() => {
-    if (secure && focused) {
+    if (masked && focused) {
       caretOpacity.value = 1;
       caretOpacity.value = withRepeat(
         withSequence(
@@ -68,7 +73,7 @@ export function TextField({
     }
     cancelAnimation(caretOpacity);
     caretOpacity.value = 0;
-  }, [caretOpacity, focused, motion.caretBlink, secure]);
+  }, [caretOpacity, focused, masked, motion.caretBlink]);
 
   const lineStyle = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(
@@ -89,9 +94,10 @@ export function TextField({
     <FieldBox variant="container">
       <Text variant="inputLabel">{label}</Text>
       <FieldBox variant="value">
-        {secure ? (
+        {masked ? (
           <FieldBox
             variant="mask"
+            paddingHorizontal={inset}
             pointerEvents="none"
             accessibilityElementsHidden
             importantForAccessibility="no-hide-descendants"
@@ -110,6 +116,7 @@ export function TextField({
           testID={testID}
           variant="inputValue"
           padding="none"
+          paddingHorizontal={inset}
           value={value}
           onChangeText={onChangeText}
           onFocus={() => setFocused(true)}
@@ -124,20 +131,41 @@ export function TextField({
           autoCorrect={false}
           autoCapitalize="none"
           spellCheck={false}
-          style={[valueHeight, secure ? styles.hiddenValue : undefined]}
+          style={[valueHeight, masked ? styles.hiddenValue : undefined]}
           {...(secure
             ? {
-                secureTextEntry: true,
-                caretHidden: true,
+                secureTextEntry: masked,
+                caretHidden: masked,
                 contextMenuHidden: true,
                 autoComplete: 'off',
                 textContentType: 'none',
                 importantForAutofill: 'no',
+              }
+            : {})}
+          {...(masked
+            ? {
                 accessibilityValue: { text: mask },
                 selection: { start: value.length, end: value.length },
               }
             : {})}
         />
+        {secure ? (
+          <FieldBox variant="toggle">
+            <PressableOpacity
+              testID="text-field-toggle"
+              onPress={() => setRevealed(current => !current)}
+              hitSlop={spacing.m}
+              accessibilityRole="button"
+              accessibilityLabel={revealed ? 'Ocultar senha' : 'Mostrar senha'}
+            >
+              <Icon
+                name={revealed ? 'eyeOff' : 'eye'}
+                color="inputLine"
+                size="m"
+              />
+            </PressableOpacity>
+          </FieldBox>
+        ) : null}
       </FieldBox>
       <AnimatedFieldBox
         variant="line"

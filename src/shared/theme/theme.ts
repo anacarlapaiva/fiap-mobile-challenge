@@ -75,6 +75,7 @@ export const theme = createTheme({
     tabBottom: 13,
     m: 16,
     emptyGap: 20,
+    fieldToggleInset: 22,
     l: 24,
     fieldLabelGap: 25,
     errorGap: 31,
@@ -208,6 +209,13 @@ export const theme = createTheme({
       ...fill,
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'center',
+    },
+    toggle: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
       justifyContent: 'center',
     },
     caret: {
