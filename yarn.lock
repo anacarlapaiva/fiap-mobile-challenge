@@ -2204,6 +2204,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-community/netinfo@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "@react-native-community/netinfo@npm:12.0.1"
+  peerDependencies:
+    react: "*"
+    react-native: ">=0.59"
+  checksum: 1b01d5840df4a3b71acb70e755e956d891be27557ec5e166f6f3f173ac7f061f73fc7b705b03bc1444626d81b81d20cbb2f3e35cee149268f97e2cfa8341f823
+  languageName: node
+  linkType: hard
+
 "@react-native/asset-utils@npm:0.88.0":
   version: 0.88.0
   resolution: "@react-native/asset-utils@npm:0.88.0"
@@ -3102,6 +3112,7 @@ __metadata:
     "@react-native-community/cli": 20.2.0
     "@react-native-community/cli-platform-android": 20.2.0
     "@react-native-community/cli-platform-ios": 20.2.0
+    "@react-native-community/netinfo": ^12.0.1
     "@react-native/babel-preset": 0.88.0
     "@react-native/eslint-config": 0.88.0
     "@react-native/jest-preset": 0.88.0
@@ -3124,6 +3135,7 @@ __metadata:
     lint-staged: ^16.4.0
     prettier: 2.8.8
     react: 19.3.0
+    react-error-boundary: 6.1.6
     react-native: 0.88.0
     react-native-asset: ^2.3.0
     react-native-keychain: 10.0.0
@@ -8199,6 +8211,19 @@ __metadata:
     shell-quote: ^1.6.1
     ws: ^7
   checksum: b54f2d2416f5f5ca61b1741367865eab18b0040d7e4b3236693595803dfdf82ae02adbcb480acc5b9767748b615a2d5ce3af286cde3a7f8c193123c62c777428
+  languageName: node
+  linkType: hard
+
+"react-error-boundary@npm:6.1.6":
+  version: 6.1.6
+  resolution: "react-error-boundary@npm:6.1.6"
+  peerDependencies:
+    "@types/react": ^18.0.0 || ^19.0.0
+    react: ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 4d6c0d94bf25401adbad49b6df6db5aadca1bfbff0ecceda57b65f8ef5390963f2237bd9eb333c8f5bbd4409a688d6551f1e56934ded270d38ab607323e0202f
   languageName: node
   linkType: hard
 

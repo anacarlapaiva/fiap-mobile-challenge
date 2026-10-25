@@ -13,18 +13,20 @@ Regras operacionais para agentes ficam em [AGENTS.md](../AGENTS.md). Esta pasta 
 
 ## Decisões arquiteturais (ADR)
 
-| ADR                                                     | Título                                |
-| ------------------------------------------------------- | ------------------------------------- |
-| [0000](adr/0000-template.md)                            | Template                              |
-| [0001](adr/0001-arquitetura-feature-based.md)           | Arquitetura feature-based             |
-| [0002](adr/0002-instrucoes-agnosticas-de-agente.md)     | Instruções agnósticas de agente       |
-| [0003](adr/0003-reproducao-de-video-local.md)           | Reprodução de vídeo local             |
-| [0004](adr/0004-animacoes-com-reanimated.md)            | Animações com Reanimated              |
-| [0005](adr/0005-navegacao-com-react-navigation.md)      | Navegação com React Navigation        |
-| [0006](adr/0006-sessao-no-keychain.md)                  | Sessão no Keychain                    |
-| [0007](adr/0007-validar-com-zod.md)                     | Validar dados externos com Zod        |
-| [0008](adr/0008-separar-contrato-em-dto-e-validacao.md) | Separar o contrato em DTO e validação |
-| [0009](adr/0009-cache-do-mock-com-react-query.md)       | Cache do mock com React Query         |
+| ADR                                                                     | Título                                              |
+| ----------------------------------------------------------------------- | --------------------------------------------------- |
+| [0000](adr/0000-template.md)                                            | Template                                            |
+| [0001](adr/0001-arquitetura-feature-based.md)                           | Arquitetura feature-based                           |
+| [0002](adr/0002-instrucoes-agnosticas-de-agente.md)                     | Instruções agnósticas de agente                     |
+| [0003](adr/0003-reproducao-de-video-local.md)                           | Reprodução de vídeo local                           |
+| [0004](adr/0004-animacoes-com-reanimated.md)                            | Animações com Reanimated                            |
+| [0005](adr/0005-navegacao-com-react-navigation.md)                      | Navegação com React Navigation                      |
+| [0006](adr/0006-sessao-no-keychain.md)                                  | Sessão no Keychain                                  |
+| [0007](adr/0007-validar-com-zod.md)                                     | Validar dados externos com Zod                      |
+| [0008](adr/0008-separar-contrato-em-dto-e-validacao.md)                 | Separar o contrato em DTO e validação               |
+| [0009](adr/0009-cache-do-mock-com-react-query.md)                       | Cache do mock com React Query                       |
+| [0010](adr/0010-conectar-auth-e-firestore-com-react-native-firebase.md) | Conectar Auth e Firestore com React Native Firebase |
+| [0011](adr/0011-detectar-internet-com-netinfo.md)                       | Detectar a internet com NetInfo                     |
 
 ## Specs
 
