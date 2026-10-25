@@ -1,4 +1,6 @@
+import NetInfo from '@react-native-community/netinfo';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
 import { Pressable, Text as NativeText } from 'react-native';
 import ReactTestRenderer from 'react-test-renderer';
 
@@ -20,8 +22,10 @@ const clearSession = jest.mocked(sessionStorage.clearSession);
 
 function Harness() {
   const { session, isReady, signIn, signOut, selectStudent } = useSession();
+  const [notice, setNotice] = useState<string | null>(null);
   return (
     <>
+      {notice ? <NativeText>{notice}</NativeText> : null}
       <NativeText>{isReady ? 'ready' : 'loading'}</NativeText>
       <NativeText>
         {session ? `${session.guardianId}:${session.studentRm}` : 'none'}
@@ -43,6 +47,18 @@ function Harness() {
         testID="sign-in-invalid"
         onPress={() => {
           signIn('111.444.777-35', '123456').catch(() => undefined);
+        }}
+      />
+      <Pressable
+        testID="sign-in-notice"
+        onPress={() => {
+          signIn('969.294.560-04', '123456')
+            .then(result => {
+              if (!result.ok) {
+                setNotice(result.message);
+              }
+            })
+            .catch(() => undefined);
         }}
       />
       <Pressable testID="sign-out" onPress={signOut} />
@@ -286,6 +302,25 @@ describe('provider da sessão', () => {
       expect(texts(renderer)).toEqual(
         expect.arrayContaining(['ready', 'none']),
       );
+    });
+  });
+
+  describe('dado um aparelho sem internet', () => {
+    test('quando o login é pedido, então a sessão não é gravada e a frase avisa a falta de conexão', async () => {
+      jest.mocked(NetInfo.fetch).mockResolvedValueOnce({
+        isConnected: false,
+        isInternetReachable: false,
+      } as Awaited<ReturnType<typeof NetInfo.fetch>>);
+      const { renderer } = await renderProvider();
+      await settle();
+
+      await press(renderer, 'sign-in-notice');
+
+      expect(saveSession).not.toHaveBeenCalled();
+      expect(texts(renderer)).toContain(
+        'Sem conexão com a internet. Verifique sua rede e tente novamente.',
+      );
+      expect(texts(renderer)).toContain('none');
     });
   });
 

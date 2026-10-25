@@ -20,14 +20,16 @@ import {
 import type { Session } from '@/features/auth/types';
 import {
   assessLogin,
+  loginMessages,
   type LoginResult,
 } from '@/features/auth/validation/login.validation';
+import { isOffline, readReachability } from '@/shared/lib/reachability';
 
 type SessionContextValue = {
   session: Session | null;
   isReady: boolean;
   isSigningIn: boolean;
-  signIn: (cpf: string, password: string) => Promise<LoginResult>;
+  signIn: (identifier: string, password: string) => Promise<LoginResult>;
   signOut: () => Promise<void>;
   selectStudent: (studentRm: number) => Promise<boolean>;
 };
@@ -103,14 +105,18 @@ export function SessionProvider({ children }: PropsWithChildren) {
   }, [queryClient, session]);
 
   const signIn = useCallback(
-    (cpf: string, password: string) => {
+    (identifier: string, password: string) => {
       if (signingIn.current) {
         return signingIn.current;
       }
       const pending = (async (): Promise<LoginResult> => {
         try {
+          const reachability = await readReachability();
+          if (isOffline(reachability)) {
+            return { ok: false, message: loginMessages.offline };
+          }
           const guardians = await ensureGuardians(queryClient);
-          const result = assessLogin(cpf, password, guardians);
+          const result = assessLogin(identifier, password, guardians);
           if (!result.ok) {
             return result;
           }
