@@ -7,7 +7,7 @@
 
 ## O quê
 
-A aba BOLETIM mostra o boletim do aluno da sessão, um ano por vez, a partir do JSON. Título e dropdown de ano ficam visíveis. Cada trimestre é um card; as disciplinas abrem abaixo dele.
+A aba BOLETIM mostra o boletim do aluno da sessão, um ano por vez, a partir do documento do responsável (mesmo contrato do JSON da FIAP, via Firestore — spec 011). Título e dropdown de ano ficam visíveis. Cada trimestre é um card; as disciplinas abrem abaixo dele.
 
 ## Critérios de aceite
 
@@ -27,7 +27,7 @@ A aba BOLETIM mostra o boletim do aluno da sessão, um ano por vez, a partir do 
 
 ## Regras
 
-- Fonte: `boletim` do aluno da sessão no JSON. Sem HTTP. Sem spinner.
+- Fonte: `boletim` do aluno da sessão no documento do responsável. Sem spinner.
 - Ano inicial: primeiro item da lista. Ano, trimestre aberto e disciplinas abertas vivem na tela, não na sessão. Sair volta ao primeiro ano, com os cards fechados.
 - Rótulo do ano: `turma - ano` (`7EF - 2025`). Rótulo do trimestre: `nº TRIMESTRE`. Nome da disciplina em maiúsculas pt-BR (`Língua Portuguesa` → `LÍNGUA PORTUGUESA`).
 - Nota com uma casa decimal (`8` → `8.0`, `9.5` → `9.5`, `10` → `10.0`). Falta inteira. `null` de nota ou falta vira `-`. Empty não substitui nota nem falta.
@@ -38,4 +38,4 @@ A aba BOLETIM mostra o boletim do aluno da sessão, um ano por vez, a partir do 
 
 ## Fora do escopo
 
-- Agenda, escolha de aluno, persistir o ano no disco, editar nota, alterar o cabeçalho, Firebase/API.
+- Agenda, escolha de aluno, persistir o ano no disco, editar nota, alterar o cabeçalho.

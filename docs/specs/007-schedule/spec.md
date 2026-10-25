@@ -7,7 +7,7 @@
 
 ## O quê
 
-A aba AGENDA mostra as aulas do aluno da sessão, um dia por vez, a partir do JSON. Título e dropdown de dia ficam visíveis; sem aulas no dia, o Empty ocupa só a lista.
+A aba AGENDA mostra as aulas do aluno da sessão, um dia por vez, a partir do documento do responsável (mesmo contrato do JSON da FIAP, via Firestore — spec 011). Título e dropdown de dia ficam visíveis; sem aulas no dia, o Empty ocupa só a lista.
 
 ## Critérios de aceite
 
@@ -22,7 +22,7 @@ A aba AGENDA mostra as aulas do aluno da sessão, um dia por vez, a partir do JS
 
 ## Regras
 
-- Fonte: `agenda` do aluno da sessão no JSON. Sem HTTP. Sem spinner de agenda.
+- Fonte: `agenda` do aluno da sessão no documento do responsável. Sem spinner de agenda.
 - Dia inicial: primeiro `dia` da lista. Dia escolhido vive na tela, não na sessão; Sair volta ao primeiro dia.
 - Rótulo: `d de mês, weekday` em pt-BR, sem ano, a partir do ISO (`2025-03-16` → `16 de março, domingo`).
 - Empty só substitui a lista. Cabeçalho não muda.
@@ -30,4 +30,4 @@ A aba AGENDA mostra as aulas do aluno da sessão, um dia por vez, a partir do JS
 
 ## Fora do escopo
 
-- Boletim, escolha de aluno, persistir o dia no disco, alterar o cabeçalho, Firebase/API.
+- Boletim, escolha de aluno, persistir o dia no disco, alterar o cabeçalho.

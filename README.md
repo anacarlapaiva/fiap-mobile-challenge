@@ -1,22 +1,51 @@
 # AppFiap
 
-App mobile em React Native (CLI) com TypeScript. É desenvolvido com Spec-Driven Development (SDD), abordagem AI-first e arquitetura feature-based.
+Aplicativo para responsáveis da FIAP School acompanharem as aulas do dia e o boletim anual do aluno.
 
-- Documentação do projeto: [docs/README.md](docs/README.md)
-- Instruções para agentes de IA (e regras do repositório): [AGENTS.md](AGENTS.md)
+Feito em React Native CLI e TypeScript, com o layout do [Figma do desafio](https://www.figma.com/design/lWgkJr0vc9ZiQQylY2J4Zt/Teste-T%C3%A9cnico-Mobile---FIAP?node-id=4001-2). Os dados vêm do Firebase (Authentication + Cloud Firestore), no mesmo contrato do JSON da FIAP. O desenvolvimento seguiu Spec-Driven Development (SDD).
+
+O projeto Firebase `app-fiap-cbb00` já está ligado aos apps Android e iOS. Depois de clonar, basta instalar e rodar.
+
+## O que o app cobre
+
+| Tela             | O que faz                                                                          |
+| ---------------- | ---------------------------------------------------------------------------------- |
+| Splash           | Reproduz o vídeo de abertura uma vez e entrega o restante do app                   |
+| Login            | CPF (máscara `XXX.XXX.XXX-XX`) ou e-mail + senha; sessão persiste ao fechar o app  |
+| Agenda           | Aulas de um dia, com horário e disciplina; troca de dia da semana                  |
+| Boletim          | Ano, turma e trimestres; 2025 abre no 1º trimestre; anos anteriores quando existem |
+| Escolha de aluno | Só aparece se o responsável tiver mais de um aluno; volta para a tela de origem    |
+| Sair             | Confirmação nativa antes de encerrar a sessão                                      |
+
+Nas telas autenticadas: cabeçalho com o responsável, o aluno (nome, RM, turma, período), TROCAR PERFIL quando houver mais de um aluno, SAIR, e abas AGENDA / BOLETIM no rodapé.
+
+Além do corte: testes automatizados, animações, estados vazios (responsável sem alunos, dia sem aula, boletim ausente), detecção de falta de internet no login e Firebase no lugar do JSON local.
+
+## Stack
+
+| Item      | Escolha                                                          |
+| --------- | ---------------------------------------------------------------- |
+| App       | React Native 0.88 (CLI, sem Expo), React 19, TypeScript `strict` |
+| UI        | `@shopify/restyle`, Reanimated, SVG, `react-native-video`        |
+| Navegação | React Navigation 7 (native-stack + bottom-tabs)                  |
+| Dados     | Firebase Auth + Firestore, React Query, Zod                      |
+| Sessão    | `react-native-keychain`                                          |
+| Qualidade | Jest, ESLint, Prettier, Husky                                    |
+
+Gerenciador de pacotes: Yarn 3.6.4. Node.js >= 22.11.0.
 
 ## Pré-requisitos
 
 - Node.js >= 22.11.0
-- Yarn (versão fixada no repositório via `.yarn/releases`; habilite com `corepack enable`)
-- Ambiente React Native configurado: [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment)
-- iOS: Ruby/Bundler e CocoaPods
+- Yarn (versão fixada no repositório; `corepack enable`)
+- Ambiente React Native: [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment)
+- iOS: Ruby, Bundler e CocoaPods
 
 ## Como rodar
 
 ```sh
-yarn install                 # instala dependências e o hook de pre-commit
-yarn start                   # inicia o Metro
+yarn install
+yarn start
 
 # em outro terminal
 yarn android
@@ -26,13 +55,11 @@ cd ios && bundle exec pod install && cd ..
 yarn ios
 ```
 
-As fontes já estão registradas no iOS e no Android. Para alterá-las, veja "Registrar fontes" em [AGENTS.md](AGENTS.md#comandos).
+`yarn install` também registra o hook de pre-commit.
 
-Na abertura, o app reproduz `src/assets/videos/splash.mp4` uma vez e em seguida mostra o conteúdo. A tela nativa anterior ao JavaScript é preta. O player é nativo: depois de instalar dependências, rode `bundle exec pod install` em `ios/` e recompile o app. Recarregar o Metro não basta. O mesmo vale para `react-native-svg` (ícones) e `react-native-reanimated` (animações); o Reanimated também usa um plugin no Babel, então, depois de instalar ou atualizar, inicie o Metro com `yarn start --reset-cache`.
+As fontes (Montserrat) já estão no iOS e no Android. O player de vídeo, o SVG e o Reanimated são nativos: depois de instalar dependências, rode `bundle exec pod install` em `ios/` e recompile. Recarregar o Metro não basta. Depois de instalar ou atualizar o Reanimated, inicie o Metro com `yarn start --reset-cache`.
 
 ## Acesso de teste
-
-O app já aponta para o projeto Firebase `app-fiap-cbb00` (os arquivos `android/app/google-services.json` e `ios/AppFiap/GoogleService-Info.plist` estão no repositório). Basta clonar, instalar e rodar: os dados vêm do Firestore, em qualquer aparelho com internet.
 
 | Responsável                | CPF              | E-mail                          | Senha    | Alunos         |
 | -------------------------- | ---------------- | ------------------------------- | -------- | -------------- |
@@ -43,11 +70,13 @@ O login aceita CPF ou e-mail. O Gustavo tem dois alunos (mostra TROCAR PERFIL) e
 
 ## Firebase
 
-- **Authentication:** provedor E-mail/senha, com os dois usuários acima.
+Já configurado neste repositório (`android/app/google-services.json` e `ios/AppFiap/GoogleService-Info.plist`). Com internet, o app fala com o projeto `app-fiap-cbb00`.
+
+- **Authentication:** e-mail/senha, com os dois usuários da tabela.
 - **Cloud Firestore:** coleção `responsaveis`, documentos `1` e `2`, no formato do JSON da FIAP, **sem** o campo `senha`.
 - **Regras** ([firestore.rules](firestore.rules)): o usuário autenticado lê só o documento cujo `email` é o do token; ninguém escreve pelo app.
-- **Login por CPF:** o Authentication só conhece e-mail, então o app traduz o CPF pelo diretório local `src/features/auth/data/loginDirectory.ts` (sem senha).
-- Decisões: [ADR 0010](docs/adr/0010-conectar-auth-e-firestore-com-react-native-firebase.md) e [spec 011](docs/specs/011-firebase-account/spec.md).
+- **Login por CPF:** o Authentication só conhece e-mail. O app traduz o CPF pelo diretório local `src/features/auth/data/loginDirectory.ts` (sem senha).
+- O JSON original fica em `src/shared/mocks/responsaveis.json` só como fixture dos testes.
 
 Para usar um projeto Firebase próprio:
 
@@ -56,16 +85,25 @@ Para usar um projeto Firebase próprio:
 3. Em Firestore, crie a coleção `responsaveis` com um documento por responsável (id = `id`), copiando `src/shared/mocks/responsaveis.json` sem o campo `senha`.
 4. Publique as regras: `firebase deploy --only firestore:rules` (Firebase CLI, com `firebase use <projeto>`).
 
+## Arquitetura e SDD
+
+O código em `src/` tem quatro camadas: `app`, `features` (`splash`, `auth`, `schedule`, `report-card`), `shared` e `assets`. Cada feature só exporta pelo `index.ts`. As regras de dependência são impostas pelo ESLint.
+
+Cada fatia de produto nasceu de uma spec em `docs/specs/`, com ADRs para as escolhas de biblioteca. O mapa está em [docs/README.md](docs/README.md). As instruções usadas pelos agentes de IA estão em [AGENTS.md](AGENTS.md).
+
+## Qualidade
+
+```sh
+yarn typecheck
+yarn lint
+yarn test
+yarn validate          # typecheck + lint + formatação + testes
+```
+
+O pre-commit (Husky + lint-staged) verifica formatação, lint e tipos em cada commit.
+
 ## Solução de problemas
 
 - **iOS:** o Firebase iOS 13 só vem por SPM e exige frameworks dinâmicos (já configurado no `Podfile`). Não exporte `USE_FRAMEWORKS=static`.
 - **Android:** o Firebase exige Kotlin 2.4 (`kotlinVersion` em `android/build.gradle`). Se um build antigo falhar, rode `cd android && ./gradlew clean`.
 - **Metro:** depois de trocar de branch ou instalar dependências, `yarn start --reset-cache`.
-
-## Comandos e estrutura
-
-- Stack e dependências: [AGENTS.md](AGENTS.md#stack).
-- Typecheck, lint, formatação, testes e `yarn validate`: [AGENTS.md](AGENTS.md#comandos).
-- Arquitetura e pastas: [docs/arquitetura.md](docs/arquitetura.md) e [docs/estrutura-de-pastas.md](docs/estrutura-de-pastas.md).
-
-O pre-commit (Husky + lint-staged) verifica formatação, lint e tipos automaticamente em cada commit.
