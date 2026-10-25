@@ -68,6 +68,7 @@ describe('campo de texto', () => {
       );
 
       expect(view.texts()).toContain('CPF');
+      expect(view.input.props.accessibilityLabel).toBe('CPF');
       expect(view.lineColor()).toBe('rgba(82, 82, 82, 1)');
     });
   });
@@ -251,7 +252,7 @@ describe('campo de texto', () => {
   });
 
   describe('dado qualquer aparelho', () => {
-    test('quando o campo é renderizado, então o valor tem a altura 39 do Figma e não segue a fonte do sistema', async () => {
+    test('quando o campo é renderizado, então o valor tem a altura 39 do Figma e segue a fonte do sistema', async () => {
       const view = await render(
         <TextField label="CPF" value="" onChangeText={jest.fn()} />,
       );
@@ -259,7 +260,7 @@ describe('campo de texto', () => {
       expect(StyleSheet.flatten(view.input.props.style)).toMatchObject({
         height: 39,
       });
-      expect(view.input.props.allowFontScaling).toBe(false);
+      expect(view.input.props.allowFontScaling).toBe(true);
     });
   });
 });

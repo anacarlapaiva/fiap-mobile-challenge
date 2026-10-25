@@ -91,7 +91,13 @@ export function TextField({
 
   return (
     <FieldBox variant="container">
-      <Text variant="inputLabel">{label}</Text>
+      <Text
+        variant="inputLabel"
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
+        {label}
+      </Text>
       <FieldBox variant="value">
         {secure ? (
           <FieldBox
@@ -124,7 +130,7 @@ export function TextField({
           keyboardType={keyboardType}
           maxLength={maxLength}
           textAlign="center"
-          allowFontScaling={false}
+          allowFontScaling
           underlineColorAndroid="transparent"
           selectionColor={theme.colors.textPrimary}
           accessibilityLabel={label}

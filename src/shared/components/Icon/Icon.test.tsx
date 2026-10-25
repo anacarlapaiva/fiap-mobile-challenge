@@ -28,6 +28,7 @@ describe('ícone', () => {
       expect(svg.props.width).toBe(14);
       expect(svg.props.height).toBe(14);
       expect(svg.props.viewBox).toBe('0 0 14 14');
+      expect(svg.props.accessible).toBe(false);
       root.findAllByType(Path).forEach(path => {
         expect(path.props.fill).toBe(theme.colors.accent);
       });

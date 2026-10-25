@@ -73,6 +73,10 @@ describe('rodapé das abas', () => {
         flexDirection: 'row',
       });
       expect(
+        root.findAllByType(View).find(view => view.props.testID === 'tab-bar')
+          ?.props.accessibilityRole,
+      ).toBe('tabbar');
+      expect(
         root
           .findAllByType(View)
           .filter(

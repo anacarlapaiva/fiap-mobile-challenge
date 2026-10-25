@@ -59,6 +59,7 @@ async function render(
   return {
     press,
     field: () => pressableById('dropdown'),
+    option: (index: number) => pressableById(`dropdown-option-${index}`),
     modalVisible: () => root.findByType(Modal).props.visible,
     optionLabels: () =>
       root
@@ -89,6 +90,12 @@ describe('lista de opções', () => {
       expect(view.list()).toBeTruthy();
       expect(view.field()?.props.accessibilityState).toEqual({
         expanded: true,
+      });
+      expect(view.option(0)?.props.accessibilityState).toEqual({
+        selected: true,
+      });
+      expect(view.option(1)?.props.accessibilityState).toEqual({
+        selected: false,
       });
     });
   });

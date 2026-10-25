@@ -8,5 +8,5 @@ const ThemedText = createText<Theme>();
 type TextProps = ComponentProps<typeof ThemedText>;
 
 export function Text(props: TextProps) {
-  return <ThemedText {...props} allowFontScaling={false} />;
+  return <ThemedText {...props} allowFontScaling />;
 }

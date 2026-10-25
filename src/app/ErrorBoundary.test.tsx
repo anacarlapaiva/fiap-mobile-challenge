@@ -63,6 +63,9 @@ describe('proteção contra falha de tela', () => {
 
       expect(texts(renderer)).toEqual(['Algo deu errado.', 'TENTAR NOVAMENTE']);
       expect(
+        renderer.root.findAllByType(NativeText)[0]?.props.accessibilityRole,
+      ).toBe('alert');
+      expect(
         StyleSheet.flatten(
           renderer.root
             .findAllByType(View)

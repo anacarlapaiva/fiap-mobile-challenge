@@ -200,6 +200,7 @@ export function Dropdown<T>({
                   paddingHorizontal={textInset}
                   accessibilityRole="button"
                   accessibilityLabel={option.label}
+                  accessibilityState={{ selected: option.value === value }}
                 >
                   <Text variant="body">{option.label}</Text>
                 </PressableOpacity>

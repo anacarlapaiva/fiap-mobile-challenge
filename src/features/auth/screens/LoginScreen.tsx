@@ -108,7 +108,7 @@ export function LoginScreen() {
     <Screen testID="login-screen" edges={['top']}>
       <KeyboardAvoidingView
         style={[styles.fill, keyboardBackdrop]}
-        behavior="padding"
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
           ref={scroll}
@@ -153,6 +153,7 @@ export function LoginScreen() {
                 color="accent"
                 textAlign="center"
                 marginTop="errorGap"
+                accessibilityRole="alert"
               >
                 {message}
               </Text>

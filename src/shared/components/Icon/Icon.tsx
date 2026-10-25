@@ -23,6 +23,8 @@ export function Icon({ name, color, size }: IconProps) {
       height={height}
       viewBox={`0 0 ${icon.width} ${icon.height}`}
       fill="none"
+      accessible={false}
+      importantForAccessibility="no"
     >
       {icon.paths.map(path => (
         <Path
