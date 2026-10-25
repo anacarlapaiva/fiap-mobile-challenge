@@ -1,0 +1,12 @@
+appId: org.reactjs.native.example.AppFiap
+name: Sair pede confirmação e cancelar mantém a sessão
+---
+- runFlow: subflows/entrar-como-gustavo.yaml
+- tapOn:
+    id: logout
+- assertVisible: 'Sair da conta?'
+- takeScreenshot: alerta-sair
+- tapOn: 'Cancelar'
+- assertVisible:
+    id: header
+- runFlow: subflows/sair.yaml

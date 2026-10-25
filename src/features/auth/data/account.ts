@@ -4,14 +4,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from '@react-native-firebase/auth';
-import {
-  collection,
-  getDocs,
-  getFirestore,
-  limit,
-  query,
-  where,
-} from '@react-native-firebase/firestore';
+import { doc, getDoc, getFirestore } from '@react-native-firebase/firestore';
 
 import type { ResponsavelDto } from '@/shared/dto';
 import { parseGuardian } from '@/shared/validation';
@@ -41,17 +34,13 @@ export function signOutAccount(): Promise<void> {
 }
 
 export async function readAccountGuardian(): Promise<ResponsavelDto | null> {
-  const email = getAuth().currentUser?.email;
-  if (!email) {
+  const uid = getAuth().currentUser?.uid;
+  if (!uid) {
     return null;
   }
-  const snapshot = await getDocs(
-    query(
-      collection(getFirestore(), GUARDIANS),
-      where('email', '==', email),
-      limit(1),
-    ),
-  );
-  const raw = snapshot.docs[0]?.data();
-  return raw ? parseGuardian(raw) : null;
+  const snapshot = await getDoc(doc(getFirestore(), GUARDIANS, uid));
+  if (!snapshot.exists()) {
+    return null;
+  }
+  return parseGuardian(snapshot.data());
 }

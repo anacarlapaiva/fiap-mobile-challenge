@@ -1,0 +1,19 @@
+appId: org.reactjs.native.example.AppFiap
+name: Agenda abre no primeiro dia e troca de dia
+---
+- runFlow: subflows/entrar-como-gustavo.yaml
+- assertVisible: 'GUSTAVO'
+- assertVisible: 'RAFAEL'
+- assertVisible:
+    id: switch-profile
+- assertVisible: 'Sem aulas neste dia'
+- takeScreenshot: agenda-vazia
+- tapOn:
+    id: agenda-day
+- assertVisible:
+    id: dropdown-list
+- takeScreenshot: agenda-dropdown
+- tapOn:
+    id: dropdown-option-1
+- assertVisible: 'Matemática I'
+- assertVisible: '07:15 - 08:00'

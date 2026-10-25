@@ -3,8 +3,15 @@ import type { ReactElement } from 'react';
 import { StyleSheet, Text as NativeText, TextInput, View } from 'react-native';
 import ReactTestRenderer from 'react-test-renderer';
 
+import { Icon } from '@/shared/components/Icon';
 import { TextField } from '@/shared/components/TextField';
 import { theme } from '@/shared/theme';
+
+async function pressToggle(view: Awaited<ReturnType<typeof render>>) {
+  await ReactTestRenderer.act(() => {
+    view.toggle().props.onPress();
+  });
+}
 
 async function render(element: ReactElement) {
   let renderer: ReactTestRenderer.ReactTestRenderer | undefined;
@@ -26,6 +33,22 @@ async function render(element: ReactElement) {
         ?.props.jestAnimatedStyle?.value.backgroundColor,
     texts: () =>
       root.findAllByType(NativeText).map(node => node.props.children),
+    toggles: () =>
+      root.findAll(node => node.props.testID === 'text-field-toggle'),
+    toggle: () => {
+      const [toggle] = root.findAll(
+        node => node.props.testID === 'text-field-toggle',
+      );
+      if (!toggle) {
+        throw new Error('olho não encontrado');
+      }
+      return toggle;
+    },
+    display: () =>
+      root
+        .findAllByType(NativeText)
+        .find(node => node.props.testID === 'text-field-display')?.props
+        .children,
   };
 }
 
@@ -83,7 +106,7 @@ describe('campo de texto', () => {
 
       const mask = view.root
         .findAllByType(NativeText)
-        .find(node => node.props.testID === 'text-field-mask');
+        .find(node => node.props.testID === 'text-field-display');
       expect(mask?.props.children).toBe('******');
       expect(StyleSheet.flatten(mask?.props.style)).toMatchObject({
         fontFamily: 'Montserrat-Regular',
@@ -126,6 +149,89 @@ describe('campo de texto', () => {
     });
   });
 
+  describe('dado um campo seguro recém-montado', () => {
+    test('quando renderizado, então a senha começa oculta e o olho anuncia mostrar senha', async () => {
+      const view = await render(
+        <TextField label="SENHA" value="abc" onChangeText={jest.fn()} secure />,
+      );
+
+      expect(view.display()).toBe('***');
+      expect(view.root.findByType(Icon).props.name).toBe('eye');
+      expect(view.toggle().props).toMatchObject({
+        accessibilityRole: 'button',
+        accessibilityLabel: 'Mostrar senha',
+      });
+    });
+  });
+
+  describe('dado um campo seguro com a senha oculta', () => {
+    test('quando o olho é tocado, então a senha aparece como texto sem desligar o modo seguro nativo e o olho anuncia ocultar senha', async () => {
+      const view = await render(
+        <TextField label="SENHA" value="abc" onChangeText={jest.fn()} secure />,
+      );
+
+      await pressToggle(view);
+
+      const input = view.root.findByType(TextInput);
+      expect(view.display()).toBe('abc');
+      expect(input.props.secureTextEntry).toBe(true);
+      expect(input.props.accessibilityValue).toEqual({ text: 'abc' });
+      expect(view.root.findByType(Icon).props.name).toBe('eyeOff');
+      expect(view.toggle().props.accessibilityLabel).toBe('Ocultar senha');
+    });
+  });
+
+  describe('dado um campo seguro com a senha visível', () => {
+    test('quando o olho riscado é tocado, então a senha volta aos asteriscos', async () => {
+      const view = await render(
+        <TextField label="SENHA" value="abc" onChangeText={jest.fn()} secure />,
+      );
+
+      await pressToggle(view);
+      await pressToggle(view);
+
+      expect(view.display()).toBe('***');
+      expect(view.root.findByType(TextInput).props.accessibilityValue).toEqual({
+        text: '***',
+      });
+      expect(view.root.findByType(Icon).props.name).toBe('eye');
+      expect(view.toggle().props.accessibilityLabel).toBe('Mostrar senha');
+    });
+
+    test('quando o usuário digita e a tela renderiza de novo, então a senha continua visível e o texto chega igual', async () => {
+      const onChangeText = jest.fn();
+      const view = await render(
+        <TextField
+          label="SENHA"
+          value="abc"
+          onChangeText={onChangeText}
+          secure
+        />,
+      );
+
+      await pressToggle(view);
+      await ReactTestRenderer.act(() => {
+        view.root.findByType(TextInput).props.onChangeText('abcd');
+      });
+      await ReactTestRenderer.act(() => {
+        view.renderer.update(
+          <ThemeProvider theme={theme}>
+            <TextField
+              label="SENHA"
+              value="abcd"
+              onChangeText={onChangeText}
+              secure
+            />
+          </ThemeProvider>,
+        );
+      });
+
+      expect(onChangeText).toHaveBeenCalledWith('abcd');
+      expect(view.display()).toBe('abcd');
+      expect(view.root.findByType(TextInput).props.value).toBe('abcd');
+    });
+  });
+
   describe('dado um campo de CPF', () => {
     test('quando o usuário digita, então o texto chega sem formatação', async () => {
       const onChangeText = jest.fn();
@@ -140,6 +246,7 @@ describe('campo de texto', () => {
       expect(onChangeText).toHaveBeenCalledWith('12345678900');
       expect(view.input.props.secureTextEntry).toBeUndefined();
       expect(view.input.props.selection).toBeUndefined();
+      expect(view.toggles()).toHaveLength(0);
     });
   });
 

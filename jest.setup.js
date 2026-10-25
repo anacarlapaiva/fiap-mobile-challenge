@@ -22,11 +22,17 @@ jest.mock('@react-native-firebase/app', () => ({
 jest.mock('@react-native-firebase/auth', () => ({
   getAuth: () => ({
     get currentUser() {
-      return mockAccountState.email ? { email: mockAccountState.email } : null;
+      return mockAccountState.email
+        ? { email: mockAccountState.email, uid: mockAccountState.email }
+        : null;
     },
   }),
   onAuthStateChanged: (_auth, listener) => {
-    listener(mockAccountState.email ? { email: mockAccountState.email } : null);
+    listener(
+      mockAccountState.email
+        ? { email: mockAccountState.email, uid: mockAccountState.email }
+        : null,
+    );
     return () => undefined;
   },
   signInWithEmailAndPassword: (_auth, email) => {
@@ -42,19 +48,22 @@ jest.mock('@react-native-firebase/auth', () => ({
 jest.mock('@react-native-firebase/firestore', () => ({
   __esModule: true,
   getFirestore: () => ({}),
-  collection: () => ({}),
-  where: () => ({}),
-  limit: () => ({}),
-  query: () => ({}),
-  getDocs: () => {
+  doc: () => ({}),
+  getDoc: () => {
     const { readGuardians } = require('./src/shared/mocks');
     const email = mockAccountState.email;
     const match = readGuardians().find(
       item => item.email.toLowerCase() === email,
     );
     if (!match) {
-      return Promise.resolve({ docs: [] });
+      return Promise.resolve({
+        exists: () => false,
+        data: () => undefined,
+      });
     }
-    return Promise.resolve({ docs: [{ data: () => match }] });
+    return Promise.resolve({
+      exists: () => true,
+      data: () => match,
+    });
   },
 }));

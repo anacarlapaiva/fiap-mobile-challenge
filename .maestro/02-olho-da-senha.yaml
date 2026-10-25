@@ -1,0 +1,26 @@
+appId: org.reactjs.native.example.AppFiap
+name: Olho mostra e oculta a senha sem perder o que foi digitado
+---
+- runFlow: subflows/garantir-login.yaml
+- tapOn:
+    id: login-cpf
+- inputText: '96929456004'
+- tapOn:
+    id: login-password
+- inputText: 'abc'
+- assertVisible: 'Mostrar senha'
+- takeScreenshot: senha-oculta
+- tapOn:
+    id: text-field-toggle
+- assertVisible: 'Ocultar senha'
+- inputText: 'd'
+- tapOn:
+    id: text-field-toggle
+- inputText: 'e'
+- tapOn:
+    id: text-field-toggle
+- assertVisible:
+    id: login-password
+    text: 'abcde'
+- hideKeyboard
+- takeScreenshot: senha-visivel

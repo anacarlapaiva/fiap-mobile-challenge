@@ -1,0 +1,13 @@
+appId: org.reactjs.native.example.AppFiap
+---
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: 'login-password|logout'
+    timeout: 20000
+- runFlow:
+    when:
+      visible:
+        id: logout
+    file: sair.yaml
