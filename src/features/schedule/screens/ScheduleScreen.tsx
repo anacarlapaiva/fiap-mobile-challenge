@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
-import { useCurrentUser } from '@/features/auth';
+import { useCurrentUser, UserFallback } from '@/features/auth';
 import { LessonRow } from '@/features/schedule/components/LessonRow';
 import { formatAgendaDay } from '@/features/schedule/formatAgendaDay';
 import { Box, Dropdown, Empty, Screen, Text } from '@/shared/components';
@@ -26,6 +26,7 @@ export function ScheduleScreen() {
     return (
       <Screen testID="schedule-screen" edges={[]}>
         <AgendaTitle />
+        <UserFallback state={currentUser} />
       </Screen>
     );
   }

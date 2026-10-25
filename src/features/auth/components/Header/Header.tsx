@@ -24,7 +24,7 @@ export function Header({ onSwitchProfile }: HeaderProps) {
   const confirmSignOut = () => {
     Alert.alert(
       'Sair da conta?',
-      'Você vai precisar entrar de novo com CPF e senha.',
+      'Você vai precisar entrar de novo com CPF ou e-mail e senha.',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -50,25 +50,23 @@ export function Header({ onSwitchProfile }: HeaderProps) {
           justifyContent="space-between"
         >
           <Logo size="small" />
-          {ready ? (
-            <Box flexDirection="row" alignItems="center">
-              {canSwitch ? (
-                <TextButton
-                  testID="switch-profile"
-                  label="TROCAR PERFIL"
-                  onPress={onSwitchProfile}
-                />
-              ) : null}
-              <Box marginLeft={canSwitch ? 'm' : 'none'}>
-                <TextButton
-                  testID="logout"
-                  label="SAIR"
-                  icon="logout"
-                  onPress={confirmSignOut}
-                />
-              </Box>
+          <Box flexDirection="row" alignItems="center">
+            {canSwitch ? (
+              <TextButton
+                testID="switch-profile"
+                label="TROCAR PERFIL"
+                onPress={onSwitchProfile}
+              />
+            ) : null}
+            <Box marginLeft={canSwitch ? 'm' : 'none'}>
+              <TextButton
+                testID="logout"
+                label="SAIR"
+                icon="logout"
+                onPress={confirmSignOut}
+              />
             </Box>
-          ) : null}
+          </Box>
         </Box>
       </Box>
       {ready ? (

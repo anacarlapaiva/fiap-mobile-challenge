@@ -1,7 +1,11 @@
+import NetInfo from '@react-native-community/netinfo';
+import * as firestore from '@react-native-firebase/firestore';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
 import { Pressable, Text as NativeText } from 'react-native';
 import ReactTestRenderer from 'react-test-renderer';
 
+import { primeAccount } from '@/features/auth/data/account.mock';
 import {
   SessionProvider,
   useSession,
@@ -20,8 +24,10 @@ const clearSession = jest.mocked(sessionStorage.clearSession);
 
 function Harness() {
   const { session, isReady, signIn, signOut, selectStudent } = useSession();
+  const [notice, setNotice] = useState<string | null>(null);
   return (
     <>
+      {notice ? <NativeText>{notice}</NativeText> : null}
       <NativeText>{isReady ? 'ready' : 'loading'}</NativeText>
       <NativeText>
         {session ? `${session.guardianId}:${session.studentRm}` : 'none'}
@@ -43,6 +49,18 @@ function Harness() {
         testID="sign-in-invalid"
         onPress={() => {
           signIn('111.444.777-35', '123456').catch(() => undefined);
+        }}
+      />
+      <Pressable
+        testID="sign-in-notice"
+        onPress={() => {
+          signIn('969.294.560-04', '123456')
+            .then(result => {
+              if (!result.ok) {
+                setNotice(result.message);
+              }
+            })
+            .catch(() => undefined);
         }}
       />
       <Pressable testID="sign-out" onPress={signOut} />
@@ -119,6 +137,7 @@ function texts(renderer: ReactTestRenderer.ReactTestRenderer) {
 
 describe('provider da sessão', () => {
   beforeEach(() => {
+    primeAccount(null);
     readSession.mockReset();
     readSession.mockResolvedValue(null);
     saveSession.mockReset();
@@ -265,6 +284,55 @@ describe('provider da sessão', () => {
     });
   });
 
+  describe('dado uma sessão gravada e o Firestore sem resposta', () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+      jest.useRealTimers();
+    });
+
+    test('quando o tempo de abertura acaba, então a sessão é mantida', async () => {
+      jest.useFakeTimers();
+      primeAccount('gustavo-da-silva@example.com');
+      readSession.mockResolvedValue({ guardianId: 1, studentRm: 12567 });
+      jest
+        .spyOn(firestore, 'getDocs')
+        .mockImplementation(() => new Promise(() => undefined));
+      const { renderer } = await renderProvider();
+
+      await ReactTestRenderer.act(async () => {
+        jest.runOnlyPendingTimers();
+        await flush();
+      });
+
+      expect(texts(renderer)).toEqual(
+        expect.arrayContaining(['ready', '1:12567']),
+      );
+      expect(clearSession).not.toHaveBeenCalled();
+    });
+
+    test('quando a leitura falha, então a sessão é mantida', async () => {
+      jest.useFakeTimers();
+      primeAccount('gustavo-da-silva@example.com');
+      readSession.mockResolvedValue({ guardianId: 1, studentRm: 12567 });
+      jest
+        .spyOn(firestore, 'getDocs')
+        .mockRejectedValue(new Error('unavailable'));
+      const { renderer } = await renderProvider();
+
+      for (let step = 0; step < 5; step += 1) {
+        await ReactTestRenderer.act(async () => {
+          jest.runOnlyPendingTimers();
+          await flush();
+        });
+      }
+
+      expect(texts(renderer)).toEqual(
+        expect.arrayContaining(['ready', '1:12567']),
+      );
+      expect(clearSession).not.toHaveBeenCalled();
+    });
+  });
+
   describe('dado uma sessão cujo responsável não está no mock', () => {
     test('CA-16: quando a leitura termina, então não há sessão e o Keychain é apagado', async () => {
       readSession.mockResolvedValue({ guardianId: 99, studentRm: 1 });
@@ -286,6 +354,25 @@ describe('provider da sessão', () => {
       expect(texts(renderer)).toEqual(
         expect.arrayContaining(['ready', 'none']),
       );
+    });
+  });
+
+  describe('dado um aparelho sem internet', () => {
+    test('quando o login é pedido, então a sessão não é gravada e a frase avisa a falta de conexão', async () => {
+      jest.mocked(NetInfo.fetch).mockResolvedValueOnce({
+        isConnected: false,
+        isInternetReachable: false,
+      } as Awaited<ReturnType<typeof NetInfo.fetch>>);
+      const { renderer } = await renderProvider();
+      await settle();
+
+      await press(renderer, 'sign-in-notice');
+
+      expect(saveSession).not.toHaveBeenCalled();
+      expect(texts(renderer)).toContain(
+        'Sem conexão com a internet. Verifique sua rede e tente novamente.',
+      );
+      expect(texts(renderer)).toContain('none');
     });
   });
 

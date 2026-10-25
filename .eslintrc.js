@@ -74,6 +74,10 @@ module.exports = {
   },
   overrides: [
     {
+      files: ['jest.setup.js'],
+      env: { jest: true },
+    },
+    {
       files: ['src/**/*.{js,jsx,ts,tsx}'],
       rules: {
         'no-restricted-imports': [

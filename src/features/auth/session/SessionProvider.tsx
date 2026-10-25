@@ -10,6 +10,12 @@ import {
   type PropsWithChildren,
 } from 'react';
 
+import {
+  signInAccount,
+  signOutAccount,
+  waitForAccount,
+} from '@/features/auth/data/account';
+import { loginDirectory } from '@/features/auth/data/loginDirectory';
 import { ensureGuardians } from '@/features/auth/hooks/useGuardians';
 import { findUser } from '@/features/auth/session/findUser';
 import {
@@ -20,14 +26,18 @@ import {
 import type { Session } from '@/features/auth/types';
 import {
   assessLogin,
+  loginMessages,
+  messageForRemoteFailure,
+  sessionFromGuardian,
   type LoginResult,
 } from '@/features/auth/validation/login.validation';
+import { isOffline } from '@/shared/lib/reachability';
 
 type SessionContextValue = {
   session: Session | null;
   isReady: boolean;
   isSigningIn: boolean;
-  signIn: (cpf: string, password: string) => Promise<LoginResult>;
+  signIn: (identifier: string, password: string) => Promise<LoginResult>;
   signOut: () => Promise<void>;
   selectStudent: (studentRm: number) => Promise<boolean>;
 };
@@ -54,7 +64,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     let settled = false;
-    const timeout = setTimeout(() => finish(null), RESTORE_TIMEOUT_MS);
+    let stored: Session | null = null;
+    const timeout = setTimeout(() => finish(stored), RESTORE_TIMEOUT_MS);
 
     function finish(value: Session | null) {
       if (settled) {
@@ -68,21 +79,38 @@ export function SessionProvider({ children }: PropsWithChildren) {
     }
 
     readSession()
-      .then(async stored => {
-        if (!stored || settled) {
-          return null;
-        }
-        const guardians = await ensureGuardians(queryClient);
-        if (findUser(stored, guardians)) {
-          return stored;
-        }
-        if (!settled) {
-          await enqueueStorage(clearSession).catch(() => undefined);
-        }
-        return null;
-      })
       .catch(() => null)
-      .then(finish);
+      .then(async value => {
+        if (settled) {
+          return;
+        }
+        if (!value) {
+          finish(null);
+          return;
+        }
+        stored = value;
+        try {
+          await waitForAccount();
+          if (settled) {
+            return;
+          }
+          const guardians = await ensureGuardians(queryClient);
+          if (settled) {
+            return;
+          }
+          if (findUser(value, guardians)) {
+            finish(value);
+            return;
+          }
+          await signOutAccount().catch(() => undefined);
+          if (!settled) {
+            await enqueueStorage(clearSession).catch(() => undefined);
+          }
+          finish(null);
+        } catch {
+          finish(value);
+        }
+      });
 
     return () => {
       settled = true;
@@ -103,24 +131,51 @@ export function SessionProvider({ children }: PropsWithChildren) {
   }, [queryClient, session]);
 
   const signIn = useCallback(
-    (cpf: string, password: string) => {
+    (identifier: string, password: string) => {
       if (signingIn.current) {
         return signingIn.current;
       }
       const pending = (async (): Promise<LoginResult> => {
         try {
-          const guardians = await ensureGuardians(queryClient);
-          const result = assessLogin(cpf, password, guardians);
-          if (!result.ok) {
-            return result;
+          if (await isOffline()) {
+            return { ok: false, message: loginMessages.offline };
+          }
+          const attempt = assessLogin(identifier, password, loginDirectory);
+          if (!attempt.ok) {
+            return attempt;
           }
           setIsSigningIn(true);
-          await enqueueStorage(() => saveSession(result.session)).catch(
-            () => undefined,
-          );
-          sessionRef.current = result.session;
-          setSession(result.session);
-          return result;
+          const mismatch =
+            attempt.kind === 'email'
+              ? loginMessages.emailCredentials
+              : loginMessages.credentials;
+          try {
+            await signInAccount(attempt.email, password);
+            queryClient.removeQueries({ queryKey: ['guardians'] });
+            const guardians = await ensureGuardians(queryClient);
+            const guardian = guardians.find(
+              item => item.email.toLowerCase() === attempt.email,
+            );
+            const result = sessionFromGuardian(guardian, mismatch);
+            if (!result.ok) {
+              await signOutAccount().catch(() => undefined);
+              queryClient.removeQueries({ queryKey: ['guardians'] });
+              return result;
+            }
+            await enqueueStorage(() => saveSession(result.session)).catch(
+              () => undefined,
+            );
+            sessionRef.current = result.session;
+            setSession(result.session);
+            return result;
+          } catch (error) {
+            await signOutAccount().catch(() => undefined);
+            queryClient.removeQueries({ queryKey: ['guardians'] });
+            return {
+              ok: false,
+              message: messageForRemoteFailure(error, attempt.kind),
+            };
+          }
         } finally {
           signingIn.current = null;
           setIsSigningIn(false);
@@ -134,7 +189,10 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
   const signOut = useCallback(() => {
     sessionRef.current = null;
-    return enqueueStorage(clearSession)
+    return enqueueStorage(async () => {
+      await signOutAccount().catch(() => undefined);
+      await clearSession();
+    })
       .catch(() => undefined)
       .then(() => {
         setSession(null);

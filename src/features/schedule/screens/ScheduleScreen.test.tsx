@@ -11,6 +11,8 @@ import { ScheduleScreen } from './ScheduleScreen';
 
 jest.mock('@/features/auth', () => ({
   useCurrentUser: jest.fn(),
+  UserFallback: jest.requireActual('@/features/auth/components/UserFallback')
+    .UserFallback,
 }));
 
 const useCurrentUserMock = jest.mocked(useCurrentUser);
@@ -101,10 +103,13 @@ describe('tela da agenda', () => {
   });
 
   describe('dado o usuário ainda carregando', () => {
-    test('quando a aba abre, então só o título aparece', async () => {
+    test('quando a aba abre, então aparecem o título e o carregamento', async () => {
       const view = await renderSchedule({ status: 'loading' });
 
       expect(view.labels()).toEqual(['AGENDA']);
+      expect(
+        view.root.findAll(node => node.props.testID === 'user-loading'),
+      ).not.toHaveLength(0);
       expect(
         view.root.findAll(node => node.props.testID === 'agenda-day'),
       ).toHaveLength(0);

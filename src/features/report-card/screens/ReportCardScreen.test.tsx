@@ -11,6 +11,8 @@ import { ReportCardScreen } from './ReportCardScreen';
 
 jest.mock('@/features/auth', () => ({
   useCurrentUser: jest.fn(),
+  UserFallback: jest.requireActual('@/features/auth/components/UserFallback')
+    .UserFallback,
 }));
 
 const useCurrentUserMock = jest.mocked(useCurrentUser);
@@ -146,10 +148,13 @@ describe('tela do boletim', () => {
   });
 
   describe('dado o usuário ainda carregando', () => {
-    test('quando a aba abre, então só o título aparece', async () => {
+    test('quando a aba abre, então aparecem o título e o carregamento', async () => {
       const view = await renderReport({ status: 'loading' });
 
       expect(view.labels()).toEqual(['BOLETIM']);
+      expect(
+        view.root.findAll(node => node.props.testID === 'user-loading'),
+      ).not.toHaveLength(0);
     });
   });
 

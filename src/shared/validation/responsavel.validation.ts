@@ -8,7 +8,6 @@ const responsavelSchema = z.object({
   id: z.number(),
   cpf: z.string(),
   email: z.string(),
-  senha: z.string(),
   primeiroNome: z.string(),
   sobrenome: z.string(),
   alunos: z.array(alunoSchema),
@@ -17,6 +16,10 @@ const responsavelSchema = z.object({
 const responsaveisSchema = z.array(responsavelSchema) satisfies z.ZodType<
   ResponsavelDto[]
 >;
+
+export function parseGuardian(input: unknown): ResponsavelDto {
+  return responsavelSchema.parse(input);
+}
 
 export function parseGuardians(input: unknown): ResponsavelDto[] {
   return responsaveisSchema.parse(input);

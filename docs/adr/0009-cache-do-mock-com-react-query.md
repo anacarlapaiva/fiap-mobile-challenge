@@ -1,6 +1,6 @@
 # 0009. Cache do mock com React Query
 
-- **Status:** Aceito
+- **Status:** Aceito (fonte de dados alterada pelo ADR 0010)
 - **Data:** 2026-10-24
 - **Decisores:** Ana Carla Paiva
 
@@ -13,7 +13,7 @@ O app lê o JSON local dos responsáveis no lugar de uma API. Login, a tela aute
 1. O mock dos responsáveis é uma query do `@tanstack/react-query` 5.104.5, com a chave `['guardians']`.
 2. A sessão `{ guardianId, studentRm }` não entra nesse cache.
 3. O Sair apaga a sessão do Keychain, chama `queryClient.clear()` e volta ao login, mesmo se o Keychain falhar.
-4. O `QueryClient` fica nos providers da aplicação. Queries não tentam de novo e não expiram: o dado é local.
+4. O `QueryClient` fica nos providers da aplicação. Queries não expiram. Desde o ADR 0010 a query `['guardians']` lê o Firestore e tenta de novo duas vezes; se ainda falhar, a tela mostra "TENTAR NOVAMENTE" e mantém o SAIR.
 
 ## Alternativas consideradas
 

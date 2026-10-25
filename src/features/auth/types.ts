@@ -13,4 +13,5 @@ export type User = {
 export type UserState =
   | { status: 'anonymous' }
   | { status: 'loading' }
+  | { status: 'error'; retry: () => void }
   | { status: 'ready'; user: User };

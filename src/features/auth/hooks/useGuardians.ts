@@ -1,10 +1,17 @@
 import { useQuery, type QueryClient } from '@tanstack/react-query';
 
-import { readGuardians } from '@/shared/mocks';
+import { readAccountGuardian } from '@/features/auth/data/account';
+import type { ResponsavelDto } from '@/shared/dto';
+
+async function readSignedInGuardians(): Promise<ResponsavelDto[]> {
+  const guardian = await readAccountGuardian();
+  return guardian ? [guardian] : [];
+}
 
 const guardiansQuery = {
   queryKey: ['guardians'],
-  queryFn: readGuardians,
+  queryFn: readSignedInGuardians,
+  retry: 2,
 };
 
 export function useGuardians() {

@@ -5,6 +5,16 @@ import ReactTestRenderer from 'react-test-renderer';
 
 import App from '@/app/App';
 
+jest.mock('@/features/auth/data/account', () => ({
+  waitForAccount: () => Promise.resolve(),
+  signInAccount: () => Promise.resolve(),
+  signOutAccount: () => Promise.resolve(),
+  readAccountGuardian: () => {
+    const { readGuardians } = require('@/shared/mocks');
+    return Promise.resolve(readGuardians()[0] ?? null);
+  },
+}));
+
 jest.mock('react-native-keychain', () => ({
   getGenericPassword: jest.fn(() => Promise.resolve(false)),
   setGenericPassword: jest.fn(() => Promise.resolve(false)),
