@@ -12,6 +12,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ReactTestRenderer from 'react-test-renderer';
 
 import { Header } from '@/features/auth/components/Header';
+import { primeAccountForGuardian } from '@/features/auth/data/account.mock';
 import { SessionProvider } from '@/features/auth/session/SessionProvider';
 import * as sessionStorage from '@/features/auth/session/sessionStorage';
 import type { Session } from '@/features/auth/types';
@@ -51,6 +52,7 @@ async function renderHeader(
   session: Session,
   onSwitchProfile: () => void = jest.fn(),
 ) {
+  primeAccountForGuardian(session.guardianId);
   readSession.mockResolvedValue(session);
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },
@@ -204,7 +206,7 @@ describe('cabeçalho autenticado', () => {
 
       expect(view.title).toBe('Sair da conta?');
       expect(view.message).toBe(
-        'Você vai precisar entrar de novo com CPF e senha.',
+        'Você vai precisar entrar de novo com CPF ou e-mail e senha.',
       );
       expect(view.buttons?.map(item => [item.text, item.style])).toEqual([
         ['Cancelar', 'cancel'],

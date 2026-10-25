@@ -102,6 +102,14 @@ const guardianWithImpossibleDay = {
 };
 
 describe('leitura do JSON de responsáveis', () => {
+  describe('dado um responsável com senha no JSON', () => {
+    test('quando o JSON é lido, então a senha é descartada', () => {
+      const parsed = parseGuardians([guardian]);
+
+      expect(parsed[0]).not.toHaveProperty('senha');
+    });
+  });
+
   describe('dado um responsável com boletim de 2024 e de 2025', () => {
     test('quando o JSON é lido, então a turma do boletim de 2024 permanece', () => {
       const parsed = parseGuardians([guardian]);

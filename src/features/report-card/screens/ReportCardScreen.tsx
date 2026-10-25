@@ -13,7 +13,7 @@ import {
   type ScrollViewInstance,
 } from 'react-native';
 
-import { useCurrentUser } from '@/features/auth';
+import { useCurrentUser, UserFallback } from '@/features/auth';
 import { TermSection } from '@/features/report-card/components/TermSection';
 import {
   formatYearLabel,
@@ -136,6 +136,7 @@ export function ReportCardScreen() {
     return (
       <Screen testID="report-card-screen" edges={[]}>
         <ReportTitle />
+        <UserFallback state={currentUser} />
       </Screen>
     );
   }

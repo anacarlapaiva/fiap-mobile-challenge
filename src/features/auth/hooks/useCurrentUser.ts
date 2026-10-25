@@ -10,13 +10,22 @@ export function useCurrentUser(): UserState {
   if (!session) {
     return { status: 'anonymous' };
   }
-  if (guardians.isPending) {
-    return { status: 'loading' };
+
+  const retry = () => {
+    guardians.refetch().catch(() => undefined);
+  };
+
+  if (guardians.data === undefined) {
+    return guardians.isError && !guardians.isFetching
+      ? { status: 'error', retry }
+      : { status: 'loading' };
   }
 
-  const user = findUser(session, guardians.data ?? []);
+  const user = findUser(session, guardians.data);
   if (!user) {
-    return { status: 'loading' };
+    return guardians.isFetching
+      ? { status: 'loading' }
+      : { status: 'error', retry };
   }
   return { status: 'ready', user };
 }

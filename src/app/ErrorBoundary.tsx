@@ -1,4 +1,4 @@
-import { Fragment, useState, type PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 import {
   ErrorBoundary as ReactErrorBoundary,
   type FallbackProps,
@@ -20,14 +20,9 @@ function ErrorFallback({ resetErrorBoundary }: FallbackProps) {
 }
 
 export function ErrorBoundary({ children }: PropsWithChildren) {
-  const [attempt, setAttempt] = useState(0);
-
   return (
-    <ReactErrorBoundary
-      FallbackComponent={ErrorFallback}
-      onReset={() => setAttempt(current => current + 1)}
-    >
-      <Fragment key={attempt}>{children}</Fragment>
+    <ReactErrorBoundary FallbackComponent={ErrorFallback}>
+      {children}
     </ReactErrorBoundary>
   );
 }

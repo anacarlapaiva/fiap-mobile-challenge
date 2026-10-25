@@ -13,6 +13,7 @@ export const loginMessages = {
   emailCredentials: 'E-mail ou senha incorretos.',
   offline: 'Sem conexão com a internet. Verifique sua rede e tente novamente.',
   noStudents: 'Não encontramos alunos vinculados à sua conta.',
+  unavailable: 'Não foi possível carregar seus dados. Tente novamente.',
 } as const;
 
 const EMAIL_MAX_LENGTH = 254;
@@ -25,6 +26,17 @@ export const PASSWORD_MAX_LENGTH = 128;
 export type LoginResult =
   | { ok: false; message: string }
   | { ok: true; session: Session };
+
+export type LoginKind = 'cpf' | 'email';
+
+export type LoginAttempt =
+  | { ok: false; message: string }
+  | { ok: true; email: string; kind: LoginKind };
+
+export type LoginDirectoryEntry = {
+  cpf: string;
+  email: string;
+};
 
 export function applyCpfMask(value: string): string {
   const digits = value.replace(/\D/g, '').slice(0, 11);
@@ -103,7 +115,7 @@ function checkDigit(digits: string, startWeight: number): number {
   return remainder < 2 ? 0 : 11 - remainder;
 }
 
-function sessionFor(
+export function sessionFromGuardian(
   guardian: ResponsavelDto | undefined,
   mismatch: string,
 ): LoginResult {
@@ -120,10 +132,33 @@ function sessionFor(
   };
 }
 
+export function messageForRemoteFailure(
+  error: unknown,
+  kind: LoginKind,
+): string {
+  const code = remoteErrorCode(error);
+  if (code.includes('network') || code.includes('unavailable')) {
+    return loginMessages.offline;
+  }
+  if (code.startsWith('auth/')) {
+    return kind === 'email'
+      ? loginMessages.emailCredentials
+      : loginMessages.credentials;
+  }
+  return loginMessages.unavailable;
+}
+
+function remoteErrorCode(error: unknown): string {
+  if (typeof error !== 'object' || error === null || !('code' in error)) {
+    return '';
+  }
+  return typeof error.code === 'string' ? error.code : '';
+}
+
 function rejectPassword(
   password: string,
   mismatch: string,
-): LoginResult | null {
+): { ok: false; message: string } | null {
   if (password.length === 0) {
     return { ok: false, message: loginMessages.emptyPassword };
   }
@@ -133,11 +168,7 @@ function rejectPassword(
   return null;
 }
 
-function assessEmailLogin(
-  identifier: string,
-  password: string,
-  guardians: readonly ResponsavelDto[],
-): LoginResult {
+function assessEmailLogin(identifier: string, password: string): LoginAttempt {
   const email = identifier.trim().toLowerCase();
   if (!isEmailAddress(email)) {
     return { ok: false, message: loginMessages.invalidEmail };
@@ -146,17 +177,14 @@ function assessEmailLogin(
   if (rejected) {
     return rejected;
   }
-  const guardian = guardians.find(
-    item => item.email.toLowerCase() === email && item.senha === password,
-  );
-  return sessionFor(guardian, loginMessages.emailCredentials);
+  return { ok: true, email, kind: 'email' };
 }
 
 function assessCpfLogin(
   cpf: string,
   password: string,
-  guardians: readonly ResponsavelDto[],
-): LoginResult {
+  directory: readonly LoginDirectoryEntry[],
+): LoginAttempt {
   const digits = cpf.replace(/\D/g, '');
   if (digits.length === 0) {
     return { ok: false, message: loginMessages.emptyIdentifier };
@@ -176,19 +204,24 @@ function assessCpfLogin(
   if (rejected) {
     return rejected;
   }
-  const guardian = guardians.find(
-    item => item.cpf === digits && item.senha === password,
-  );
-  return sessionFor(guardian, loginMessages.credentials);
+  const entry = directory.find(item => item.cpf === digits);
+  if (!entry) {
+    return { ok: false, message: loginMessages.credentials };
+  }
+  return {
+    ok: true,
+    email: entry.email.trim().toLowerCase(),
+    kind: 'cpf',
+  };
 }
 
 export function assessLogin(
   identifier: string,
   password: string,
-  guardians: readonly ResponsavelDto[],
-): LoginResult {
+  directory: readonly LoginDirectoryEntry[],
+): LoginAttempt {
   if (/[A-Za-z@]/.test(identifier)) {
-    return assessEmailLogin(identifier, password, guardians);
+    return assessEmailLogin(identifier, password);
   }
-  return assessCpfLogin(identifier, password, guardians);
+  return assessCpfLogin(identifier, password, directory);
 }

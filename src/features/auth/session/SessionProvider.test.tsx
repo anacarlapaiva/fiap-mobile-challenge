@@ -1,9 +1,11 @@
 import NetInfo from '@react-native-community/netinfo';
+import * as firestore from '@react-native-firebase/firestore';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Pressable, Text as NativeText } from 'react-native';
 import ReactTestRenderer from 'react-test-renderer';
 
+import { primeAccount } from '@/features/auth/data/account.mock';
 import {
   SessionProvider,
   useSession,
@@ -135,6 +137,7 @@ function texts(renderer: ReactTestRenderer.ReactTestRenderer) {
 
 describe('provider da sessão', () => {
   beforeEach(() => {
+    primeAccount(null);
     readSession.mockReset();
     readSession.mockResolvedValue(null);
     saveSession.mockReset();
@@ -277,6 +280,55 @@ describe('provider da sessão', () => {
         await flush();
       });
 
+      expect(clearSession).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('dado uma sessão gravada e o Firestore sem resposta', () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+      jest.useRealTimers();
+    });
+
+    test('quando o tempo de abertura acaba, então a sessão é mantida', async () => {
+      jest.useFakeTimers();
+      primeAccount('gustavo-da-silva@example.com');
+      readSession.mockResolvedValue({ guardianId: 1, studentRm: 12567 });
+      jest
+        .spyOn(firestore, 'getDocs')
+        .mockImplementation(() => new Promise(() => undefined));
+      const { renderer } = await renderProvider();
+
+      await ReactTestRenderer.act(async () => {
+        jest.runOnlyPendingTimers();
+        await flush();
+      });
+
+      expect(texts(renderer)).toEqual(
+        expect.arrayContaining(['ready', '1:12567']),
+      );
+      expect(clearSession).not.toHaveBeenCalled();
+    });
+
+    test('quando a leitura falha, então a sessão é mantida', async () => {
+      jest.useFakeTimers();
+      primeAccount('gustavo-da-silva@example.com');
+      readSession.mockResolvedValue({ guardianId: 1, studentRm: 12567 });
+      jest
+        .spyOn(firestore, 'getDocs')
+        .mockRejectedValue(new Error('unavailable'));
+      const { renderer } = await renderProvider();
+
+      for (let step = 0; step < 5; step += 1) {
+        await ReactTestRenderer.act(async () => {
+          jest.runOnlyPendingTimers();
+          await flush();
+        });
+      }
+
+      expect(texts(renderer)).toEqual(
+        expect.arrayContaining(['ready', '1:12567']),
+      );
       expect(clearSession).not.toHaveBeenCalled();
     });
   });

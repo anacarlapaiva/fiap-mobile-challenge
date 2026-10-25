@@ -1,1 +1,1 @@
-export { parseGuardians } from './responsavel.validation';
+export { parseGuardian, parseGuardians } from './responsavel.validation';

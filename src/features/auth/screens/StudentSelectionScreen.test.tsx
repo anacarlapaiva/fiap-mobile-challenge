@@ -4,6 +4,7 @@ import { StyleSheet, Text as NativeText, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ReactTestRenderer from 'react-test-renderer';
 
+import { primeAccountForGuardian } from '@/features/auth/data/account.mock';
 import { StudentSelectionScreen } from '@/features/auth/screens/StudentSelectionScreen';
 import { SessionProvider } from '@/features/auth/session/SessionProvider';
 import * as sessionStorage from '@/features/auth/session/sessionStorage';
@@ -43,6 +44,7 @@ async function settle(ms = 0) {
 }
 
 async function render() {
+  primeAccountForGuardian(1);
   readSession.mockResolvedValue({ guardianId: 1, studentRm: 12567 });
   const onClose = jest.fn();
   const client = new QueryClient({

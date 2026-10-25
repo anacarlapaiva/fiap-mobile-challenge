@@ -4,6 +4,8 @@ import {
   assessLogin,
   formatLoginIdentifier,
   loginMessages,
+  messageForRemoteFailure,
+  sessionFromGuardian,
   applyCpfMask,
 } from './login.validation';
 
@@ -11,7 +13,6 @@ const gustavo: ResponsavelDto = {
   id: 1,
   cpf: '96929456004',
   email: 'gustavo-da-silva@example.com',
-  senha: '123456',
   primeiroNome: 'Gustavo',
   sobrenome: 'da Silva',
   alunos: [
@@ -106,28 +107,32 @@ describe('avaliação do login', () => {
     });
   });
 
-  describe('dado o CPF de um responsável do mock com a senha errada', () => {
-    test('CA-09: quando o login é avaliado, então a frase diz que o par não confere', () => {
+  describe('dado o CPF de um responsável e uma senha preenchida', () => {
+    test('quando o login é avaliado, então a tentativa usa o e-mail desse CPF', () => {
       expect(assessLogin('969.294.560-04', '654321', [gustavo])).toEqual({
-        ok: false,
-        message: loginMessages.credentials,
+        ok: true,
+        email: 'gustavo-da-silva@example.com',
+        kind: 'cpf',
       });
     });
   });
 
-  describe('dado o CPF e a senha de um responsável do mock', () => {
-    test('quando o login é avaliado, então a sessão usa o id dele e o RM do primeiro aluno', () => {
-      expect(assessLogin('969.294.560-04', '123456', [gustavo])).toEqual({
+  describe('dado o responsável autenticado', () => {
+    test('quando a sessão é montada, então ela usa o id dele e o RM do primeiro aluno', () => {
+      expect(sessionFromGuardian(gustavo, loginMessages.credentials)).toEqual({
         ok: true,
         session: { guardianId: 1, studentRm: 12567 },
       });
     });
   });
 
-  describe('dado o CPF e a senha de um responsável sem alunos', () => {
-    test('CA-21: quando o login é avaliado, então a frase diz que não há aluno vinculado', () => {
+  describe('dado um responsável sem alunos', () => {
+    test('CA-21: quando a sessão é montada, então a frase diz que não há aluno vinculado', () => {
       expect(
-        assessLogin('969.294.560-04', '123456', [{ ...gustavo, alunos: [] }]),
+        sessionFromGuardian(
+          { ...gustavo, alunos: [] },
+          loginMessages.credentials,
+        ),
       ).toEqual({
         ok: false,
         message: loginMessages.noStudents,
@@ -135,39 +140,21 @@ describe('avaliação do login', () => {
     });
   });
 
-  describe('dado um e-mail com letra maiúscula e a senha do responsável', () => {
-    test('quando o login é avaliado, então a sessão ignora a caixa do e-mail', () => {
+  describe('dado um e-mail com letra maiúscula', () => {
+    test('quando o login é avaliado, então a tentativa ignora a caixa do e-mail', () => {
       expect(
         assessLogin('Gustavo-Da-Silva@Example.com', '123456', [gustavo]),
       ).toEqual({
         ok: true,
-        session: { guardianId: 1, studentRm: 12567 },
+        email: 'gustavo-da-silva@example.com',
+        kind: 'email',
       });
       expect(
-        assessLogin('ADELAIDE-SILVEIRA@example.com', '987654', [
-          gustavo,
-          {
-            ...gustavo,
-            id: 2,
-            cpf: '50879567007',
-            email: 'adelaide-silveira@example.com',
-            senha: '987654',
-            alunos: [
-              {
-                rm: 13752,
-                turma: '1EF',
-                periodo: 'Tarde',
-                primeiroNome: 'Bianca',
-                sobrenome: 'Silveira da Costa',
-                agenda: [],
-                boletim: [],
-              },
-            ],
-          },
-        ]),
+        assessLogin('ADELAIDE-SILVEIRA@example.com', '987654', []),
       ).toEqual({
         ok: true,
-        session: { guardianId: 2, studentRm: 13752 },
+        email: 'adelaide-silveira@example.com',
+        kind: 'email',
       });
     });
   });
@@ -196,39 +183,47 @@ describe('avaliação do login', () => {
     });
   });
 
-  describe('dado um e-mail que não forma o par com a senha', () => {
-    test('quando o login é avaliado, então a frase não revela qual dos dois falhou', () => {
-      expect(
-        assessLogin('gustavo-da-silva@example.com', '000000', [gustavo]),
-      ).toEqual({
-        ok: false,
-        message: loginMessages.emailCredentials,
-      });
+  describe('dado um e-mail válido que a conta ainda não conferiu', () => {
+    test('quando o login é avaliado, então a tentativa segue para a conta', () => {
       expect(
         assessLogin('outra-pessoa@example.com', '123456', [gustavo]),
       ).toEqual({
-        ok: false,
-        message: loginMessages.emailCredentials,
-      });
-      expect(
-        assessLogin('96929456004@example.com', '123456', [gustavo]),
-      ).toEqual({
-        ok: false,
-        message: loginMessages.emailCredentials,
+        ok: true,
+        email: 'outra-pessoa@example.com',
+        kind: 'email',
       });
     });
   });
 
-  describe('dado o e-mail e a senha de um responsável sem alunos', () => {
-    test('quando o login é avaliado, então a frase diz que não há aluno vinculado', () => {
+  describe('dado uma falha da conta', () => {
+    test('quando a credencial não confere, então a frase não revela qual dos dois falhou', () => {
       expect(
-        assessLogin('gustavo-da-silva@example.com', '123456', [
-          { ...gustavo, alunos: [] },
-        ]),
-      ).toEqual({
-        ok: false,
-        message: loginMessages.noStudents,
-      });
+        messageForRemoteFailure({ code: 'auth/invalid-credential' }, 'email'),
+      ).toBe(loginMessages.emailCredentials);
+      expect(
+        messageForRemoteFailure({ code: 'auth/user-not-found' }, 'email'),
+      ).toBe(loginMessages.emailCredentials);
+      expect(
+        messageForRemoteFailure({ code: 'auth/wrong-password' }, 'cpf'),
+      ).toBe(loginMessages.credentials);
+    });
+
+    test('quando a rede falha, então a frase avisa a falta de conexão', () => {
+      expect(
+        messageForRemoteFailure(
+          { code: 'auth/network-request-failed' },
+          'email',
+        ),
+      ).toBe(loginMessages.offline);
+      expect(
+        messageForRemoteFailure({ code: 'firestore/unavailable' }, 'cpf'),
+      ).toBe(loginMessages.offline);
+    });
+
+    test('quando os dados não chegam, então a frase pede para tentar de novo', () => {
+      expect(messageForRemoteFailure(new Error('parse'), 'email')).toBe(
+        loginMessages.unavailable,
+      );
     });
   });
 
