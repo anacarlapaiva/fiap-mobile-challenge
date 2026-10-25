@@ -7,7 +7,7 @@
 
 ## O quê
 
-Splash entrega login sem sessão e a área autenticada com sessão. Login só com responsável do mock. Sessão `{ guardianId, studentRm }` no Keychain; `studentRm` é o primeiro aluno. Senha não é gravada. Sair apaga Keychain e cache e volta ao login. O cabeçalho é chrome do `PrivateNavigator`: logo, TROCAR PERFIL e SAIR na barra de ações; saudação abaixo. Sem lista, o Empty mostra a ilustração e a frase.
+Splash entrega login sem sessão e a área autenticada com sessão. A spec 011 passa a conta e os dados do responsável para o Firebase. Sessão `{ guardianId, studentRm }` no Keychain; `studentRm` é o primeiro aluno. Senha não é gravada. Sair apaga Keychain e cache e volta ao login. O cabeçalho é chrome do `PrivateNavigator`: logo, TROCAR PERFIL e SAIR na barra de ações; saudação abaixo. Sem lista, o Empty mostra a ilustração e a frase.
 
 ## Critérios de aceite
 

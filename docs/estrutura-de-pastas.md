@@ -19,7 +19,7 @@ A árvore descreve pastas e o papel delas. Arquivos internos não entram aqui: o
     │   ├── hooks/
     │   ├── dto/
     │   ├── validation/
-    │   ├── mocks/
+    │   ├── mocks/           # fixture dos testes
     │   ├── theme/
     │   └── lib/
     └── assets/
@@ -32,23 +32,23 @@ A árvore descreve pastas e o papel delas. Arquivos internos não entram aqui: o
 
 ## Propósito de cada pasta
 
-| Pasta                    | Propósito                                                   | Não pode conter                                                            |
-| ------------------------ | ----------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `src/app/`               | Bootstrap, providers globais e navegação raiz               | Telas e regras de negócio                                                  |
-| `src/app/providers/`     | Composição dos providers (`AppProviders`)                   | Lógica de feature                                                          |
-| `src/app/navigation/`    | Navigators e rotas raiz                                     | Telas (ficam nas features)                                                 |
-| `src/features/`          | Uma pasta por domínio                                       | Código compartilhado entre features                                        |
-| `src/shared/components/` | Componentes de UI genéricos, só por props                   | Componentes que conhecem uma feature, chamam API ou leem estado de domínio |
-| `src/shared/hooks/`      | Hooks genéricos                                             | Hooks de uma única feature                                                 |
-| `src/shared/lib/`        | Utilitários e adaptadores de bibliotecas                    | Endpoints de uma feature                                                   |
-| `src/shared/theme/`      | Tokens de design                                            | Componentes                                                                |
-| `src/shared/config/`     | Ponto único de acesso às variáveis de ambiente e constantes | Segredos versionados                                                       |
-| `src/shared/dto/`        | Contrato externo lido por mais de uma feature (`*.dto.ts`)  | Schema Zod, regra de tela e texto de interface                             |
-| `src/shared/validation/` | Schema Zod do contrato compartilhado (`*.validation.ts`)    | Type do contrato e regra de tela                                           |
-| `src/shared/mocks/`      | Dado local que substitui a API, lido pela validação         | Chamada HTTP, regra de tela e texto de interface                           |
-| `src/shared/types/`      | Tipos sem dono de domínio e que não são contrato externo    | Tipos de uma feature e o JSON dos responsáveis                             |
-| `src/assets/`            | Arquivos estáticos, em `fonts/`, `images/` e `videos/`      | Código com lógica                                                          |
-| `docs/`                  | Contrato do projeto (arquitetura, specs, ADRs, convenções)  | Código executável                                                          |
+| Pasta                    | Propósito                                                                 | Não pode conter                                                            |
+| ------------------------ | ------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `src/app/`               | Bootstrap, providers globais e navegação raiz                             | Telas e regras de negócio                                                  |
+| `src/app/providers/`     | Composição dos providers (`AppProviders`)                                 | Lógica de feature                                                          |
+| `src/app/navigation/`    | Navigators e rotas raiz                                                   | Telas (ficam nas features)                                                 |
+| `src/features/`          | Uma pasta por domínio                                                     | Código compartilhado entre features                                        |
+| `src/shared/components/` | Componentes de UI genéricos, só por props                                 | Componentes que conhecem uma feature, chamam API ou leem estado de domínio |
+| `src/shared/hooks/`      | Hooks genéricos                                                           | Hooks de uma única feature                                                 |
+| `src/shared/lib/`        | Utilitários e adaptadores de bibliotecas                                  | Endpoints de uma feature                                                   |
+| `src/shared/theme/`      | Tokens de design                                                          | Componentes                                                                |
+| `src/shared/config/`     | Ponto único de acesso às variáveis de ambiente e constantes               | Segredos versionados                                                       |
+| `src/shared/dto/`        | Contrato externo lido por mais de uma feature (`*.dto.ts`)                | Schema Zod, regra de tela e texto de interface                             |
+| `src/shared/validation/` | Schema Zod do contrato compartilhado (`*.validation.ts`)                  | Type do contrato e regra de tela                                           |
+| `src/shared/mocks/`      | Fixture dos testes (JSON da FIAP). Nunca importado por código de produção | Chamada de rede, regra de tela e texto de interface                        |
+| `src/shared/types/`      | Tipos sem dono de domínio e que não são contrato externo                  | Tipos de uma feature e o JSON dos responsáveis                             |
+| `src/assets/`            | Arquivos estáticos, em `fonts/`, `images/` e `videos/`                    | Código com lógica                                                          |
+| `docs/`                  | Contrato do projeto (arquitetura, specs, ADRs, convenções)                | Código executável                                                          |
 
 ## Anatomia de uma feature
 
@@ -58,7 +58,7 @@ src/features/<nome>/
 ├── components/
 ├── hooks/
 ├── session/
-├── api/
+├── data/              # acesso ao Firebase e dados locais da feature
 ├── dto/
 ├── validation/
 ├── store/
