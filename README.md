@@ -6,7 +6,7 @@ Feito em React Native CLI e TypeScript, com o layout do [Figma do desafio](https
 
 O projeto Firebase `app-fiap-cbb00` já está ligado aos apps Android e iOS. Depois de clonar, basta instalar e rodar.
 
-Criado uma splashscreen exclusiva, desenvolvida para dar mais fluidez e polimento ao app. A arte foi feita baseata na tela inicial do Figmaa
+Foi criado também, uma splashscreen exclusiva, desenvolvida por Ana Carla PAiva para dar mais fluidez e polimento ao app. A arte foi feita baseada na tela inicial do Figmaa
 
 <p align="center">
   <img src="docs/demo/00-splash.gif" alt="Splash de abertura da FIAP" width="480" />
