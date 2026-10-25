@@ -32,18 +32,18 @@ describe('texto do tema', () => {
   });
 
   describe('dado a fonte do sistema aumentada', () => {
-    test('quando o texto é renderizado, então o tamanho continua o da tabela', async () => {
+    test('quando o texto é renderizado, então o texto acompanha a fonte do sistema', async () => {
       let renderer: ReactTestRenderer.ReactTestRenderer | undefined;
       await ReactTestRenderer.act(() => {
         renderer = ReactTestRenderer.create(
           <ThemeProvider theme={theme}>
-            <Text allowFontScaling>AGENDA</Text>
+            <Text allowFontScaling={false}>AGENDA</Text>
           </ThemeProvider>,
         );
       });
 
       expect(renderer?.root.findByType(NativeText).props.allowFontScaling).toBe(
-        false,
+        true,
       );
     });
   });

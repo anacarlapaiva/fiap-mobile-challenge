@@ -57,6 +57,8 @@ export function SubjectRow({
   }, [onReveal, open]);
 
   const label = formatSubjectName(nome);
+  const gradeLabel = `Nota: ${formatGrade(nota)}`;
+  const absencesLabel = `Faltas: ${formatAbsences(faltas)}`;
 
   return (
     <Animated.View layout={layout}>
@@ -83,13 +85,14 @@ export function SubjectRow({
         </PressableOpacity>
         <Animated.View layout={layout} style={styles.clip}>
           {open ? (
-            <Box paddingHorizontal="s" paddingBottom="s">
-              <Text variant="captionMedium">{`Nota: ${formatGrade(
-                nota,
-              )}`}</Text>
-              <Text variant="captionMedium">{`Faltas: ${formatAbsences(
-                faltas,
-              )}`}</Text>
+            <Box
+              paddingHorizontal="s"
+              paddingBottom="s"
+              accessible
+              accessibilityLabel={`${gradeLabel}, ${absencesLabel}`}
+            >
+              <Text variant="captionMedium">{gradeLabel}</Text>
+              <Text variant="captionMedium">{absencesLabel}</Text>
             </Box>
           ) : null}
         </Animated.View>

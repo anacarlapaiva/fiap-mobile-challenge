@@ -7,6 +7,11 @@ Feito em React Native CLI e TypeScript, com o layout do [Figma do desafio](https
 O projeto Firebase `app-fiap-cbb00` já está ligado aos apps Android e iOS. Depois de clonar, basta instalar e rodar.
 
 <p align="center">
+  <img src="docs/demo/00-splash.gif" alt="Splash de abertura da FIAP" width="480" />
+</p>
+<p align="center"><sub>Splash · 6,1 s</sub></p>
+
+<p align="center">
   <img src="docs/demo/01-login.png" alt="Login" width="180" />
   <img src="docs/demo/02-agenda-aulas.png" alt="Agenda com aulas" width="180" />
   <img src="docs/demo/04-boletim-aberto.png" alt="Boletim com trimestre aberto" width="180" />
@@ -19,10 +24,10 @@ O projeto Firebase `app-fiap-cbb00` já está ligado aos apps Android e iOS. Dep
 - **Firebase Authentication** com e-mail/senha, Firestore protegido por regra de UID, sessão no Keychain do sistema e a senha nunca gravada em lugar nenhum. Detalhes em [Autenticação](#autenticação).
 - **O teclado nunca cobre o campo.** No login, o botão FAZER LOGIN sobe junto com o teclado, e a tela rola sozinha até a senha e a mensagem de erro assim que o teclado termina de abrir, no iOS e no Android.
 - **Mostrar senha sem perder o que foi digitado.** O olho no campo SENHA alterna entre `*` e o texto. O campo nativo continua seguro o tempo todo (sem sugestões do teclado, sem copiar), então o iOS não apaga a senha ao ocultar de novo.
-- **Testado de ponta a ponta com Maestro.** Sete fluxos em [`.maestro/`](.maestro) cobrem login (todos os erros), olho da senha, agenda, boletim, troca de perfil, saída e sessão persistida, rodando no simulador iOS. Somam-se aos 196 testes unitários do Jest.
+- **Testado de ponta a ponta com Maestro.** Sete fluxos em [`.maestro/`](.maestro) cobrem login (todos os erros), olho da senha, agenda, boletim, troca de perfil, saída e sessão persistida, rodando no simulador iOS. Somam-se aos 197 testes unitários do Jest.
 - **Animação em todas as telas, respeitando o sistema.** Vídeo na splash, fade entre abas, escolha de aluno subindo de baixo, pulso nos cards, accordion do boletim, dropdown, linha e cursor do campo. Com "Reduzir movimento" ligado no aparelho, as transições são desligadas.
 - **Cenários de erro tratados.** Sem internet, dados quebrados, responsável sem alunos, sessão órfã, Keychain falhando e tela que quebra ao renderizar têm mensagem e saída próprias (veja [Offline e rede](#offline-e-rede)).
-- **Acessível.** Botões, abas, cards e dropdowns anunciam papel, rótulo e estado (aberto, selecionado) para o VoiceOver e o TalkBack.
+- **VoiceOver e TalkBack de verdade, não `testID`.** Cada controle anuncia papel, rótulo e estado. Erro de login e tela quebrada entram como alerta. Logo, ícone e ilustração vazia ficam fora da ordem de leitura. Detalhes em [Acessibilidade](#acessibilidade).
 - **Engenharia guiada por spec.** Dez specs com critérios de aceite, doze ADRs, camadas impostas por lint e instruções de IA versionadas no repositório.
 
 ## Galeria
@@ -127,6 +132,28 @@ O login **precisa de internet**. Sair, restaurar sessão já gravada e trocar de
 - Card com nome completo, turma, RM e período. O aluno da sessão vem com borda de destaque.
 - Escolher outro aluno regrava a sessão, mostra `Perfil alterado para JOANA` e zera dia/ano das abas.
 - Tocar no aluno já selecionado só fecha a tela.
+
+### Acessibilidade
+
+O app fala com o VoiceOver (iOS) e o TalkBack (Android) no próprio componente: papel, rótulo e estado. Não há uma camada extra de acessibilidade.
+
+| Onde                                                         | O que o leitor anuncia                                                                    |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| FAZER LOGIN                                                  | Botão; ocupado enquanto a conta entra                                                     |
+| Olho da senha                                                | `Mostrar senha` / `Ocultar senha`; o valor é `*` ou o texto, sem duplicar o rótulo visual |
+| Erro de login, dados que não carregam, toast e tela quebrada | Alerta                                                                                    |
+| Abas                                                         | Barra de abas; AGENDA / BOLETIM; a ativa vem selecionada                                  |
+| Dropdown                                                     | Aberto ou fechado; a opção atual vem selecionada                                          |
+| Trimestre e disciplina                                       | Expandido ou recolhido                                                                    |
+| Card de aluno                                                | Nome, turma, RM e período numa frase; o da sessão vem selecionado                         |
+| Aula                                                         | Horário e disciplina juntos (`07:15 - 08:00, Matemática I`)                               |
+| Nota e faltas                                                | Juntas (`Nota: 9.5, Faltas: 0`)                                                           |
+| Saudação                                                     | Um cabeçalho (`Olá, GUSTAVO`)                                                             |
+| Splash                                                       | Imagem modal `Animação de abertura da FIAP`                                               |
+| Logo, ícone e ilustração vazia                               | Decorativos; não entram na ordem de leitura                                               |
+| Carregando                                                   | `Carregando`                                                                              |
+
+Com **Reduzir movimento** ligado no aparelho, as transições são desligadas.
 
 ## Acesso de teste
 

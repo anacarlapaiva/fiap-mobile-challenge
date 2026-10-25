@@ -18,6 +18,9 @@ export function Header({ onSwitchProfile }: HeaderProps) {
   const currentUser = useCurrentUser();
   const ready = currentUser.status === 'ready' ? currentUser.user : null;
   const canSwitch = ready !== null && ready.guardian.alunos.length > 1;
+  const guardianName = ready
+    ? ready.guardian.primeiroNome.toLocaleUpperCase('pt-BR')
+    : '';
 
   const topInset = { paddingTop: insets.top };
 
@@ -71,11 +74,16 @@ export function Header({ onSwitchProfile }: HeaderProps) {
       </Box>
       {ready ? (
         <Box paddingHorizontal="m" paddingTop="m" alignItems="center">
-          <Box flexDirection="row">
+          <Box
+            flexDirection="row"
+            accessible
+            accessibilityRole="header"
+            accessibilityLabel={`Olá, ${guardianName}`}
+          >
             <Text variant="greeting">Olá, </Text>
             <Box flexShrink={1}>
               <Text variant="greetingName" numberOfLines={1}>
-                {ready.guardian.primeiroNome.toLocaleUpperCase('pt-BR')}
+                {guardianName}
               </Text>
             </Box>
           </Box>

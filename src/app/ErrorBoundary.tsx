@@ -10,7 +10,7 @@ function ErrorFallback({ resetErrorBoundary }: FallbackProps) {
   return (
     <Screen testID="error-fallback">
       <Box flex={1} justifyContent="center" padding="m">
-        <Text variant="bodyMedium" textAlign="center">
+        <Text variant="bodyMedium" textAlign="center" accessibilityRole="alert">
           Algo deu errado.
         </Text>
       </Box>
