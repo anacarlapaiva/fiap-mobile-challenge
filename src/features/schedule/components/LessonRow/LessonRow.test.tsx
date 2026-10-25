@@ -37,6 +37,7 @@ describe('linha de aula', () => {
         height: 6,
       });
       expect(labels).toEqual(['07:15 - 08:00', 'Matemática I']);
+      expect(row?.props.accessibilityLabel).toBe('07:15 - 08:00, Matemática I');
     });
   });
 });

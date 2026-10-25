@@ -3,6 +3,8 @@ import { ThemeProvider } from '@shopify/restyle';
 import {
   Dimensions,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text as NativeText,
   View,
@@ -151,6 +153,7 @@ describe('tela de login', () => {
         textAlign: 'center',
         marginTop: 31,
       });
+      expect(message?.props.accessibilityRole).toBe('alert');
     });
   });
 
@@ -159,6 +162,9 @@ describe('tela de login', () => {
       window(414, 736);
       const renderer = await openKeyboard();
 
+      expect(
+        renderer.root.findByType(KeyboardAvoidingView).props.behavior,
+      ).toBe('padding');
       expect(style(renderer, 'login-submit')).toMatchObject({
         paddingBottom: 0,
       });
@@ -201,6 +207,18 @@ describe('tela de login', () => {
 
       expect(texts(renderer)).toContain('Informe seu CPF ou e-mail.');
       expect(scrollToEnd).toHaveBeenCalledWith({ animated: true });
+    });
+  });
+
+  describe('dado o Android', () => {
+    test('quando a tela é renderizada, então o teclado não soma padding em cima do ajuste nativo', async () => {
+      jest.replaceProperty(Platform, 'OS', 'android');
+      window(414, 736);
+      const renderer = await renderLogin();
+
+      expect(
+        renderer.root.findByType(KeyboardAvoidingView).props.behavior,
+      ).toBeUndefined();
     });
   });
 });

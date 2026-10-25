@@ -71,6 +71,7 @@ export function StudentCard({
               testID="student-loading"
               size="small"
               color={colors.accent}
+              accessibilityLabel="Carregando"
             />
           </Box>
         ) : null}

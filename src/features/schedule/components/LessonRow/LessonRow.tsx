@@ -17,6 +17,8 @@ export function LessonRow({ aula }: LessonRowProps) {
       flexDirection="row"
       alignItems="center"
       paddingHorizontal="l"
+      accessible
+      accessibilityLabel={`${aula.horario}, ${aula.disciplina}`}
     >
       <Box
         width={theme.sizes.bullet}

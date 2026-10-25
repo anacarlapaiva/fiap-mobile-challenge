@@ -63,6 +63,11 @@ describe('linha da disciplina', () => {
 
       expect(labels).toEqual(['LÍNGUA PORTUGUESA', 'Nota: 9.5', 'Faltas: 0']);
       expect(headerLabels).toEqual(['LÍNGUA PORTUGUESA']);
+      expect(
+        renderer.root.findByProps({
+          accessibilityLabel: 'Nota: 9.5, Faltas: 0',
+        }),
+      ).toBeTruthy();
     });
   });
 });

@@ -104,7 +104,12 @@ export function TabBar({ state, navigation }: BottomTabBarProps) {
   };
 
   return (
-    <TabBarBox testID="tab-bar" variant="bar" style={bottomInset}>
+    <TabBarBox
+      testID="tab-bar"
+      variant="bar"
+      style={bottomInset}
+      accessibilityRole="tabbar"
+    >
       {state.routes.map((route, index) => {
         if (!isTab(route.name)) {
           return null;
