@@ -1,101 +1,71 @@
-# APP_
+# AppFiap
 
-Fiap
+App mobile em React Native (CLI) com TypeScript. É desenvolvido com Spec-Driven Development (SDD), abordagem AI-first e arquitetura feature-based.
 
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+- Documentação do projeto: [docs/README.md](docs/README.md)
+- Instruções para agentes de IA (e regras do repositório): [AGENTS.md](AGENTS.md)
 
-# Getting Started
+## Pré-requisitos
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+- Node.js >= 22.11.0
+- Yarn (versão fixada no repositório via `.yarn/releases`; habilite com `corepack enable`)
+- Ambiente React Native configurado: [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment)
+- iOS: Ruby/Bundler e CocoaPods
 
-## Step 1: Start Metro
-
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
-
-To start the Metro dev server, run the following command from the root of your React Native project:
-
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+## Como rodar
 
 ```sh
-# Using npm
-npm run android
+yarn install                 # instala dependências e o hook de pre-commit
+yarn start                   # inicia o Metro
 
-# OR using Yarn
+# em outro terminal
 yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
+# ou, no iOS (primeira vez e após mudar dependências nativas):
 bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
+cd ios && bundle exec pod install && cd ..
 yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+As fontes já estão registradas no iOS e no Android. Para alterá-las, veja "Registrar fontes" em [AGENTS.md](AGENTS.md#comandos).
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+Na abertura, o app reproduz `src/assets/videos/splash.mp4` uma vez e em seguida mostra o conteúdo. A tela nativa anterior ao JavaScript é preta. O player é nativo: depois de instalar dependências, rode `bundle exec pod install` em `ios/` e recompile o app. Recarregar o Metro não basta. O mesmo vale para `react-native-svg` (ícones) e `react-native-reanimated` (animações); o Reanimated também usa um plugin no Babel, então, depois de instalar ou atualizar, inicie o Metro com `yarn start --reset-cache`.
 
-## Step 3: Modify your app
+## Acesso de teste
 
-Now that you have successfully run the app, let's make changes!
+O app já aponta para o projeto Firebase `app-fiap-cbb00` (os arquivos `android/app/google-services.json` e `ios/AppFiap/GoogleService-Info.plist` estão no repositório). Basta clonar, instalar e rodar: os dados vêm do Firestore, em qualquer aparelho com internet.
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+| Responsável                | CPF              | E-mail                          | Senha    | Alunos         |
+| -------------------------- | ---------------- | ------------------------------- | -------- | -------------- |
+| Gustavo da Silva           | `969.294.560-04` | `gustavo-da-silva@example.com`  | `123456` | Rafael e Joana |
+| Adelaide Silveira da Costa | `508.795.670-07` | `adelaide-silveira@example.com` | `987654` | Bianca         |
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+O login aceita CPF ou e-mail. O Gustavo tem dois alunos (mostra TROCAR PERFIL) e boletim de 2024 e 2025 no Rafael.
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+## Firebase
 
-## Congratulations! :tada:
+- **Authentication:** provedor E-mail/senha, com os dois usuários acima.
+- **Cloud Firestore:** coleção `responsaveis`, documentos `1` e `2`, no formato do JSON da FIAP, **sem** o campo `senha`.
+- **Regras** ([firestore.rules](firestore.rules)): o usuário autenticado lê só o documento cujo `email` é o do token; ninguém escreve pelo app.
+- **Login por CPF:** o Authentication só conhece e-mail, então o app traduz o CPF pelo diretório local `src/features/auth/data/loginDirectory.ts` (sem senha).
+- Decisões: [ADR 0010](docs/adr/0010-conectar-auth-e-firestore-com-react-native-firebase.md) e [spec 011](docs/specs/011-firebase-account/spec.md).
 
-You've successfully run and modified your React Native App. :partying_face:
+Para usar um projeto Firebase próprio:
 
-### Now what?
+1. Crie o projeto e registre os apps Android (`com.appfiap`) e iOS (`org.reactjs.native.example.AppFiap`). Substitua `google-services.json` e `GoogleService-Info.plist`.
+2. Em Authentication, ative E-mail/senha e crie os usuários da tabela.
+3. Em Firestore, crie a coleção `responsaveis` com um documento por responsável (id = `id`), copiando `src/shared/mocks/responsaveis.json` sem o campo `senha`.
+4. Publique as regras: `firebase deploy --only firestore:rules` (Firebase CLI, com `firebase use <projeto>`).
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+## Solução de problemas
 
-# Troubleshooting
+- **iOS:** o Firebase iOS 13 só vem por SPM e exige frameworks dinâmicos (já configurado no `Podfile`). Não exporte `USE_FRAMEWORKS=static`.
+- **Android:** o Firebase exige Kotlin 2.4 (`kotlinVersion` em `android/build.gradle`). Se um build antigo falhar, rode `cd android && ./gradlew clean`.
+- **Metro:** depois de trocar de branch ou instalar dependências, `yarn start --reset-cache`.
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## Comandos e estrutura
 
-# Learn More
+- Stack e dependências: [AGENTS.md](AGENTS.md#stack).
+- Typecheck, lint, formatação, testes e `yarn validate`: [AGENTS.md](AGENTS.md#comandos).
+- Arquitetura e pastas: [docs/arquitetura.md](docs/arquitetura.md) e [docs/estrutura-de-pastas.md](docs/estrutura-de-pastas.md).
 
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+O pre-commit (Husky + lint-staged) verifica formatação, lint e tipos automaticamente em cada commit.

@@ -78,3 +78,13 @@ yarn-error.log
 .env
 .env.*
 !.env.example
+
+# Firebase CLI
+.firebase/
+*-debug.log
+.runtimeconfig.json
+*-firebase-adminsdk-*.json
+serviceAccount*.json
+
+# MCP local do Cursor (caminho desta máquina)
+.cursor/mcp.json
