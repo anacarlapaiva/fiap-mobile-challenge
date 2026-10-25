@@ -14,12 +14,12 @@ Splash entrega login sem sessão e a área autenticada com sessão. Login só co
 - **CA-01:** **Dado** a splash concluída e nenhuma sessão, **Quando** a rota abre, **Então** a tela é o login.
 - **CA-02:** **Dado** a splash concluída e uma sessão válida, **Quando** a rota abre, **Então** a tela autenticada aparece.
 - **CA-03:** **Dado** o login, **Quando** a pessoa digita dígitos no CPF, **Então** o campo mostra a máscara `XXX.XXX.XXX-XX`.
-- **CA-04:** **Dado** o login, **Quando** FAZER LOGIN é tocado com o CPF vazio, **Então** aparece "Informe o CPF.".
-- **CA-05:** **Dado** um CPF com quantidade de dígitos diferente de 11, **Quando** FAZER LOGIN é tocado, **Então** aparece "O CPF deve ter 11 dígitos.".
-- **CA-06:** **Dado** um CPF com 11 dígitos iguais, **Quando** FAZER LOGIN é tocado, **Então** aparece "O CPF não pode ter todos os dígitos iguais.".
-- **CA-07:** **Dado** um CPF cujo dígito verificador não fecha, **Quando** FAZER LOGIN é tocado, **Então** aparece "O CPF informado é inválido.".
-- **CA-08:** **Dado** um CPF válido e a senha vazia, **Quando** FAZER LOGIN é tocado, **Então** aparece "Informe a senha.".
-- **CA-09:** **Dado** um CPF válido e uma senha que não formam um responsável do mock, **Quando** FAZER LOGIN é tocado, **Então** aparece "CPF ou senha não conferem.".
+- **CA-04:** **Dado** o login, **Quando** FAZER LOGIN é tocado com o campo vazio, **Então** aparece "Informe seu CPF ou e-mail.".
+- **CA-05:** **Dado** um CPF com quantidade de dígitos diferente de 11, **Quando** FAZER LOGIN é tocado, **Então** aparece "O CPF precisa ter 11 dígitos.".
+- **CA-06:** **Dado** um CPF com 11 dígitos iguais, **Quando** FAZER LOGIN é tocado, **Então** aparece "CPF inválido. Confira os números.".
+- **CA-07:** **Dado** um CPF cujo dígito verificador não fecha, **Quando** FAZER LOGIN é tocado, **Então** aparece "CPF inválido. Confira os números.".
+- **CA-08:** **Dado** um CPF válido e a senha vazia, **Quando** FAZER LOGIN é tocado, **Então** aparece "Informe sua senha.".
+- **CA-09:** **Dado** um CPF válido e uma senha que não formam um responsável do mock, **Quando** FAZER LOGIN é tocado, **Então** aparece "CPF ou senha incorretos.".
 - **CA-10:** **Dado** o CPF e a senha de um responsável do mock, **Quando** FAZER LOGIN é tocado, **Então** a sessão gravada tem o id desse responsável e o RM do primeiro aluno, e a área autenticada abre.
 - **CA-11:** **Dado** a área autenticada de um responsável com mais de um aluno, **Quando** a tela é exibida, **Então** SAIR e TROCAR PERFIL aparecem. **Quando** o responsável tem um aluno, **Então** só SAIR aparece.
 - **CA-12:** **Dado** TROCAR PERFIL visível, **Quando** o botão é tocado, **Então** a sessão permanece. A tela que abre é a da spec 009.
@@ -31,7 +31,7 @@ Splash entrega login sem sessão e a área autenticada com sessão. Login só co
 - **CA-18:** **Dado** o Gustavo com o Rafael, **Quando** o cabeçalho é exibido, **Então** aparecem "Olá, ", "GUSTAVO", "RAFAEL", "7EF - RM 12567 - Matutino", SAIR e TROCAR PERFIL.
 - **CA-19:** **Dado** a Adelaide, **Quando** o cabeçalho é exibido, **Então** aparecem "Olá, ", "ADELAIDE", "BIANCA", "1EF - RM 13752 - Tarde" e SAIR, e TROCAR PERFIL não aparece.
 - **CA-20:** **Dado** o estado vazio com uma frase, **Quando** renderizado, **Então** a ilustração ocupa 328×208 (menos em tela mais estreita, na proporção) sem distorção e a frase aparece 20 abaixo, no estilo de rótulo do campo, centralizada.
-- **CA-21:** **Dado** o CPF e a senha de um responsável sem alunos, **Quando** FAZER LOGIN é tocado, **Então** aparece "Nenhum aluno vinculado a este responsável." e a sessão não é gravada.
+- **CA-21:** **Dado** o CPF e a senha de um responsável sem alunos, **Quando** FAZER LOGIN é tocado, **Então** aparece "Não encontramos alunos vinculados à sua conta." e a sessão não é gravada.
 - **CA-22:** **Dado** que o Keychain falha ao gravar, **Quando** FAZER LOGIN é tocado com o CPF e a senha de um responsável do mock, **Então** a sessão vale na memória, a área autenticada abre e nenhum erro aparece.
 - **CA-23:** **Dado** que o Keychain não responde à leitura, **Quando** passam 3 s, **Então** não há sessão e a tela é o login; uma resposta que chega depois é ignorada.
 - **CA-24:** **Dado** uma tela que falha ao renderizar, **Quando** a falha acontece, **Então** aparece, no fundo preto, "Algo deu errado." e o botão TENTAR NOVAMENTE, que monta as telas de novo.
