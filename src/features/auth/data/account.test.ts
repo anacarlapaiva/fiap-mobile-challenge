@@ -39,9 +39,10 @@ describe('leitura do responsável autenticado', () => {
 
   describe('dado um documento que não é o contrato', () => {
     test('quando a leitura termina, então ela é recusada', async () => {
-      jest.spyOn(firestore, 'getDocs').mockResolvedValue({
-        docs: [{ data: () => ({ email: 'gustavo-da-silva@example.com' }) }],
-      } as unknown as Awaited<ReturnType<typeof firestore.getDocs>>);
+      jest.spyOn(firestore, 'getDoc').mockResolvedValue({
+        exists: () => true,
+        data: () => ({ email: 'gustavo-da-silva@example.com' }),
+      } as unknown as Awaited<ReturnType<typeof firestore.getDoc>>);
       await signInAccount('gustavo-da-silva@example.com', '123456');
 
       await expect(readAccountGuardian()).rejects.toThrow();

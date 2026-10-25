@@ -1,0 +1,39 @@
+appId: org.reactjs.native.example.AppFiap
+name: Login mostra cada erro de validação
+---
+- runFlow: subflows/garantir-login.yaml
+- tapOn:
+    id: login-submit
+- assertVisible: 'Informe seu CPF ou e-mail.'
+- tapOn:
+    id: login-cpf
+- inputText: '11111111111'
+- assertVisible: '111.111.111-11'
+- hideKeyboard
+- tapOn:
+    id: login-submit
+- assertVisible: 'CPF inválido. Confira os números.'
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: login-cpf
+    timeout: 20000
+- tapOn:
+    id: login-cpf
+- inputText: '96929456004'
+- hideKeyboard
+- tapOn:
+    id: login-submit
+- assertVisible: 'Informe sua senha.'
+- tapOn:
+    id: login-password
+- inputText: '000000'
+- hideKeyboard
+- tapOn:
+    id: login-submit
+- extendedWaitUntil:
+    visible: 'CPF ou senha incorretos.'
+    timeout: 15000
+- hideKeyboard
+- takeScreenshot: login-erro

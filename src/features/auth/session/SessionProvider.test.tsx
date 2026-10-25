@@ -295,7 +295,7 @@ describe('provider da sessão', () => {
       primeAccount('gustavo-da-silva@example.com');
       readSession.mockResolvedValue({ guardianId: 1, studentRm: 12567 });
       jest
-        .spyOn(firestore, 'getDocs')
+        .spyOn(firestore, 'getDoc')
         .mockImplementation(() => new Promise(() => undefined));
       const { renderer } = await renderProvider();
 
@@ -315,7 +315,7 @@ describe('provider da sessão', () => {
       primeAccount('gustavo-da-silva@example.com');
       readSession.mockResolvedValue({ guardianId: 1, studentRm: 12567 });
       jest
-        .spyOn(firestore, 'getDocs')
+        .spyOn(firestore, 'getDoc')
         .mockRejectedValue(new Error('unavailable'));
       const { renderer } = await renderProvider();
 

@@ -1,0 +1,8 @@
+appId: org.reactjs.native.example.AppFiap
+---
+- runFlow: garantir-login.yaml
+- runFlow:
+    file: entrar.yaml
+    env:
+      CPF: '96929456004'
+      SENHA: '123456'

@@ -1,0 +1,11 @@
+appId: org.reactjs.native.example.AppFiap
+---
+- tapOn:
+    id: logout
+- assertVisible: 'Sair da conta?'
+- tapOn:
+    point: '68%,57%'
+- extendedWaitUntil:
+    visible:
+      id: login-password
+    timeout: 15000

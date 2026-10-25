@@ -1,0 +1,15 @@
+appId: org.reactjs.native.example.AppFiap
+name: Boletim abre em 2025 e navega para 2024
+---
+- runFlow: subflows/entrar-como-gustavo.yaml
+- tapOn: 'BOLETIM'
+- assertVisible:
+    id: report-card-screen
+- assertVisible: '1º TRIMESTRE'
+- takeScreenshot: boletim
+- tapOn:
+    id: report-year
+- tapOn:
+    id: dropdown-option-1
+- assertVisible: '.*2024.*'
+- takeScreenshot: boletim-2024

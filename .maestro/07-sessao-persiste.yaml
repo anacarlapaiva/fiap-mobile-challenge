@@ -1,0 +1,19 @@
+appId: org.reactjs.native.example.AppFiap
+name: Sessão continua ao fechar e abrir o app
+---
+- runFlow: subflows/garantir-login.yaml
+- runFlow:
+    file: subflows/entrar.yaml
+    env:
+      CPF: '50879567007'
+      SENHA: '987654'
+- assertVisible: 'ADELAIDE'
+- assertNotVisible:
+    id: switch-profile
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: header
+    timeout: 20000
+- assertVisible: 'ADELAIDE'

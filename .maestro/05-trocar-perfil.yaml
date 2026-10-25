@@ -1,0 +1,19 @@
+appId: org.reactjs.native.example.AppFiap
+name: Trocar perfil volta para a aba de origem com aviso
+---
+- runFlow: subflows/entrar-como-gustavo.yaml
+- tapOn: 'BOLETIM'
+- tapOn:
+    id: switch-profile
+- assertVisible:
+    id: student-selection
+- tapOn: '.*JOANA.*'
+- extendedWaitUntil:
+    visible: 'Perfil alterado para JOANA'
+    timeout: 5000
+- takeScreenshot: toast-perfil
+- assertVisible:
+    id: report-card-screen
+- extendedWaitUntil:
+    notVisible: 'Perfil alterado para JOANA'
+    timeout: 10000

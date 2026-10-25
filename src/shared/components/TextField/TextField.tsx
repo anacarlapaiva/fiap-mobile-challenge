@@ -12,6 +12,8 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { createVariantBox } from '@/shared/lib/createVariantBox';
+import { Icon } from '@/shared/components/Icon';
+import { PressableOpacity } from '@/shared/components/PressableOpacity';
 import { Text } from '@/shared/components/Text';
 import type { Theme } from '@/shared/theme';
 
@@ -43,8 +45,10 @@ export function TextField({
   testID,
 }: TextFieldProps) {
   const theme = useTheme<Theme>();
-  const { motion } = theme;
+  const { motion, spacing } = theme;
   const [focused, setFocused] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+  const inset = secure ? 'fieldToggleInset' : 'none';
   const filled = useSharedValue(value.length > 0 ? 1 : 0);
   const caretOpacity = useSharedValue(0);
 
@@ -82,7 +86,7 @@ export function TextField({
     opacity: caretOpacity.value,
   }));
 
-  const mask = '*'.repeat(value.length);
+  const display = revealed ? value : '*'.repeat(value.length);
   const valueHeight = { height: theme.textVariants.inputValue.lineHeight };
 
   return (
@@ -92,16 +96,18 @@ export function TextField({
         {secure ? (
           <FieldBox
             variant="mask"
+            paddingHorizontal={inset}
             pointerEvents="none"
             accessibilityElementsHidden
             importantForAccessibility="no-hide-descendants"
           >
             <Text
               variant="inputValue"
-              testID="text-field-mask"
+              testID="text-field-display"
               numberOfLines={1}
+              ellipsizeMode="head"
             >
-              {mask}
+              {display}
             </Text>
             <AnimatedFieldBox variant="caret" style={caretStyle} />
           </FieldBox>
@@ -110,6 +116,7 @@ export function TextField({
           testID={testID}
           variant="inputValue"
           padding="none"
+          paddingHorizontal={inset}
           value={value}
           onChangeText={onChangeText}
           onFocus={() => setFocused(true)}
@@ -133,11 +140,28 @@ export function TextField({
                 autoComplete: 'off',
                 textContentType: 'none',
                 importantForAutofill: 'no',
-                accessibilityValue: { text: mask },
+                accessibilityValue: { text: display },
                 selection: { start: value.length, end: value.length },
               }
             : {})}
         />
+        {secure ? (
+          <FieldBox variant="toggle">
+            <PressableOpacity
+              testID="text-field-toggle"
+              onPress={() => setRevealed(current => !current)}
+              hitSlop={spacing.m}
+              accessibilityRole="button"
+              accessibilityLabel={revealed ? 'Ocultar senha' : 'Mostrar senha'}
+            >
+              <Icon
+                name={revealed ? 'eyeOff' : 'eye'}
+                color="inputLine"
+                size="m"
+              />
+            </PressableOpacity>
+          </FieldBox>
+        ) : null}
       </FieldBox>
       <AnimatedFieldBox
         variant="line"
