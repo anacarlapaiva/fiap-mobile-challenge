@@ -3,7 +3,6 @@ import {
   createNativeStackNavigator,
   type NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import { useCallback } from 'react';
 import { useReducedMotion } from 'react-native-reanimated';
 
 import {
@@ -14,7 +13,7 @@ import { Header, StudentSelectionScreen } from '@/features/auth';
 import { Box } from '@/shared/components';
 import { theme } from '@/shared/theme';
 
-export type PrivateStackParamList = {
+type PrivateStackParamList = {
   Main: NavigatorScreenParams<PrivateTabParamList>;
   StudentSelection: undefined;
 };
@@ -24,13 +23,9 @@ const Stack = createNativeStackNavigator<PrivateStackParamList>();
 function MainScreen({
   navigation,
 }: NativeStackScreenProps<PrivateStackParamList, 'Main'>) {
-  const openStudentSelection = useCallback(() => {
-    navigation.navigate('StudentSelection');
-  }, [navigation]);
-
   return (
     <Box flex={1} backgroundColor="background">
-      <Header onSwitchProfile={openStudentSelection} />
+      <Header onSwitchProfile={() => navigation.navigate('StudentSelection')} />
       <TabNavigator />
     </Box>
   );
@@ -39,11 +34,11 @@ function MainScreen({
 function StudentSelectionRoute({
   navigation,
 }: NativeStackScreenProps<PrivateStackParamList, 'StudentSelection'>) {
-  const close = useCallback(() => {
+  const close = () => {
     if (navigation.isFocused() && navigation.canGoBack()) {
       navigation.goBack();
     }
-  }, [navigation]);
+  };
 
   return <StudentSelectionScreen onClose={close} />;
 }

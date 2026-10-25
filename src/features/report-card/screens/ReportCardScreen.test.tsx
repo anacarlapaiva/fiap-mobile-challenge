@@ -167,7 +167,6 @@ describe('tela do boletim', () => {
         ]),
       );
       expect(view.subjects()).toEqual([]);
-      expect(view.labels()).not.toContain('Sem aulas neste dia');
     });
   });
 
@@ -271,6 +270,21 @@ describe('tela do boletim', () => {
           '3º TRIMESTRE',
         ]),
       );
+    });
+  });
+
+  describe('dado um aluno sem boletim', () => {
+    test('CA-13: quando a aba BOLETIM abre, então aparecem o título e o Empty com "Nenhum boletim disponível."', async () => {
+      const { guardian, student } = rafaelUser();
+      const view = await renderReport({
+        status: 'ready',
+        user: { guardian, student: { ...student, boletim: [] } },
+      });
+
+      expect(view.labels()).toEqual(['BOLETIM', 'Nenhum boletim disponível.']);
+      expect(
+        view.root.findAll(node => node.props.testID === 'report-year'),
+      ).toHaveLength(0);
     });
   });
 

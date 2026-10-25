@@ -32,9 +32,9 @@ async function render(element: ReactElement) {
 
 describe('card', () => {
   describe('dado um card selecionado', () => {
-    test('CA-12: quando renderizado, então a borda acento tem 1', async () => {
+    test('quando renderizado, então a borda acento tem 1', async () => {
       const view = await render(
-        <Card testID="card" selected paddingHorizontal="m">
+        <Card testID="card" selected paddingHorizontal="m" onPress={jest.fn()}>
           <Text>ALUNO</Text>
         </Card>,
       );
@@ -54,14 +54,14 @@ describe('card', () => {
   });
 
   describe('dado um card sem seleção', () => {
-    test('CA-12: quando renderizado, então não há borda e o conteúdo permanece no lugar', async () => {
+    test('quando renderizado, então não há borda e o conteúdo permanece no lugar', async () => {
       const selected = await render(
-        <Card testID="card" selected paddingHorizontal="m">
+        <Card testID="card" selected paddingHorizontal="m" onPress={jest.fn()}>
           <Text>ALUNO</Text>
         </Card>,
       );
       const plain = await render(
-        <Card testID="card" paddingHorizontal="m">
+        <Card testID="card" paddingHorizontal="m" onPress={jest.fn()}>
           <Text>ALUNO</Text>
         </Card>,
       );
@@ -72,7 +72,7 @@ describe('card', () => {
   });
 
   describe('dado um card com ação', () => {
-    test('CA-13: quando tocado, então a ação é chamada', async () => {
+    test('quando tocado, então a ação é chamada', async () => {
       const onPress = jest.fn();
       const view = await render(
         <Card testID="card" onPress={onPress}>
@@ -89,15 +89,18 @@ describe('card', () => {
     });
   });
 
-  describe('dado um card sem ação', () => {
-    test('CA-13: quando renderizado, então não é pressionável', async () => {
+  describe('dado um card expansível', () => {
+    test('quando aberto, então anuncia seleção e expansão', async () => {
       const view = await render(
-        <Card testID="card">
+        <Card testID="card" expanded onPress={jest.fn()}>
           <Text>1º TRIMESTRE</Text>
         </Card>,
       );
 
-      expect(view.pressables).toHaveLength(0);
+      expect(view.pressables.slice(-1)[0]?.props.accessibilityState).toEqual({
+        selected: false,
+        expanded: true,
+      });
     });
   });
 });

@@ -11,6 +11,6 @@ export const alunoSchema = z.object({
   periodo: z.string(),
   primeiroNome: z.string(),
   sobrenome: z.string(),
-  agenda: z.array(agendaDiaSchema),
-  boletim: z.array(boletimSchema),
+  agenda: z.array(agendaDiaSchema).default([]),
+  boletim: z.array(boletimSchema).default([]),
 }) satisfies z.ZodType<AlunoDto>;

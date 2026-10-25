@@ -9,6 +9,7 @@ export const loginMessages = {
   checksum: 'O CPF informado é inválido.',
   emptyPassword: 'Informe a senha.',
   credentials: 'CPF ou senha não conferem.',
+  noStudents: 'Nenhum aluno vinculado a este responsável.',
 } as const;
 
 export type LoginResult =
@@ -58,9 +59,12 @@ export function assessLogin(
   const guardian = guardians.find(
     item => item.cpf === digits && item.senha === password,
   );
-  const student = guardian?.alunos[0];
-  if (!guardian || !student) {
+  if (!guardian) {
     return { ok: false, message: loginMessages.credentials };
+  }
+  const student = guardian.alunos[0];
+  if (!student) {
+    return { ok: false, message: loginMessages.noStudents };
   }
   return {
     ok: true,

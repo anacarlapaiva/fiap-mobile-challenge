@@ -1,14 +1,17 @@
 import { useTheme } from '@shopify/restyle';
 import { type ComponentRef, useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Animated, { LinearTransition } from 'react-native-reanimated';
+import Animated, {
+  LinearTransition,
+  useReducedMotion,
+} from 'react-native-reanimated';
 
-import { useCaretStyle } from '@/features/report-card/useCaretStyle';
 import {
   formatAbsences,
   formatGrade,
   formatSubjectName,
 } from '@/features/report-card/formatReportCard';
+import { useCaretStyle } from '@/features/report-card/hooks/useCaretStyle';
 import { Box, Icon, PressableOpacity, Text } from '@/shared/components';
 import type { Theme } from '@/shared/theme';
 
@@ -36,6 +39,10 @@ export function SubjectRow({
   onReveal,
 }: SubjectRowProps) {
   const theme = useTheme<Theme>();
+  const reducedMotion = useReducedMotion();
+  const layout = reducedMotion
+    ? undefined
+    : LinearTransition.duration(theme.motion.medium);
   const caretStyle = useCaretStyle(open);
   const rowRef = useRef<ComponentRef<typeof View>>(null);
 
@@ -52,30 +59,29 @@ export function SubjectRow({
   const label = formatSubjectName(nome);
 
   return (
-    <View ref={rowRef} collapsable={false}>
-      <PressableOpacity
-        testID={`subject-${nome}`}
-        onPress={onPress}
-        accessibilityRole="button"
-        accessibilityLabel={label}
-        accessibilityState={{ expanded: open }}
-      >
-        <Box
-          height={theme.sizes.subjectRowHeight}
-          paddingHorizontal="s"
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="space-between"
+    <Animated.View layout={layout}>
+      <View ref={rowRef} collapsable={false}>
+        <PressableOpacity
+          testID={`subject-${nome}`}
+          onPress={onPress}
+          accessibilityRole="button"
+          accessibilityLabel={label}
+          accessibilityState={{ expanded: open }}
         >
-          <Text variant="captionMedium">{label}</Text>
-          <AnimatedBox style={caretStyle} testID={`subject-${nome}-caret`}>
-            <Icon name="arrow" color="accent" size="m" />
-          </AnimatedBox>
-        </Box>
-        <Animated.View
-          layout={LinearTransition.duration(theme.motion.medium)}
-          style={styles.clip}
-        >
+          <Box
+            height={theme.sizes.subjectRowHeight}
+            paddingHorizontal="s"
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Text variant="captionMedium">{label}</Text>
+            <AnimatedBox style={caretStyle} testID={`subject-${nome}-caret`}>
+              <Icon name="arrow" color="accent" size="m" />
+            </AnimatedBox>
+          </Box>
+        </PressableOpacity>
+        <Animated.View layout={layout} style={styles.clip}>
           {open ? (
             <Box paddingHorizontal="s" paddingBottom="s">
               <Text variant="captionMedium">{`Nota: ${formatGrade(
@@ -87,7 +93,7 @@ export function SubjectRow({
             </Box>
           ) : null}
         </Animated.View>
-      </PressableOpacity>
-    </View>
+      </View>
+    </Animated.View>
   );
 }

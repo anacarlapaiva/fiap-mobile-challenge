@@ -5,7 +5,7 @@ import type { UserState } from '@/features/auth/types';
 
 export function useCurrentUser(): UserState {
   const { session } = useSession();
-  const guardians = useGuardians({ enabled: session !== null });
+  const guardians = useGuardians();
 
   if (!session) {
     return { status: 'anonymous' };

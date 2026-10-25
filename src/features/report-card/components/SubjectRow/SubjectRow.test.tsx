@@ -45,13 +45,24 @@ describe('linha da disciplina', () => {
   });
 
   describe('dado a disciplina aberta', () => {
-    test('quando renderizada, então mostra nota e faltas', () => {
+    test('quando renderizada, então mostra nota e faltas fora do botão da linha', () => {
       const renderer = renderRow(true);
       const labels = renderer.root
         .findAllByType(NativeText)
         .map(node => node.props.children);
+      const header = renderer.root
+        .findAll(
+          node =>
+            node.props.accessibilityLabel === 'LÍNGUA PORTUGUESA' &&
+            typeof node.props.onPress === 'function',
+        )
+        .slice(-1)[0];
+      const headerLabels = header
+        ?.findAllByType(NativeText)
+        .map(node => node.props.children);
 
       expect(labels).toEqual(['LÍNGUA PORTUGUESA', 'Nota: 9.5', 'Faltas: 0']);
+      expect(headerLabels).toEqual(['LÍNGUA PORTUGUESA']);
     });
   });
 });

@@ -23,6 +23,7 @@ A aba BOLETIM mostra o boletim do aluno da sessão, um ano por vez, a partir do 
 - **CA-10:** **Dado** o `3º TRIMESTRE` colado no rodapé, **Quando** abre, **Então** o título e o dropdown permanecem visíveis e a lista rola o mínimo para o topo desse card encostar no topo da área rolável, acima da tab bar.
 - **CA-11:** **Dado** uma disciplina cuja nota ficaria sob a tab bar, **Quando** abre, **Então** a lista rola só o bastante para nota e faltas ficarem acima da tab bar. Se o bloco for mais alto que a área rolável, o topo do que abriu fica visível.
 - **CA-12:** **Dado** os cards fechados, **Quando** a lista é rolada até o fim, **Então** ela para 16 abaixo do último card. **Dado** um trimestre aberto, **Quando** a lista é rolada até o fim, **Então** o espaço abaixo do conteúdo é só o necessário para o topo desse trimestre encostar no topo da área rolável (no mínimo 16).
+- **CA-13:** **Dado** um aluno com `boletim` vazio ou ausente no JSON, **Quando** a aba BOLETIM abre, **Então** aparecem "BOLETIM" e o Empty com "Nenhum boletim disponível.", sem dropdown.
 
 ## Regras
 
@@ -37,4 +38,4 @@ A aba BOLETIM mostra o boletim do aluno da sessão, um ano por vez, a partir do 
 
 ## Fora do escopo
 
-- Agenda, escolha de aluno, persistir o ano no disco, editar nota, boletim vazio, alterar o cabeçalho, Firebase/API.
+- Agenda, escolha de aluno, persistir o ano no disco, editar nota, alterar o cabeçalho, Firebase/API.

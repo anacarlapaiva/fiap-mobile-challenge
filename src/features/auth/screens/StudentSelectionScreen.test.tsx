@@ -48,23 +48,25 @@ async function render() {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Infinity } },
   });
+  const tree = (open: boolean) => (
+    <SafeAreaProvider initialMetrics={metrics}>
+      <QueryClientProvider client={client}>
+        <ThemeProvider theme={theme}>
+          <SessionProvider>
+            {open ? <StudentSelectionScreen onClose={onClose} /> : null}
+          </SessionProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </SafeAreaProvider>
+  );
   let renderer: ReactTestRenderer.ReactTestRenderer | undefined;
   await ReactTestRenderer.act(async () => {
-    renderer = ReactTestRenderer.create(
-      <SafeAreaProvider initialMetrics={metrics}>
-        <QueryClientProvider client={client}>
-          <ThemeProvider theme={theme}>
-            <SessionProvider>
-              <StudentSelectionScreen onClose={onClose} />
-            </SessionProvider>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </SafeAreaProvider>,
-    );
+    renderer = ReactTestRenderer.create(tree(true));
   });
   if (!renderer) {
     throw new Error('render falhou');
   }
+  const mounted = renderer;
   await settle();
   const root = renderer.root;
   const pressable = (label: string) => {
@@ -91,6 +93,11 @@ async function render() {
     });
   };
   const finishPulse = () => settle(theme.motion.short);
+  const dismiss = async () => {
+    await ReactTestRenderer.act(async () => {
+      mounted.update(tree(false));
+    });
+  };
   const accessible = (label: string) =>
     root
       .findAllByType(View)
@@ -102,6 +109,7 @@ async function render() {
     hasBorder,
     press,
     finishPulse,
+    dismiss,
     accessible,
   };
 }
@@ -258,6 +266,32 @@ describe('escolha de aluno', () => {
 
       expect(view.onClose).toHaveBeenCalledTimes(1);
       expect(saveSession).not.toHaveBeenCalled();
+    });
+
+    test('CA-04: quando a tela sai pelo voltar ao fim do pulso da Joana, então a sessão não muda', async () => {
+      const view = await render();
+      const heldFrames: Array<(time: number) => void> = [];
+      const requestFrame = jest
+        .spyOn(globalThis, 'requestAnimationFrame')
+        .mockImplementation(callback => {
+          if (callback.length === 0) {
+            heldFrames.push(callback);
+            return 0;
+          }
+          return Number(setTimeout(() => callback(Date.now()), 0));
+        });
+
+      await view.press(joana);
+      await view.finishPulse();
+      await view.dismiss();
+      await ReactTestRenderer.act(async () => {
+        heldFrames.forEach(callback => callback(0));
+      });
+      requestFrame.mockRestore();
+      await settle();
+
+      expect(saveSession).not.toHaveBeenCalled();
+      expect(showSuccessToastMock).not.toHaveBeenCalled();
     });
 
     test('CA-14: quando lida por leitor de tela, então título é cabeçalho, FECHAR e cards são botões e só o Rafael está selecionado', async () => {

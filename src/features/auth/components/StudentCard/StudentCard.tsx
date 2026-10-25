@@ -51,8 +51,12 @@ export function StudentCard({
         accessibilityLabel={`${name}, ${details}`}
       >
         <Box flex={1} paddingVertical="m" justifyContent="space-between">
-          <Text variant="bodyMedium">{name}</Text>
-          <Text variant="body">{details}</Text>
+          <Text variant="bodyMedium" numberOfLines={1}>
+            {name}
+          </Text>
+          <Text variant="body" numberOfLines={1}>
+            {details}
+          </Text>
         </Box>
         {loading ? (
           <Box

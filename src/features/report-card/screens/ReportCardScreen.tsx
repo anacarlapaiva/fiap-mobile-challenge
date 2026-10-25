@@ -19,7 +19,7 @@ import {
   formatYearLabel,
   yearKey,
 } from '@/features/report-card/formatReportCard';
-import { Box, Dropdown, Screen, Text } from '@/shared/components';
+import { Box, Dropdown, Empty, Screen, Text } from '@/shared/components';
 import type { Theme } from '@/shared/theme';
 
 const styles = StyleSheet.create({
@@ -55,7 +55,7 @@ export function ReportCardScreen() {
   const alignTop = useCallback(
     (node: HostView | null) => {
       const content = contentRef.current;
-      if (!node || !content || typeof node.measureLayout !== 'function') {
+      if (!node || !content) {
         return;
       }
       node.measureLayout(
@@ -83,12 +83,7 @@ export function ReportCardScreen() {
   const revealSubject = useCallback((node: HostView | null) => {
     const content = contentRef.current;
     const viewHeight = scrollAreaRef.current;
-    if (
-      !node ||
-      !content ||
-      viewHeight === 0 ||
-      typeof node.measureLayout !== 'function'
-    ) {
+    if (!node || !content || viewHeight === 0) {
       return;
     }
     node.measureLayout(
@@ -154,6 +149,7 @@ export function ReportCardScreen() {
     return (
       <Screen testID="report-card-screen" edges={[]}>
         <ReportTitle />
+        <Empty message="Nenhum boletim disponível." />
       </Screen>
     );
   }
@@ -161,12 +157,7 @@ export function ReportCardScreen() {
   const selectedKey = yearKey(selected.turma, selected.ano);
 
   const toggleTerm = (trimestre: number) => {
-    if (openTerm === trimestre) {
-      setOpenTerm(undefined);
-      setOpenSubjects([]);
-      return;
-    }
-    setOpenTerm(trimestre);
+    setOpenTerm(current => (current === trimestre ? undefined : trimestre));
     setOpenSubjects([]);
   };
 
@@ -237,7 +228,7 @@ export function ReportCardScreen() {
                   trimestre={term.trimestre}
                   disciplinas={term.disciplinas}
                   open={openTerm === term.trimestre}
-                  openSubjects={openTerm === term.trimestre ? openSubjects : []}
+                  openSubjects={openSubjects}
                   spaced={index > 0}
                   onToggle={() => toggleTerm(term.trimestre)}
                   onToggleSubject={toggleSubject}

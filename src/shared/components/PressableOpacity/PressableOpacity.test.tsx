@@ -47,7 +47,7 @@ describe('toque com opacidade', () => {
   });
 
   describe('dado um componente pressionável', () => {
-    test('CA-17: quando pressionado, então a opacidade vai a 0,8', async () => {
+    test('quando pressionado, então a opacidade vai a 0,8', async () => {
       const view = await render();
 
       await ReactTestRenderer.act(() => {
@@ -58,7 +58,7 @@ describe('toque com opacidade', () => {
       expect(view.opacity()).toBe(motion.pressedOpacity);
     });
 
-    test('CA-17: quando solto, então a opacidade volta', async () => {
+    test('quando solto, então a opacidade volta', async () => {
       const view = await render();
 
       await ReactTestRenderer.act(() => {

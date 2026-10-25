@@ -34,6 +34,8 @@ type SessionContextValue = {
 
 const SessionContext = createContext<SessionContextValue | null>(null);
 
+const RESTORE_TIMEOUT_MS = 3000;
+
 export function SessionProvider({ children }: PropsWithChildren) {
   const queryClient = useQueryClient();
   const [session, setSession] = useState<Session | null>(null);
@@ -51,39 +53,42 @@ export function SessionProvider({ children }: PropsWithChildren) {
   }, []);
 
   useEffect(() => {
-    let active = true;
+    let settled = false;
+    const timeout = setTimeout(() => finish(null), RESTORE_TIMEOUT_MS);
+
+    function finish(value: Session | null) {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      clearTimeout(timeout);
+      sessionRef.current = value;
+      setSession(value);
+      setIsReady(true);
+    }
+
     readSession()
       .then(async stored => {
-        if (!stored) {
+        if (!stored || settled) {
           return null;
         }
         const guardians = await ensureGuardians(queryClient);
         if (findUser(stored, guardians)) {
           return stored;
         }
-        await clearSession().catch(() => undefined);
+        if (!settled) {
+          await enqueueStorage(clearSession).catch(() => undefined);
+        }
         return null;
       })
-      .then(value => {
-        if (!active) {
-          return;
-        }
-        sessionRef.current = value;
-        setSession(value);
-        setIsReady(true);
-      })
-      .catch(() => {
-        if (!active) {
-          return;
-        }
-        sessionRef.current = null;
-        setSession(null);
-        setIsReady(true);
-      });
+      .catch(() => null)
+      .then(finish);
+
     return () => {
-      active = false;
+      settled = true;
+      clearTimeout(timeout);
     };
-  }, [queryClient]);
+  }, [enqueueStorage, queryClient]);
 
   useEffect(() => {
     if (session) {
@@ -110,7 +115,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
             return result;
           }
           setIsSigningIn(true);
-          await enqueueStorage(() => saveSession(result.session));
+          await enqueueStorage(() => saveSession(result.session)).catch(
+            () => undefined,
+          );
           sessionRef.current = result.session;
           setSession(result.session);
           return result;

@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@shopify/restyle';
-import { ScrollView, StyleSheet, Text as NativeText, View } from 'react-native';
+import { StyleSheet, Text as NativeText, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ReactTestRenderer from 'react-test-renderer';
 
@@ -108,7 +108,6 @@ describe('tela da agenda', () => {
       expect(
         view.root.findAll(node => node.props.testID === 'agenda-day'),
       ).toHaveLength(0);
-      expect(view.labels()).not.toContain('Sem aulas neste dia');
     });
   });
 
@@ -143,42 +142,22 @@ describe('tela da agenda', () => {
       await view.press('agenda-day');
       await view.press('dropdown-option-1');
 
-      expect(view.labels()).toEqual(
-        expect.arrayContaining([
-          'AGENDA',
-          '17 de março, segunda-feira',
-          '07:15 - 08:00',
-          'Matemática I',
-          '08:00 - 08:45',
-          'Língua Inglesa',
-          '09:15 - 10:00',
-          '10:00 - 10:45',
-          'Ciências',
-          '10:45 - 11:30',
-          '11:30 - 12:15',
-          'Coding',
-        ]),
-      );
-      expect(view.labels()).not.toContain('Sem aulas neste dia');
-    });
-  });
-
-  describe('dado um dia com aulas', () => {
-    test('quando a lista é exibida, então as aulas ficam numa lista que rola', async () => {
-      const view = await renderSchedule();
-
-      await view.press('agenda-day');
-      await view.press('dropdown-option-1');
-
-      const list = view.root.findByType(ScrollView);
-      const lessons = list
-        .findAllByType(NativeText)
-        .map(node => node.props.children);
-
-      expect(list.props.testID).toBe('agenda-lessons');
-      expect(lessons).toEqual(
-        expect.arrayContaining(['07:15 - 08:00', 'Matemática I']),
-      );
+      expect(view.labels()).toEqual([
+        'AGENDA',
+        '17 de março, segunda-feira',
+        '07:15 - 08:00',
+        'Matemática I',
+        '08:00 - 08:45',
+        'Língua Inglesa',
+        '09:15 - 10:00',
+        'Língua Inglesa',
+        '10:00 - 10:45',
+        'Ciências',
+        '10:45 - 11:30',
+        'Ciências',
+        '11:30 - 12:15',
+        'Coding',
+      ]);
     });
   });
 
@@ -196,6 +175,21 @@ describe('tela da agenda', () => {
           'Sem aulas neste dia',
         ]),
       );
+    });
+  });
+
+  describe('dado um aluno sem dias na agenda', () => {
+    test('CA-08: quando a aba AGENDA abre, então aparecem o título e o Empty com "Nenhuma aula cadastrada."', async () => {
+      const { guardian, student } = rafaelUser();
+      const view = await renderSchedule({
+        status: 'ready',
+        user: { guardian, student: { ...student, agenda: [] } },
+      });
+
+      expect(view.labels()).toEqual(['AGENDA', 'Nenhuma aula cadastrada.']);
+      expect(
+        view.root.findAll(node => node.props.testID === 'agenda-day'),
+      ).toHaveLength(0);
     });
   });
 

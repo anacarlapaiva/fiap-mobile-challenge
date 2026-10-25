@@ -18,6 +18,7 @@ A aba AGENDA mostra as aulas do aluno da sessão, um dia por vez, a partir do JS
 - **CA-05:** **Dado** o dia `2025-03-17` selecionado, **Quando** a pessoa vai ao BOLETIM e volta à AGENDA, **Então** o dropdown continua nesse dia e a lista desse dia permanece.
 - **CA-06:** **Dado** o campo do dropdown, **Quando** renderizado, **Então** tem altura 45, raio 8, margem lateral 24, e cada opção da lista tem altura 36.
 - **CA-07:** **Dado** uma linha de aula, **Quando** renderizada, **Então** tem altura 59, marcador 6×6, o `horario` do JSON em legenda e a `disciplina` em corpo seminegrito abaixo.
+- **CA-08:** **Dado** um aluno com `agenda` vazia ou ausente no JSON, **Quando** a aba AGENDA abre, **Então** aparecem "AGENDA" e o Empty com "Nenhuma aula cadastrada.", sem dropdown.
 
 ## Regras
 

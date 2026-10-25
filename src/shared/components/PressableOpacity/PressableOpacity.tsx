@@ -12,12 +12,11 @@ import type { Theme } from '@/shared/theme';
 
 const AnimatedPressableBox = Animated.createAnimatedComponent(PressableBox);
 
-export type PressableOpacityProps = ComponentProps<typeof PressableBox>;
+type PressableOpacityProps = ComponentProps<typeof PressableBox>;
 
 export function PressableOpacity({
   onPressIn,
   onPressOut,
-  disabled,
   style,
   ...props
 }: PressableOpacityProps) {
@@ -40,7 +39,6 @@ export function PressableOpacity({
   return (
     <AnimatedPressableBox
       {...props}
-      disabled={disabled}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       style={[style, animatedStyle]}

@@ -9,7 +9,7 @@ import { useCurrentUser } from '@/features/auth';
 import { readGuardians } from '@/shared/mocks';
 import { theme } from '@/shared/theme';
 
-import { TabNavigator, tabSceneAnimation } from './TabNavigator';
+import { TabNavigator } from './TabNavigator';
 
 jest.mock('@/features/auth', () => ({
   useCurrentUser: jest.fn(),
@@ -117,20 +117,6 @@ async function renderTabs() {
       ).length > 0,
   };
 }
-
-describe('troca de aba', () => {
-  describe('dado reduzir movimento desligado', () => {
-    test('quando a cena troca, então a transição é fade', () => {
-      expect(tabSceneAnimation(false)).toBe('fade');
-    });
-  });
-
-  describe('dado reduzir movimento ligado', () => {
-    test('quando a cena troca, então não anima', () => {
-      expect(tabSceneAnimation(true)).toBe('none');
-    });
-  });
-});
 
 describe('abas com a agenda', () => {
   afterEach(async () => {

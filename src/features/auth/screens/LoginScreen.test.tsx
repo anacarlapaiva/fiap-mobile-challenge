@@ -174,6 +174,19 @@ describe('tela de login', () => {
       ).toBe(true);
     });
 
+    test('quando o teclado termina de abrir, então a tela rola até o fim para mostrar a senha', async () => {
+      window(414, 736);
+      const renderer = await openKeyboard();
+      const scrollToEnd = jest.fn();
+      renderer.root.findByProps({
+        testID: 'login-scroll',
+      }).instance.scrollToEnd = scrollToEnd;
+
+      await settle();
+
+      expect(scrollToEnd).toHaveBeenCalledWith({ animated: true });
+    });
+
     test('quando a frase de erro aparece, então a tela rola até o fim para mostrá-la', async () => {
       window(414, 736);
       const renderer = await openKeyboard();

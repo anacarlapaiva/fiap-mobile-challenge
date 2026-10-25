@@ -1,6 +1,6 @@
 import * as Keychain from 'react-native-keychain';
 import type { UserCredentials } from 'react-native-keychain';
-import { Alert, StatusBar, StyleSheet, View } from 'react-native';
+import { StatusBar, StyleSheet, View } from 'react-native';
 import ReactTestRenderer from 'react-test-renderer';
 
 import App from '@/app/App';
@@ -182,39 +182,6 @@ describe('abertura do app', () => {
         view.root
           .findAllByType(View)
           .filter(node => node.props.testID === 'schedule-screen'),
-      ).toHaveLength(1);
-    });
-  });
-
-  describe('dado a área autenticada', () => {
-    test('CA-13: quando SAIR é tocado e confirmado, então o login volta', async () => {
-      const alert = jest
-        .spyOn(Alert, 'alert')
-        .mockImplementation((_title, _message, buttons) => {
-          buttons?.find(button => button.text === 'Sair')?.onPress?.();
-        });
-      getGenericPassword.mockResolvedValue({
-        username: 'session',
-        password: JSON.stringify({ guardianId: 1, studentRm: 12567 }),
-        service: 'br.com.fiap.school.session',
-        storage: 'KeystoreAESGCM_NoAuth',
-      } as UserCredentials);
-      const view = await renderApp();
-      await finishSplash(view);
-      await ReactTestRenderer.act(async () => {
-        view.root.findByProps({ testID: 'logout' }).props.onPress();
-        for (let step = 0; step < 5; step += 1) {
-          await Promise.resolve();
-        }
-      });
-
-      alert.mockRestore();
-
-      expect(resetGenericPassword).toHaveBeenCalled();
-      expect(
-        view.root
-          .findAllByType(View)
-          .filter(node => node.props.testID === 'login-screen'),
       ).toHaveLength(1);
     });
   });

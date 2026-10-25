@@ -21,7 +21,7 @@ async function render(element: ReactElement) {
 
 describe('ícone', () => {
   describe('dado um ícone quadrado com cor e tamanho do tema', () => {
-    test('CA-02: quando renderizado, então a altura é o tamanho e o desenho usa a cor pedida', async () => {
+    test('quando renderizado, então a altura é o tamanho e o desenho usa a cor pedida', async () => {
       const root = await render(<Icon name="arrow" color="accent" size="m" />);
 
       const svg = root.findByType(Svg);
@@ -35,7 +35,7 @@ describe('ícone', () => {
   });
 
   describe('dado um ícone mais largo que alto', () => {
-    test('CA-02: quando renderizado, então a largura acompanha a proporção do desenho', async () => {
+    test('quando renderizado, então a largura acompanha a proporção do desenho', async () => {
       const root = await render(
         <Icon name="calendar" color="textPrimary" size="l" />,
       );

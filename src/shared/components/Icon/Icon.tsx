@@ -30,7 +30,6 @@ export function Icon({ name, color, size }: IconProps) {
           d={path.d}
           fill={theme.colors[color]}
           fillRule={'fillRule' in path ? path.fillRule : undefined}
-          clipRule={'fillRule' in path ? path.fillRule : undefined}
         />
       ))}
     </Svg>

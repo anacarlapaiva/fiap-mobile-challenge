@@ -8,7 +8,7 @@ import { Box, Logo, Text, TextButton } from '@/shared/components';
 import type { Theme } from '@/shared/theme';
 
 type HeaderProps = {
-  onSwitchProfile?: () => void;
+  onSwitchProfile: () => void;
 };
 
 export function Header({ onSwitchProfile }: HeaderProps) {
@@ -56,7 +56,7 @@ export function Header({ onSwitchProfile }: HeaderProps) {
                 <TextButton
                   testID="switch-profile"
                   label="TROCAR PERFIL"
-                  onPress={onSwitchProfile ?? (() => undefined)}
+                  onPress={onSwitchProfile}
                 />
               ) : null}
               <Box marginLeft={canSwitch ? 'm' : 'none'}>
@@ -75,9 +75,11 @@ export function Header({ onSwitchProfile }: HeaderProps) {
         <Box paddingHorizontal="m" paddingTop="m" alignItems="center">
           <Box flexDirection="row">
             <Text variant="greeting">Olá, </Text>
-            <Text variant="greetingName">
-              {ready.guardian.primeiroNome.toLocaleUpperCase('pt-BR')}
-            </Text>
+            <Box flexShrink={1}>
+              <Text variant="greetingName" numberOfLines={1}>
+                {ready.guardian.primeiroNome.toLocaleUpperCase('pt-BR')}
+              </Text>
+            </Box>
           </Box>
           <Text variant="bodyMedium" marginTop="greetingGap">
             {ready.student.primeiroNome.toLocaleUpperCase('pt-BR')}

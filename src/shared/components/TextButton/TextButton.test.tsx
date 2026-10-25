@@ -5,7 +5,7 @@ import Svg, { Path } from 'react-native-svg';
 import ReactTestRenderer from 'react-test-renderer';
 
 import { TextButton } from '@/shared/components/TextButton';
-import { fonts, theme } from '@/shared/theme';
+import { theme } from '@/shared/theme';
 
 async function render(element: ReactElement) {
   let renderer: ReactTestRenderer.ReactTestRenderer | undefined;
@@ -33,13 +33,13 @@ async function render(element: ReactElement) {
 
 describe('botão de texto', () => {
   describe('dado o tom padrão', () => {
-    test('CA-11: quando renderizado, então usa a legenda branca e o ícone de 10', async () => {
+    test('quando renderizado, então usa a legenda branca e o ícone de 10', async () => {
       const view = await render(
         <TextButton label="SAIR" icon="logout" onPress={jest.fn()} />,
       );
 
       expect(view.labelStyle).toMatchObject({
-        fontFamily: fonts.regular,
+        fontFamily: 'Montserrat-Regular',
         fontSize: 12,
         color: theme.colors.textPrimary,
       });
@@ -49,7 +49,7 @@ describe('botão de texto', () => {
       });
     });
 
-    test('CA-11: quando tocado, então a ação é chamada', async () => {
+    test('quando tocado, então a ação é chamada', async () => {
       const onPress = jest.fn();
       const view = await render(
         <TextButton label="SAIR" icon="logout" onPress={onPress} />,
@@ -64,7 +64,7 @@ describe('botão de texto', () => {
   });
 
   describe('dado o tom destaque', () => {
-    test('CA-11: quando renderizado, então usa o negrito acento e o ícone de 24', async () => {
+    test('quando renderizado, então usa o negrito acento e o ícone de 24', async () => {
       const view = await render(
         <TextButton
           label="FECHAR"
@@ -75,7 +75,7 @@ describe('botão de texto', () => {
       );
 
       expect(view.labelStyle).toMatchObject({
-        fontFamily: fonts.bold,
+        fontFamily: 'Montserrat-Bold',
         fontSize: 16,
         color: theme.colors.accent,
       });

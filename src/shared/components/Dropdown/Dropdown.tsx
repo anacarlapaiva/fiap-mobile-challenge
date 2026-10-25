@@ -147,7 +147,7 @@ export function Dropdown<T>({
     <Box ref={fieldRef} collapsable={false}>
       <PressableOpacity
         testID={testID}
-        onPress={open ? close : openList}
+        onPress={openList}
         accessibilityRole="button"
         accessibilityLabel={selected?.label}
         accessibilityState={{ expanded: open }}
@@ -170,7 +170,8 @@ export function Dropdown<T>({
           testID="dropdown-backdrop"
           flex={1}
           onPress={close}
-          accessibilityRole="button"
+          accessible={false}
+          importantForAccessibility="no"
         />
         <DropdownBox
           variant="overlay"
@@ -180,6 +181,7 @@ export function Dropdown<T>({
           <AnimatedDropdownBox
             variant="list"
             testID="dropdown-list"
+            onAccessibilityEscape={close}
             style={[listPosition, listStyle]}
           >
             <ScrollView
@@ -190,7 +192,7 @@ export function Dropdown<T>({
             >
               {options.map((option, index) => (
                 <PressableOpacity
-                  key={option.label}
+                  key={String(option.value)}
                   testID={`dropdown-option-${index}`}
                   onPress={() => select(option)}
                   height={theme.sizes.optionRowHeight}
