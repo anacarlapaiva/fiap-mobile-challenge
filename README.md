@@ -16,7 +16,7 @@ O projeto Firebase `app-fiap-cbb00` já está ligado aos apps Android e iOS. Dep
 
 ## Destaques
 
-- **Autenticação de verdade, não um `if` contra o JSON.** Firebase Authentication com e-mail/senha, Firestore protegido por regra de UID, sessão no Keychain do sistema e a senha nunca gravada em lugar nenhum. Detalhes em [Autenticação](#autenticação).
+- **Firebase Authentication** com e-mail/senha, Firestore protegido por regra de UID, sessão no Keychain do sistema e a senha nunca gravada em lugar nenhum. Detalhes em [Autenticação](#autenticação).
 - **O teclado nunca cobre o campo.** No login, o botão FAZER LOGIN sobe junto com o teclado, e a tela rola sozinha até a senha e a mensagem de erro assim que o teclado termina de abrir, no iOS e no Android.
 - **Mostrar senha sem perder o que foi digitado.** O olho no campo SENHA alterna entre `*` e o texto. O campo nativo continua seguro o tempo todo (sem sugestões do teclado, sem copiar), então o iOS não apaga a senha ao ocultar de novo.
 - **Testado de ponta a ponta com Maestro.** Sete fluxos em [`.maestro/`](.maestro) cobrem login (todos os erros), olho da senha, agenda, boletim, troca de perfil, saída e sessão persistida, rodando no simulador iOS. Somam-se aos 196 testes unitários do Jest.
