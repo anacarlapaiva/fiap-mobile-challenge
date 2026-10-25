@@ -1,6 +1,11 @@
 import type { ResponsavelDto } from '@/shared/dto';
 
-import { assessLogin, loginMessages, applyCpfMask } from './login.validation';
+import {
+  assessLogin,
+  formatLoginIdentifier,
+  loginMessages,
+  applyCpfMask,
+} from './login.validation';
 
 const gustavo: ResponsavelDto = {
   id: 1,
@@ -27,7 +32,7 @@ describe('avaliação do login', () => {
     test('CA-04: quando o login é avaliado, então a frase pede o CPF', () => {
       expect(assessLogin('', '123456', [gustavo])).toEqual({
         ok: false,
-        message: loginMessages.emptyCpf,
+        message: loginMessages.emptyIdentifier,
       });
     });
   });
@@ -59,6 +64,30 @@ describe('avaliação do login', () => {
     });
   });
 
+  describe('dado um CPF válido cujo dígito verificador é 9', () => {
+    test('quando o login é avaliado, então o CPF passa pela conferência dos dígitos', () => {
+      expect(assessLogin('111.444.709-94', '123456', [gustavo])).toEqual({
+        ok: false,
+        message: loginMessages.credentials,
+      });
+      expect(assessLogin('111.444.711-09', '123456', [gustavo])).toEqual({
+        ok: false,
+        message: loginMessages.credentials,
+      });
+    });
+  });
+
+  describe('dado um CPF válido e uma senha maior que o limite', () => {
+    test('quando o login é avaliado, então o par não confere', () => {
+      expect(assessLogin('969.294.560-04', '1'.repeat(129), [gustavo])).toEqual(
+        {
+          ok: false,
+          message: loginMessages.credentials,
+        },
+      );
+    });
+  });
+
   describe('dado um CPF válido e a senha vazia', () => {
     test('CA-08: quando o login é avaliado, então a frase pede a senha', () => {
       expect(assessLogin('969.294.560-04', '', [gustavo])).toEqual({
@@ -71,6 +100,15 @@ describe('avaliação do login', () => {
   describe('dado um CPF válido que não forma um responsável do mock', () => {
     test('CA-09: quando o login é avaliado, então a frase diz que o par não confere', () => {
       expect(assessLogin('111.444.777-35', '123456', [gustavo])).toEqual({
+        ok: false,
+        message: loginMessages.credentials,
+      });
+    });
+  });
+
+  describe('dado o CPF de um responsável do mock com a senha errada', () => {
+    test('CA-09: quando o login é avaliado, então a frase diz que o par não confere', () => {
+      expect(assessLogin('969.294.560-04', '654321', [gustavo])).toEqual({
         ok: false,
         message: loginMessages.credentials,
       });
@@ -94,6 +132,134 @@ describe('avaliação do login', () => {
         ok: false,
         message: loginMessages.noStudents,
       });
+    });
+  });
+
+  describe('dado um e-mail com letra maiúscula e a senha do responsável', () => {
+    test('quando o login é avaliado, então a sessão ignora a caixa do e-mail', () => {
+      expect(
+        assessLogin('Gustavo-Da-Silva@Example.com', '123456', [gustavo]),
+      ).toEqual({
+        ok: true,
+        session: { guardianId: 1, studentRm: 12567 },
+      });
+      expect(
+        assessLogin('ADELAIDE-SILVEIRA@example.com', '987654', [
+          gustavo,
+          {
+            ...gustavo,
+            id: 2,
+            cpf: '50879567007',
+            email: 'adelaide-silveira@example.com',
+            senha: '987654',
+            alunos: [
+              {
+                rm: 13752,
+                turma: '1EF',
+                periodo: 'Tarde',
+                primeiroNome: 'Bianca',
+                sobrenome: 'Silveira da Costa',
+                agenda: [],
+                boletim: [],
+              },
+            ],
+          },
+        ]),
+      ).toEqual({
+        ok: true,
+        session: { guardianId: 2, studentRm: 13752 },
+      });
+    });
+  });
+
+  describe('dado um e-mail sem formato de endereço', () => {
+    test('quando o login é avaliado, então a frase diz que o e-mail é inválido', () => {
+      expect(assessLogin('gustavo', '123456', [gustavo])).toEqual({
+        ok: false,
+        message: loginMessages.invalidEmail,
+      });
+      expect(assessLogin('gustavo@example', '123456', [gustavo])).toEqual({
+        ok: false,
+        message: loginMessages.invalidEmail,
+      });
+    });
+  });
+
+  describe('dado um e-mail válido e a senha vazia', () => {
+    test('quando o login é avaliado, então a frase pede a senha', () => {
+      expect(
+        assessLogin('gustavo-da-silva@example.com', '', [gustavo]),
+      ).toEqual({
+        ok: false,
+        message: loginMessages.emptyPassword,
+      });
+    });
+  });
+
+  describe('dado um e-mail que não forma o par com a senha', () => {
+    test('quando o login é avaliado, então a frase não revela qual dos dois falhou', () => {
+      expect(
+        assessLogin('gustavo-da-silva@example.com', '000000', [gustavo]),
+      ).toEqual({
+        ok: false,
+        message: loginMessages.emailCredentials,
+      });
+      expect(
+        assessLogin('outra-pessoa@example.com', '123456', [gustavo]),
+      ).toEqual({
+        ok: false,
+        message: loginMessages.emailCredentials,
+      });
+      expect(
+        assessLogin('96929456004@example.com', '123456', [gustavo]),
+      ).toEqual({
+        ok: false,
+        message: loginMessages.emailCredentials,
+      });
+    });
+  });
+
+  describe('dado o e-mail e a senha de um responsável sem alunos', () => {
+    test('quando o login é avaliado, então a frase diz que não há aluno vinculado', () => {
+      expect(
+        assessLogin('gustavo-da-silva@example.com', '123456', [
+          { ...gustavo, alunos: [] },
+        ]),
+      ).toEqual({
+        ok: false,
+        message: loginMessages.noStudents,
+      });
+    });
+  });
+
+  describe('dado menos de 3 dígitos', () => {
+    test('quando o campo formata, então os dígitos ficam sem máscara', () => {
+      expect(formatLoginIdentifier('')).toBe('');
+      expect(formatLoginIdentifier('1')).toBe('1');
+      expect(formatLoginIdentifier('12')).toBe('12');
+      expect(formatLoginIdentifier('12.')).toBe('12');
+    });
+  });
+
+  describe('dado 3 ou mais dígitos e nenhuma letra', () => {
+    test('quando o campo formata, então a máscara de CPF entra', () => {
+      expect(formatLoginIdentifier('123')).toBe('123');
+      expect(formatLoginIdentifier('1234')).toBe('123.4');
+      expect(formatLoginIdentifier('969.294.560-04')).toBe('969.294.560-04');
+      expect(formatLoginIdentifier('969 294 560 04')).toBe('969.294.560-04');
+    });
+  });
+
+  describe('dado um texto com letra ou @', () => {
+    test('quando o campo formata, então o valor fica e-mail e a pontuação da máscara sai', () => {
+      expect(formatLoginIdentifier('gustavo-da-silva@example.com')).toBe(
+        'gustavo-da-silva@example.com',
+      );
+      expect(formatLoginIdentifier('  a@b.com  ')).toBe('a@b.com');
+      expect(formatLoginIdentifier('123.4a')).toBe('1234a');
+      expect(
+        formatLoginIdentifier(`${'a'.repeat(300)}@example.com`),
+      ).toHaveLength(254);
     });
   });
 
