@@ -2,7 +2,7 @@
 
 Aplicativo para responsáveis da FIAP School acompanharem as aulas do dia e o boletim anual do aluno.
 
-Feito em React Native CLI e TypeScript, com o layout do [Figma do desafio](https://www.figma.com/design/lWgkJr0vc9ZiQQylY2J4Zt/Teste-T%C3%A9cnico-Mobile---FIAP?node-id=4001-2). Os dados vêm do Firebase (Authentication + Cloud Firestore), no mesmo contrato do JSON da FIAP. O desenvolvimento seguiu Spec-Driven Development (SDD).
+Feito em React Native CLI e TypeScript, com o layout do [Figma do desafio](https://www.figma.com/design/lWgkJr0vc9ZiQQylY2J4Zt/Teste-T%C3%A9cnico-Mobile---FIAP?node-id=4001-2), em Restyle. Os dados vêm do Firebase (Authentication + Cloud Firestore), no mesmo contrato do JSON da FIAP. O desenvolvimento seguiu Spec-Driven Development (SDD).
 
 O projeto Firebase `app-fiap-cbb00` já está ligado aos apps Android e iOS. Depois de clonar, basta instalar e rodar.
 
