@@ -33,6 +33,7 @@ Todas as specs estão `Concluída` e ficam só com `spec.md`. Os números 003 e 
 | [0009](adr/0009-cache-do-mock-com-react-query.md)                       | Cache dos responsáveis com React Query     |
 | [0010](adr/0010-conectar-auth-e-firestore-com-react-native-firebase.md) | Auth e Firestore com React Native Firebase |
 | [0011](adr/0011-detectar-internet-com-netinfo.md)                       | Detectar a internet com NetInfo            |
+| [0012](adr/0012-identificar-responsavel-pelo-uid.md)                    | Identificar o responsável pelo UID         |
 
 ## Arquitetura
 

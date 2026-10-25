@@ -139,8 +139,8 @@ As fontes (Montserrat) já estão no iOS e no Android. O player de vídeo, o SVG
 Já configurado neste repositório (`android/app/google-services.json` e `ios/AppFiap/GoogleService-Info.plist`). Com internet, o app fala com o projeto `app-fiap-cbb00`.
 
 - **Authentication:** e-mail/senha, com os dois usuários da tabela.
-- **Cloud Firestore:** coleção `responsaveis`, documentos `1` e `2`, no formato do JSON da FIAP, **sem** o campo `senha`.
-- **Regras** ([firestore.rules](firestore.rules)): o usuário autenticado lê só o documento cujo `email` é o do token; ninguém escreve pelo app.
+- **Cloud Firestore:** coleção `responsaveis`, um documento por conta (id = UID do Authentication), no formato do JSON da FIAP, **sem** o campo `senha`. O campo `id` do JSON (`1` ou `2`) continua dentro do documento.
+- **Regras** ([firestore.rules](firestore.rules)): o usuário autenticado lê só o documento cujo id é o UID da conta; ninguém escreve pelo app.
 - **Login por CPF:** o Authentication só conhece e-mail. O app traduz o CPF pelo diretório local `src/features/auth/data/loginDirectory.ts` (sem senha).
 - O JSON original fica em `src/shared/mocks/responsaveis.json` só como fixture dos testes.
 
@@ -148,7 +148,7 @@ Para usar um projeto Firebase próprio:
 
 1. Crie o projeto e registre os apps Android (`com.appfiap`) e iOS (`org.reactjs.native.example.AppFiap`). Substitua `google-services.json` e `GoogleService-Info.plist`.
 2. Em Authentication, ative E-mail/senha e crie os usuários da tabela.
-3. Em Firestore, crie a coleção `responsaveis` com um documento por responsável (id = `id`), copiando `src/shared/mocks/responsaveis.json` sem o campo `senha`.
+3. Em Firestore, crie a coleção `responsaveis` com um documento por responsável (id do documento = UID da conta no Authentication), copiando `src/shared/mocks/responsaveis.json` sem o campo `senha`.
 4. Publique as regras: `firebase deploy --only firestore:rules` (Firebase CLI, com `firebase use <projeto>`).
 
 ## Arquitetura e SDD
