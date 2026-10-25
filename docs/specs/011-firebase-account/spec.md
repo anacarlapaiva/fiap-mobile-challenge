@@ -18,6 +18,7 @@ Quem entra com o e-mail e a senha da conta, ou com o CPF de um responsável conh
 - **CA-05:** **Dado** a conta aceita e o documento não chega ou não é o contrato, **Quando** a leitura termina, **Então** a frase é "Não foi possível carregar seus dados. Tente novamente." e a sessão não fica gravada.
 - **CA-06:** **Dado** a conta do Gustavo, **Quando** a leitura termina, **Então** chega só o documento desse e-mail, com alunos e sem a senha.
 - **CA-07:** **Dado** um documento do responsável autenticado, **Quando** a sessão é montada, **Então** ela usa o id dele e o RM do primeiro aluno. **Dado** um responsável sem alunos, **Quando** a sessão é montada, **Então** a frase é "Não encontramos alunos vinculados à sua conta."
+- **CA-08:** **Dado** a sessão aberta e a rede indisponível ao ler o documento, **Quando** a agenda ou o boletim mostra o erro, **Então** a frase é "Sem conexão com a internet. Verifique sua rede e tente novamente." Com rede, a frase continua "Não foi possível carregar seus dados. Tente novamente."
 
 ## Fora do escopo
 
