@@ -21,7 +21,7 @@ Criar `src/features/<nome>/` com a anatomia padrão e o `index.ts` como API púb
 3. Verifique se `src/features/<nome>/` já existe. Se existir, **pare** e informe o usuário.
 4. Defina as subpastas a criar:
    - com `plan.md`: só as subpastas previstas na seção "Estrutura de arquivos";
-   - sem `plan.md`: pergunte ao usuário quais das subpastas padrão (`screens/`, `components/`, `hooks/`, `api/`, `store/`) são necessárias.
+   - sem `plan.md`: pergunte ao usuário quais das subpastas padrão (`screens/`, `components/`, `hooks/`, `data/`, `session/`, `validation/`) são necessárias.
 5. Crie as subpastas escolhidas. Pastas vazias não são versionadas pelo git; deixe a pasta vazia e inclua o primeiro arquivo nela na tarefa que for usá-la, sem criar arquivos de exemplo.
 6. Crie `src/features/<nome>/types.ts` contendo só `export {};`, sem comentários (proibição 7 do `AGENTS.md`).
 7. Crie `src/features/<nome>/index.ts` contendo só `export {};`. Outras camadas só podem importar a feature por este arquivo (`@/features/<nome>`).

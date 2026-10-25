@@ -40,4 +40,4 @@ TROCAR PERFIL abre, por cima da área autenticada, a tela "Escolha o perfil / qu
 
 ## Fora do escopo
 
-- Responsável sem alunos, adicionar ou remover aluno, confirmar a troca, lembrar a aba ou o dia por aluno, Firebase/API.
+- Responsável sem alunos, adicionar ou remover aluno, confirmar a troca, lembrar a aba ou o dia por aluno.
