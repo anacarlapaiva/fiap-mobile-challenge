@@ -44,10 +44,11 @@ async function render(element: ReactElement) {
       }
       return toggle;
     },
-    hasMask: () =>
+    display: () =>
       root
         .findAllByType(NativeText)
-        .some(node => node.props.testID === 'text-field-mask'),
+        .find(node => node.props.testID === 'text-field-display')?.props
+        .children,
   };
 }
 
@@ -105,7 +106,7 @@ describe('campo de texto', () => {
 
       const mask = view.root
         .findAllByType(NativeText)
-        .find(node => node.props.testID === 'text-field-mask');
+        .find(node => node.props.testID === 'text-field-display');
       expect(mask?.props.children).toBe('******');
       expect(StyleSheet.flatten(mask?.props.style)).toMatchObject({
         fontFamily: 'Montserrat-Regular',
@@ -154,7 +155,7 @@ describe('campo de texto', () => {
         <TextField label="SENHA" value="abc" onChangeText={jest.fn()} secure />,
       );
 
-      expect(view.hasMask()).toBe(true);
+      expect(view.display()).toBe('***');
       expect(view.root.findByType(Icon).props.name).toBe('eye');
       expect(view.toggle().props).toMatchObject({
         accessibilityRole: 'button',
@@ -164,7 +165,7 @@ describe('campo de texto', () => {
   });
 
   describe('dado um campo seguro com a senha oculta', () => {
-    test('quando o olho é tocado, então a senha aparece como texto e o olho anuncia ocultar senha', async () => {
+    test('quando o olho é tocado, então a senha aparece como texto sem desligar o modo seguro nativo e o olho anuncia ocultar senha', async () => {
       const view = await render(
         <TextField label="SENHA" value="abc" onChangeText={jest.fn()} secure />,
       );
@@ -172,13 +173,9 @@ describe('campo de texto', () => {
       await pressToggle(view);
 
       const input = view.root.findByType(TextInput);
-      expect(view.hasMask()).toBe(false);
-      expect(input.props.secureTextEntry).toBe(false);
-      expect(input.props.selection).toBeUndefined();
-      expect(input.props.accessibilityValue).toBeUndefined();
-      expect(StyleSheet.flatten(input.props.style).color).not.toBe(
-        'transparent',
-      );
+      expect(view.display()).toBe('abc');
+      expect(input.props.secureTextEntry).toBe(true);
+      expect(input.props.accessibilityValue).toEqual({ text: 'abc' });
       expect(view.root.findByType(Icon).props.name).toBe('eyeOff');
       expect(view.toggle().props.accessibilityLabel).toBe('Ocultar senha');
     });
@@ -193,8 +190,10 @@ describe('campo de texto', () => {
       await pressToggle(view);
       await pressToggle(view);
 
-      expect(view.hasMask()).toBe(true);
-      expect(view.root.findByType(TextInput).props.secureTextEntry).toBe(true);
+      expect(view.display()).toBe('***');
+      expect(view.root.findByType(TextInput).props.accessibilityValue).toEqual({
+        text: '***',
+      });
       expect(view.root.findByType(Icon).props.name).toBe('eye');
       expect(view.toggle().props.accessibilityLabel).toBe('Mostrar senha');
     });
@@ -228,7 +227,7 @@ describe('campo de texto', () => {
       });
 
       expect(onChangeText).toHaveBeenCalledWith('abcd');
-      expect(view.hasMask()).toBe(false);
+      expect(view.display()).toBe('abcd');
       expect(view.root.findByType(TextInput).props.value).toBe('abcd');
     });
   });

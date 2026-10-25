@@ -48,7 +48,6 @@ export function TextField({
   const { motion, spacing } = theme;
   const [focused, setFocused] = useState(false);
   const [revealed, setRevealed] = useState(false);
-  const masked = secure && !revealed;
   const inset = secure ? 'fieldToggleInset' : 'none';
   const filled = useSharedValue(value.length > 0 ? 1 : 0);
   const caretOpacity = useSharedValue(0);
@@ -60,7 +59,7 @@ export function TextField({
   }, [filled, motion.short, value]);
 
   useEffect(() => {
-    if (masked && focused) {
+    if (secure && focused) {
       caretOpacity.value = 1;
       caretOpacity.value = withRepeat(
         withSequence(
@@ -73,7 +72,7 @@ export function TextField({
     }
     cancelAnimation(caretOpacity);
     caretOpacity.value = 0;
-  }, [caretOpacity, focused, masked, motion.caretBlink]);
+  }, [caretOpacity, focused, motion.caretBlink, secure]);
 
   const lineStyle = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(
@@ -87,14 +86,14 @@ export function TextField({
     opacity: caretOpacity.value,
   }));
 
-  const mask = '*'.repeat(value.length);
+  const display = revealed ? value : '*'.repeat(value.length);
   const valueHeight = { height: theme.textVariants.inputValue.lineHeight };
 
   return (
     <FieldBox variant="container">
       <Text variant="inputLabel">{label}</Text>
       <FieldBox variant="value">
-        {masked ? (
+        {secure ? (
           <FieldBox
             variant="mask"
             paddingHorizontal={inset}
@@ -104,10 +103,11 @@ export function TextField({
           >
             <Text
               variant="inputValue"
-              testID="text-field-mask"
+              testID="text-field-display"
               numberOfLines={1}
+              ellipsizeMode="head"
             >
-              {mask}
+              {display}
             </Text>
             <AnimatedFieldBox variant="caret" style={caretStyle} />
           </FieldBox>
@@ -131,20 +131,16 @@ export function TextField({
           autoCorrect={false}
           autoCapitalize="none"
           spellCheck={false}
-          style={[valueHeight, masked ? styles.hiddenValue : undefined]}
+          style={[valueHeight, secure ? styles.hiddenValue : undefined]}
           {...(secure
             ? {
-                secureTextEntry: masked,
-                caretHidden: masked,
+                secureTextEntry: true,
+                caretHidden: true,
                 contextMenuHidden: true,
                 autoComplete: 'off',
                 textContentType: 'none',
                 importantForAutofill: 'no',
-              }
-            : {})}
-          {...(masked
-            ? {
-                accessibilityValue: { text: mask },
+                accessibilityValue: { text: display },
                 selection: { start: value.length, end: value.length },
               }
             : {})}

@@ -14,16 +14,43 @@ O projeto Firebase `app-fiap-cbb00` já está ligado aos apps Android e iOS. Dep
 </p>
 <p align="center"><sub>Login · Agenda · Boletim · Troca de aluno (emulador Android)</sub></p>
 
+## Destaques
+
+- **Autenticação de verdade, não um `if` contra o JSON.** Firebase Authentication com e-mail/senha, Firestore protegido por regra de UID, sessão no Keychain do sistema e a senha nunca gravada em lugar nenhum. Detalhes em [Autenticação](#autenticação).
+- **O teclado nunca cobre o campo.** No login, o botão FAZER LOGIN sobe junto com o teclado, e a tela rola sozinha até a senha e a mensagem de erro assim que o teclado termina de abrir, no iOS e no Android.
+- **Mostrar senha sem perder o que foi digitado.** O olho no campo SENHA alterna entre `*` e o texto. O campo nativo continua seguro o tempo todo (sem sugestões do teclado, sem copiar), então o iOS não apaga a senha ao ocultar de novo.
+- **Testado de ponta a ponta com Maestro.** Sete fluxos em [`.maestro/`](.maestro) cobrem login (todos os erros), olho da senha, agenda, boletim, troca de perfil, saída e sessão persistida, rodando no simulador iOS. Somam-se aos 196 testes unitários do Jest.
+- **Animação em todas as telas, respeitando o sistema.** Vídeo na splash, fade entre abas, escolha de aluno subindo de baixo, pulso nos cards, accordion do boletim, dropdown, linha e cursor do campo. Com "Reduzir movimento" ligado no aparelho, as transições são desligadas.
+- **Cenários de erro tratados.** Sem internet, dados quebrados, responsável sem alunos, sessão órfã, Keychain falhando e tela que quebra ao renderizar têm mensagem e saída próprias (veja [Offline e rede](#offline-e-rede)).
+- **Acessível.** Botões, abas, cards e dropdowns anunciam papel, rótulo e estado (aberto, selecionado) para o VoiceOver e o TalkBack.
+- **Engenharia guiada por spec.** Dez specs com critérios de aceite, doze ADRs, camadas impostas por lint e instruções de IA versionadas no repositório.
+
+## Galeria
+
+<p align="center">
+  <img src="docs/demo/08-login-erro-teclado.png" alt="Erro de login com o teclado aberto" width="180" />
+  <img src="docs/demo/09-senha-visivel.png" alt="Senha visível" width="180" />
+  <img src="docs/demo/03-agenda-sem-aulas.png" alt="Dia sem aulas" width="180" />
+  <img src="docs/demo/11-agenda-dias.png" alt="Escolha do dia da agenda" width="180" />
+</p>
+<p align="center"><sub>Erro sem o teclado cobrir · Senha visível · Dia sem aulas · Escolha do dia</sub></p>
+<p align="center">
+  <img src="docs/demo/10-boletim-2024.png" alt="Boletim de 2024" width="180" />
+  <img src="docs/demo/06-toast-perfil.png" alt="Aviso de perfil alterado" width="180" />
+  <img src="docs/demo/07-confirmar-saida.png" alt="Confirmação de saída" width="180" />
+</p>
+<p align="center"><sub>Boletim de anos anteriores · Aviso de troca de perfil · Confirmação de saída (simulador iOS)</sub></p>
+
 ## Telas
 
-| Tela             | O que faz                                                                         |
-| ---------------- | --------------------------------------------------------------------------------- |
-| Splash           | Reproduz o vídeo de abertura uma vez e entrega o restante do app                  |
-| Login            | CPF (máscara `XXX.XXX.XXX-XX`) ou e-mail + senha; sessão persiste ao fechar o app |
-| Agenda           | Aulas de um dia, com horário e disciplina; troca de dia da semana                 |
-| Boletim          | Ano, turma e trimestres; 2025 no 1º trimestre; anos anteriores quando existem     |
-| Escolha de aluno | Só aparece se o responsável tiver mais de um aluno; volta para a tela de origem   |
-| Sair             | Confirmação nativa antes de encerrar a sessão                                     |
+| Tela             | O que faz                                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| Splash           | Reproduz o vídeo de abertura uma vez e entrega o restante do app                                        |
+| Login            | CPF (máscara `XXX.XXX.XXX-XX`) ou e-mail + senha com olho para mostrar; sessão persiste ao fechar o app |
+| Agenda           | Aulas de um dia, com horário e disciplina; troca de dia da semana                                       |
+| Boletim          | Ano, turma e trimestres; 2025 no 1º trimestre; anos anteriores quando existem                           |
+| Escolha de aluno | Só aparece se o responsável tiver mais de um aluno; volta para a tela de origem                         |
+| Sair             | Confirmação nativa antes de encerrar a sessão                                                           |
 
 Nas telas autenticadas: cabeçalho com o responsável, o aluno (nome, RM, turma, período), TROCAR PERFIL quando houver mais de um aluno, SAIR, e abas AGENDA / BOLETIM no rodapé.
 
@@ -31,12 +58,27 @@ Nas telas autenticadas: cabeçalho com o responsável, o aluno (nome, RM, turma,
 
 ### Autenticação
 
+A autenticação foi tratada como em um app de produção:
+
+| Camada      | Como funciona                                                                                                                             |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Conta       | Firebase Authentication (e-mail/senha). A senha só existe no Firebase                                                                     |
+| Dados       | Firestore com regra que deixa cada conta ler só o próprio documento (id = UID) e ninguém escrever pelo app                                |
+| Sessão      | Só `{ guardianId, studentRm }`, no Keychain (iOS) / Keystore (Android), nunca em `AsyncStorage`                                           |
+| Validação   | CPF (dígitos verificadores) e e-mail conferidos antes de chamar o Firebase; sessão do Keychain e documento do Firestore validados com Zod |
+| Privacidade | Mensagem de credencial recusada não diz qual campo errou, para não revelar quem tem conta                                                 |
+| Resiliência | Sem internet, Keychain lento ou com falha, sessão órfã e responsável sem alunos têm comportamento definido                                |
+
+Regras:
+
 - O login aceita **CPF ou e-mail**. Digitando letras ou `@`, o campo trata como e-mail; só dígitos viram CPF com máscara `XXX.XXX.XXX-XX`.
 - CPF é validado de verdade: 11 dígitos, rejeita sequência repetida (`111.111.111-11`) e confere os dois dígitos verificadores.
 - Ordem das frases no CPF: vazio → quantidade → dígitos iguais → verificador → senha vazia → credencial recusada.
 - Credencial recusada **não diz** se o erro foi o CPF, o e-mail ou a senha (`CPF ou senha incorretos.` / `E-mail ou senha incorretos.`).
 - Não há cadastro nem recuperação de senha (fora do corte).
 - A senha nunca é gravada no aparelho nem no Firestore. O Authentication é e-mail/senha; o CPF é traduzido localmente para o e-mail daquele responsável, sem senha.
+- O olho do campo SENHA mostra o texto, mas o campo nativo continua no modo seguro: o teclado não aprende a senha, não há copiar/colar e o autopreenchimento fica desligado.
+- O teclado nunca fica em cima do campo: o botão sobe com o teclado e a tela rola até a senha e o erro.
 
 ### Sessão
 
@@ -167,6 +209,28 @@ yarn validate          # typecheck + lint + formatação + testes
 ```
 
 O pre-commit (Husky + lint-staged) verifica formatação, lint e tipos em cada commit.
+
+### Testes de ponta a ponta (Maestro)
+
+Todo o fluxo do app foi testado com [Maestro](https://maestro.mobile.dev) no simulador iOS. Os fluxos ficam em [`.maestro/`](.maestro):
+
+| Fluxo                | O que confere                                                                       |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| `01-login-erros`     | Cada frase de erro do login, na ordem, até a credencial recusada                    |
+| `02-olho-da-senha`   | Mostrar, digitar, ocultar e digitar de novo sem perder nenhum caractere             |
+| `03-agenda`          | Primeiro dia sem aulas, troca de dia pelo dropdown e aulas do novo dia              |
+| `04-boletim`         | Boletim de 2025 e navegação para 2024                                               |
+| `05-trocar-perfil`   | Escolha de aluno, aviso "Perfil alterado para JOANA" e volta para a aba             |
+| `06-sair`            | Confirmação de saída: cancelar mantém a sessão, sair volta ao login                 |
+| `07-sessao-persiste` | Fechar e abrir o app mantém a sessão; responsável com um aluno não vê TROCAR PERFIL |
+
+Com o app instalado e o Metro rodando:
+
+```sh
+maestro test .maestro
+```
+
+O fluxo de saída toca no botão "Sair" do alerta nativo por posição na tela, calibrada para o iPhone 17 Pro.
 
 ## Solução de problemas
 

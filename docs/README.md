@@ -17,6 +17,7 @@ Todas as specs estão `Concluída` e ficam só com `spec.md`. Os números 003 e 
 | [009](specs/009-student-selection/spec.md)       | Escolha de aluno                      |
 | [010](specs/010-logout-confirmation/spec.md)     | Confirmar a saída                     |
 | [011](specs/011-firebase-account/spec.md)        | Conta Firebase e dados do responsável |
+| [012](specs/012-mostrar-senha/spec.md)           | Mostrar a senha                       |
 
 ## Decisões (ADRs)
 

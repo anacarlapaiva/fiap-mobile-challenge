@@ -1,6 +1,6 @@
 # Spec 012: Mostrar a senha
 
-- **Status:** Em implementação
+- **Status:** Concluída
 - **Autor:** Ana Carla Paiva (com Claude Code)
 - **Aprovado por:** Ana Carla Paiva (2026-10-25)
 - **Data:** 2026-10-25
