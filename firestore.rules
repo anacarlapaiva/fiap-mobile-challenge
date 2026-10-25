@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /responsaveis/{id} {
+      allow read: if request.auth != null
+        && resource.data.email == request.auth.token.email;
+      allow write: if false;
+    }
+  }
+}
