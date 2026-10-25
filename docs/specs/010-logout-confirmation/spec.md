@@ -22,7 +22,3 @@ Tocar em SAIR abre um alerta nativo do sistema que pede confirmação antes de e
 ## Fora do escopo
 
 - Alerta com o visual do tema, confirmar outras ações.
-
-## Verificação pendente
-
-CA-03 no Android (toque fora e voltar). CA-01 e o cancelamento conferidos no simulador iOS.
