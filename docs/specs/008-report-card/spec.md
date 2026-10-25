@@ -7,7 +7,7 @@
 
 ## O quê
 
-A aba BOLETIM mostra o boletim do aluno da sessão, um ano por vez, a partir do documento do responsável (mesmo contrato do JSON da FIAP, via Firestore — spec 011). Título e dropdown de ano ficam visíveis. Cada trimestre é um card; as disciplinas abrem abaixo dele.
+A aba BOLETIM mostra o boletim do aluno da sessão, um ano por vez, a partir do documento do responsável no Firestore ([spec 011](../011-firebase-account/spec.md)), no formato do JSON da FIAP. Título e dropdown de ano ficam visíveis. Cada trimestre é um card; as disciplinas abrem abaixo dele.
 
 ## Critérios de aceite
 
@@ -23,19 +23,19 @@ A aba BOLETIM mostra o boletim do aluno da sessão, um ano por vez, a partir do 
 - **CA-10:** **Dado** o `3º TRIMESTRE` colado no rodapé, **Quando** abre, **Então** o título e o dropdown permanecem visíveis e a lista rola o mínimo para o topo desse card encostar no topo da área rolável, acima da tab bar.
 - **CA-11:** **Dado** uma disciplina cuja nota ficaria sob a tab bar, **Quando** abre, **Então** a lista rola só o bastante para nota e faltas ficarem acima da tab bar. Se o bloco for mais alto que a área rolável, o topo do que abriu fica visível.
 - **CA-12:** **Dado** os cards fechados, **Quando** a lista é rolada até o fim, **Então** ela para 16 abaixo do último card. **Dado** um trimestre aberto, **Quando** a lista é rolada até o fim, **Então** o espaço abaixo do conteúdo é só o necessário para o topo desse trimestre encostar no topo da área rolável (no mínimo 16).
-- **CA-13:** **Dado** um aluno com `boletim` vazio ou ausente no JSON, **Quando** a aba BOLETIM abre, **Então** aparecem "BOLETIM" e o Empty com "Nenhum boletim disponível.", sem dropdown.
+- **CA-13:** **Dado** um aluno com `boletim` vazio ou ausente no documento, **Quando** a aba BOLETIM abre, **Então** aparecem "BOLETIM" e o Empty com "Nenhum boletim disponível.", sem dropdown.
 
 ## Regras
 
-- Fonte: `boletim` do aluno da sessão no documento do responsável. Sem spinner.
+- Fonte: `boletim` do aluno da sessão, lido do Firestore. Enquanto os dados carregam, aparecem o título e o indicador de carregamento; se a leitura falha, aparecem a mensagem de erro da [spec 011](../011-firebase-account/spec.md) (CA-08) e TENTAR NOVAMENTE ([ADR 0009](../../adr/0009-cache-do-mock-com-react-query.md)).
 - Ano inicial: primeiro item da lista. Ano, trimestre aberto e disciplinas abertas vivem na tela, não na sessão. Sair volta ao primeiro ano, com os cards fechados.
 - Rótulo do ano: `turma - ano` (`7EF - 2025`). Rótulo do trimestre: `nº TRIMESTRE`. Nome da disciplina em maiúsculas pt-BR (`Língua Portuguesa` → `LÍNGUA PORTUGUESA`).
 - Nota com uma casa decimal (`8` → `8.0`, `9.5` → `9.5`, `10` → `10.0`). Falta inteira. `null` de nota ou falta vira `-`. Empty não substitui nota nem falta.
-- Ordem de ano, trimestre e disciplina: a do JSON.
+- Ordem de ano, trimestre e disciplina: a do documento.
 - Um trimestre aberto por vez. Várias disciplinas podem ficar abertas. Fechar o trimestre, abrir outro ou trocar de ano apaga as disciplinas abertas. Reabrir o trimestre mostra só os nomes.
 - Na entrada da aba nada anima. Abrir ou fechar anima a altura do miolo e gira a seta 180°, na duração medium do tema. Sem fade por linha.
 - Título e dropdown ficam fora da lista.
 
 ## Fora do escopo
 
-- Agenda, escolha de aluno, persistir o ano no disco, editar nota, alterar o cabeçalho.
+- Agenda, escolha de aluno, persistir o ano no disco, editar nota, alterar o cabeçalho. Login e leitura do Firestore estão na spec 011.

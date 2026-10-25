@@ -22,9 +22,13 @@ describe('tela nativa de abertura', () => {
         'android/app/src/main/res/values-v31/styles.xml',
       );
 
+      const infoPlist = readProjectFile('ios/AppFiap/Info.plist');
+
       expect(storyboard).toContain(
         'red="0.0" green="0.0" blue="0.0" alpha="1"',
       );
+      expect(infoPlist).toMatch(/<key>UIStatusBarHidden<\/key>\s*<true\/>/);
+      expect(styles).toContain('android:windowFullscreen');
       expect(storyboard).not.toContain('Powered by React Native');
       expect(storyboard).not.toContain('>AppFiap<');
       expect(colors).toContain('#000000');

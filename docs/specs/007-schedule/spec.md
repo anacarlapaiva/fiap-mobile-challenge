@@ -7,7 +7,7 @@
 
 ## O quê
 
-A aba AGENDA mostra as aulas do aluno da sessão, um dia por vez, a partir do documento do responsável (mesmo contrato do JSON da FIAP, via Firestore — spec 011). Título e dropdown de dia ficam visíveis; sem aulas no dia, o Empty ocupa só a lista.
+A aba AGENDA mostra as aulas do aluno da sessão, um dia por vez, a partir do documento do responsável no Firestore ([spec 011](../011-firebase-account/spec.md)), no formato do JSON da FIAP. Título e dropdown de dia ficam visíveis; sem aulas no dia, o Empty ocupa só a lista.
 
 ## Critérios de aceite
 
@@ -18,16 +18,16 @@ A aba AGENDA mostra as aulas do aluno da sessão, um dia por vez, a partir do do
 - **CA-05:** **Dado** o dia `2025-03-17` selecionado, **Quando** a pessoa vai ao BOLETIM e volta à AGENDA, **Então** o dropdown continua nesse dia e a lista desse dia permanece.
 - **CA-06:** **Dado** o campo do dropdown, **Quando** renderizado, **Então** tem altura 45, raio 8, margem lateral 24, e cada opção da lista tem altura 36.
 - **CA-07:** **Dado** uma linha de aula, **Quando** renderizada, **Então** tem altura 59, marcador 6×6, o `horario` do JSON em legenda e a `disciplina` em corpo seminegrito abaixo.
-- **CA-08:** **Dado** um aluno com `agenda` vazia ou ausente no JSON, **Quando** a aba AGENDA abre, **Então** aparecem "AGENDA" e o Empty com "Nenhuma aula cadastrada.", sem dropdown.
+- **CA-08:** **Dado** um aluno com `agenda` vazia ou ausente no documento, **Quando** a aba AGENDA abre, **Então** aparecem "AGENDA" e o Empty com "Nenhuma aula cadastrada.", sem dropdown.
 
 ## Regras
 
-- Fonte: `agenda` do aluno da sessão no documento do responsável. Sem spinner de agenda.
+- Fonte: `agenda` do aluno da sessão, lido do Firestore. Enquanto os dados carregam, aparecem o título e o indicador de carregamento; se a leitura falha, aparecem a mensagem de erro da [spec 011](../011-firebase-account/spec.md) (CA-08) e TENTAR NOVAMENTE ([ADR 0009](../../adr/0009-cache-do-mock-com-react-query.md)).
 - Dia inicial: primeiro `dia` da lista. Dia escolhido vive na tela, não na sessão; Sair volta ao primeiro dia.
 - Rótulo: `d de mês, weekday` em pt-BR, sem ano, a partir do ISO (`2025-03-16` → `16 de março, domingo`).
 - Empty só substitui a lista. Cabeçalho não muda.
-- Cada objeto em `aulas` é uma linha, na ordem do JSON, mesmo com disciplina repetida.
+- Cada objeto em `aulas` é uma linha, na ordem do documento, mesmo com disciplina repetida.
 
 ## Fora do escopo
 
-- Boletim, escolha de aluno, persistir o dia no disco, alterar o cabeçalho.
+- Boletim, escolha de aluno, persistir o dia no disco, alterar o cabeçalho. Login e leitura do Firestore estão na spec 011.
