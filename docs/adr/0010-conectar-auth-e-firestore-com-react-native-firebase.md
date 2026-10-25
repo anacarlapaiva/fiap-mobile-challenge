@@ -12,8 +12,8 @@ O corte do desafio pede Firebase Authentication e Cloud Firestore no lugar do JS
 
 1. O backend do app é o projeto Firebase `app-fiap-cbb00`, região `southamerica-east1`, plano Spark.
 2. Authentication usa só o provedor E-mail/senha. Os usuários de demonstração são `gustavo-da-silva@example.com` / `123456` e `adelaide-silveira@example.com` / `987654`.
-3. Cloud Firestore guarda a coleção `responsaveis` com documentos `1` e `2`, no mesmo formato do mock, sem o campo `senha`.
-4. Regras: usuário autenticado lê só o documento cujo `email` é o e-mail do token; ninguém escreve pelo cliente.
+3. Cloud Firestore guarda a coleção `responsaveis` no mesmo formato do mock, sem o campo `senha`. O id do documento é o UID da conta (ADR 0012); o campo `id` do JSON permanece no documento.
+4. Regras: o usuário autenticado lê só o documento cujo id é o UID do token (ADR 0012); ninguém escreve pelo cliente.
 5. No app, a rede usa `@react-native-firebase/app`, `@react-native-firebase/auth` e `@react-native-firebase/firestore`. A query `['guardians']` (ADR 0009) troca o `queryFn` do JSON local pela leitura do Firestore e tenta de novo duas vezes se a leitura falhar. A sessão continua só no Keychain (ADR 0006).
 6. A tela de login continua aceitando CPF ou e-mail. O Authentication é e-mail/senha: um CPF válido entra com o e-mail daquele responsável, achado num diretório local CPF → e-mail (`src/features/auth/data/loginDirectory.ts`), sem senha. O JSON da FIAP fica só como fixture dos testes e não entra no bundle.
 
