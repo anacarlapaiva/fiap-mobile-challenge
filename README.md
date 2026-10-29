@@ -13,11 +13,20 @@ Foi criado também, uma splashscreen exclusiva, desenvolvida por Ana Carla Paiva
 </p>
 <p align="center"><sub>Splash · 6,1 s</sub></p>
 
-https://github.com/user-attachments/assets/6df41702-a2c7-441f-ad27-f836dcab56fe
-<p align="center"><sub>Caminho feliz</sub></p>
-
-https://github.com/user-attachments/assets/5c2e5f90-7c44-4865-84e9-4445e9df3f26
-<p align="center"><sub>Caminho triste</sub></p>
+<table align="center">
+  <tr>
+    <td align="center" width="50%">
+      <video src="https://github.com/user-attachments/assets/6df41702-a2c7-441f-ad27-f836dcab56fe" width="300" controls muted playsinline></video>
+      <br />
+      <sub>Fluxo principal</sub>
+    </td>
+    <td align="center" width="50%">
+      <video src="https://github.com/user-attachments/assets/5c2e5f90-7c44-4865-84e9-4445e9df3f26" width="300" controls muted playsinline></video>
+      <br />
+      <sub>Validações e erros</sub>
+    </td>
+  </tr>
+</table> 
 
 <p align="center">
   <img src="docs/demo/01-login.png" alt="Login" width="180" />
